@@ -10,9 +10,9 @@
  *   pinned    - 是否置顶（pinned 的项目排在最前）
  *   featured  - 是否精选卡（跨双列 + 渐变背景，仅一个）
  *   tags      - 标签 [{ text, color:'accent'|'mute' }]
- *   type      - 'desktop'|'mobile'|'web'|'embed'|'external'
- *   detail    - 详情页路径（desktop/mobile/web 类型用）
- *   link      - 外部链接（external 类型用）/ 备用链接
+ *   action    - 'detail'（跳详情页）| 'open'（直接打开）| 'link'（跳外链）
+ *   detail    - 详情页路径（action='detail' 时用）
+ *   link      - 直接链接（action='open'/'link' 时用）/ 备用链接
  *   stack     - 技术栈（显示在卡片 footer）
  *   repo      - GitHub 仓库地址（可选）
  *   status    - 'active'|'wip'|'archived'（可选）
@@ -27,7 +27,7 @@ window.__WORKS = [
     icon: 'invoice',
     pinned: true,
     featured: true,
-    type: 'desktop',
+    action: 'detail',
     detail: 'works/invoice.html',
     link: '#',
     stack: 'Tauri 2 · Rust · pdf-lib · print.js',
@@ -44,7 +44,7 @@ window.__WORKS = [
     desc: '面向标准文档的结构化抓取与导出工具，工作中用来减少重复劳动的私人项目。',
     icon: 'scanner',
     pinned: false,
-    type: 'desktop',
+    action: 'detail',
     detail: '#',
     link: '#',
     stack: 'Python · FastAPI · pywebview',
@@ -60,7 +60,7 @@ window.__WORKS = [
     desc: '编码解码、Base64、哈希、正则测试等日常小工具的合集，打开即用无需登录。',
     icon: 'tools',
     pinned: false,
-    type: 'embed',
+    action: 'open',
     detail: '',
     link: './online_tools/',
     stack: 'HTML · Vanilla JS',
@@ -76,7 +76,7 @@ window.__WORKS = [
     desc: '记录技术折腾、读书笔记与生活琐碎。频率不高，但愿每篇都值得一读。',
     icon: 'blog',
     pinned: false,
-    type: 'external',
+    action: 'link',
     detail: '',
     link: 'https://blog.erma0.cn',
     stack: 'blog.erma0.cn',
@@ -90,7 +90,7 @@ window.__WORKS = [
     desc: 'GitHub 上还有一些小玩具和未完工的实验，等收拾干净了再放到这里。',
     icon: 'more',
     pinned: false,
-    type: 'external',
+    action: 'link',
     detail: '',
     link: '#',
     stack: 'GitHub · 持续更新',

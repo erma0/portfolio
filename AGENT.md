@@ -36,7 +36,7 @@ portfolio/
 ├── index.html              # 作品集主页
 ├── works.js                # ★ 作品数据配置（独立文件）
 ├── styles.css              # 全局样式（米白纸主题、卡片、动效）
-├── main.js                 # 动效 + 卡片渲染 + 图标映射 + type 路由
+├── main.js                 # 动效 + 卡片渲染 + 图标映射 + action 路由
 ├── vercel.json             # Vercel rewrite 配置
 ├── AGENT.md                # 本文件
 ├── .workbuddy/memory/      # 项目记忆（不提交 Git）
@@ -117,10 +117,10 @@ portfolio/
     { text: '桌面', color: 'mute' }
   ],
 
-  // ── 类型与路由 ★ ──
-  type: 'desktop',             // 驱动行为：desktop|mobile|web|embed|external
-  detail: 'works/invoice.html',// 详情页路径（desktop/mobile/web 用）
-  link: '#',                   // 外部链接或备用链接
+  // ── 卡片动作 ★ ──
+  action: 'detail',            // 'detail'（跳详情页）| 'open'（直接打开）| 'link'（跳外链）
+  detail: 'works/invoice.html',// 详情页路径（action='detail' 时用）
+  link: '#',                   // 直接链接（action='open'/'link' 时用）/ 备用
 
   // ── 元信息 ──
   stack: 'Tauri 2 · Rust · JS',// 技术栈（显示在卡片 footer）
@@ -130,15 +130,15 @@ portfolio/
 }
 ```
 
-### type 字段驱动规则
+### action 字段驱动规则
 
-| type | 卡片链接 | 按钮文字 | 详情页 | 典型场景 |
+`action` 只控制卡片上的操作行为，**不约束详情页内容**。详情页是独立 HTML，完全自由。
+
+| action | 卡片链接 | 按钮文字 | 外链 | 典型场景 |
 |---|---|---|---|---|
-| `desktop` | `detail` 或 `link` | 查看 → | `works/xxx.html` | 桌面应用、发票酱 |
-| `mobile` | `detail` 或 `link` | 查看 → | `works/xxx.html` | 安卓 APP、小程序 |
-| `web` | `detail` 或 `link` | 打开 → | `works/xxx.html` | 在线服务、独立部署 |
-| `embed` | `link` 直接 | 打开 → | 无需详情页 | 站内工具集 |
-| `external` | `link` 外链 | 访问 → | 无需详情页 | 博客、GitHub 等 |
+| `detail` | `detail` 或 `link` | 查看 → | 否 | 有详情页的项目 |
+| `open` | `link` 直接 | 打开 → | 否 | 站内工具集、在线服务 |
+| `link` | `link` 外链 | 访问 → | 是 | 博客、GitHub、外部服务 |
 
 链接解析优先级：`detail`（非空且非 `#`）→ `link` → `#`（禁用）
 
@@ -218,7 +218,7 @@ newIcon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-widt
 
 ### 新增项目的完整流程
 
-1. 在 `works.js` 对应位置插入配置项（设置 `type` + `detail`）
+1. 在 `works.js` 对应位置插入配置项（设置 `action` + `detail`）
 2. 如需要详情页：复制 `works/invoice.html` 为模板，改内容
 3. 如需要新图标：在 `main.js` 的 `ICONS` 中添加 SVG
 
@@ -258,11 +258,11 @@ newIcon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-widt
 ## 常见任务指南
 
 ### 新增/修改项目卡片
-编辑 `index.html` 中 `window.__WORKS` 数组：
+编辑 `works.js` 中 `window.__WORKS` 数组：
 - **新增**：在合适位置插入一个新对象
 - **修改**：直接改对应字段
 - **删除**：移除整个对象
-- **置顶**：改 `pinned: true`，调整在该组中的位置决定排序
+- **置顶**：改 `pinned: true`
 - **主推**：改 `featured: true`（记得把前一个的 `featured` 关掉）
 
 ### 新增在线工具页
@@ -276,10 +276,10 @@ newIcon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-widt
 - 详情页样式 → `works/detail.css`
 - 工具页样式 → `online_tools/css/style.css`
 - 单工具页公用 → `online_tools/css/tool.css`
-- 动效 + 卡片渲染 + type 路由 → `main.js`
+- 动效 + 卡片渲染 + action 路由 → `main.js`
 
 ### 配置新项目
-编辑 `works.js`：在合适位置插入配置对象，设置 `type`、`detail`、`tags` 等字段。
+编辑 `works.js`：在合适位置插入配置对象，设置 `action`、`detail`、`tags` 等字段。
 如需要详情页：在 `works/` 下新建 HTML，复制 `works/invoice.html` 为模板。
 
 ### 添加新图标

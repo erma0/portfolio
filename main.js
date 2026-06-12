@@ -44,20 +44,18 @@
 
   works.sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0));
 
-  // type → {按钮文字, 链接, 是否外链}
-  const TYPE_META = {
-    desktop:  { action: '查看 →', external: false },
-    mobile:   { action: '查看 →', external: false },
-    web:      { action: '打开 →', external: false },
-    embed:    { action: '打开 →', external: false },
-    external: { action: '访问 →', external: false }
+  // action → {按钮文字, 是否外链}
+  const ACTION_META = {
+    detail: { label: '查看 →', external: false },
+    open:   { label: '打开 →', external: false },
+    link:   { label: '访问 →', external: true }
   };
 
   works.forEach((w) => {
-    const meta = TYPE_META[w.type] || { action: '查看 →', external: false };
+    const meta = ACTION_META[w.action] || { label: '查看 →', external: false };
     // 链接解析：detail 优先，否则用 link
     const href = (w.detail && w.detail !== '#') ? w.detail : (w.link || '#');
-    const isExternal = w.type === 'external' || (!w.detail && w.link && w.link.startsWith('http'));
+    const isExternal = meta.external;
 
     const card = document.createElement('a');
     card.className = 'card' + (w.featured ? ' card--feature' : '');
@@ -93,7 +91,7 @@
       ${noteHTML}
       <div class="card__foot">
         <span class="card__stack">${w.stack}</span>
-        <span class="card__link">${meta.action}</span>
+        <span class="card__link">${meta.label}</span>
       </div>
       <span class="card__sheen" aria-hidden="true"></span>
     `;
