@@ -23,7 +23,7 @@ window.__WORKS = [
   {
     id: 'invoice',
     title: '发票打印系统',
-    desc: '面向内部财务的跨平台桌面应用，覆盖 OFD/XML 数电票解析、PDF 矢量打印与批量模板管理。',
+    desc: '面向内部财务的跨平台桌面应用，覆盖 OFD/XML 数电票解析、PDF 矢量打印与批量模板管理。纯前端版可脱离桌面环境运行。',
     icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="2" width="18" height="20" rx="2"/><path d="M7 6h10M7 10h10M7 14h6"/><circle cx="17" cy="17" r="3"/></svg>',
     pinned: true,
     featured: true,
@@ -35,6 +35,7 @@ window.__WORKS = [
     status: 'active',
     tags: [
       { text: '主推', color: 'accent' },
+      { text: 'Web版', color: 'accent' },
       { text: '桌面', color: 'mute' }
     ]
   },
