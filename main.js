@@ -6,6 +6,11 @@
   'use strict';
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  // HTML 转义，防止 XSS
+  const esc = (s) => String(s).replace(/[&<>"']/g, (c) => (
+    { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]
+  ));
+
   /* ---------- 1. 顶部导航：滚动后变实底 ---------- */
   const header = document.getElementById('siteHeader');
   const onScroll = () => {
@@ -42,7 +47,8 @@
   const grid = document.getElementById('worksGrid');
   const works = window.__WORKS || [];
 
-  works.sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0));
+  // 用 slice() 复制后再排序，避免修改原配置数组
+  const sortedWorks = works.slice().sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0));
 
   // action → {按钮文字, 是否外链}
   const ACTION_META = {
@@ -51,7 +57,7 @@
     link:   { label: '访问 →', external: true }
   };
 
-  works.forEach((w) => {
+  sortedWorks.forEach((w) => {
     const meta = ACTION_META[w.action] || { label: '查看 →', external: false };
     // 链接解析：detail 优先，否则用 link
     const href = (w.detail && w.detail !== '#') ? w.detail : (w.link || '#');
@@ -73,7 +79,7 @@
     if (w.tags && w.tags.length) {
       tagsHTML = w.tags.map((t) => {
         const cls = t.color === 'accent' ? 'card__tag--accent' : 'card__tag';
-        return `<span class="${cls}">${t.text}</span>`;
+        return `<span class="${cls}">${esc(t.text)}</span>`;
       }).join('');
     }
 
@@ -81,16 +87,16 @@
     const iconHTML = `<div class="card__icon" aria-hidden="true">${ICONS[w.icon] || ''}</div>`;
 
     // 备注行
-    const noteHTML = w.note ? `<div class="card__note">${w.note}</div>` : '';
+    const noteHTML = w.note ? `<div class="card__note">${esc(w.note)}</div>` : '';
 
     card.innerHTML = `
       <div class="card__tags">${tagsHTML}</div>
       ${iconHTML}
-      <h3 class="card__title">${w.title}</h3>
-      <p class="card__desc">${w.desc}</p>
+      <h3 class="card__title">${esc(w.title)}</h3>
+      <p class="card__desc">${esc(w.desc)}</p>
       ${noteHTML}
       <div class="card__foot">
-        <span class="card__stack">${w.stack}</span>
+        <span class="card__stack">${esc(w.stack)}</span>
         <span class="card__link">${meta.label}</span>
       </div>
       <span class="card__sheen" aria-hidden="true"></span>
