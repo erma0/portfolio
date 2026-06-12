@@ -1,520 +1,1054 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>安全生产网格员公示牌 · 鸽子笼</title>
-  <meta name="description" content="企业安全生产网格化管理公示牌，安全生产可视化工具。" />
-  <meta name="theme-color" content="#f6f3ec" />
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🕊</text></svg>" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="../styles.css" />
-  <link rel="stylesheet" href="detail.css" />
-  <style>
-    .detail-body { display: flex; justify-content: center; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>安全生产网格员公示牌 · 鸽子笼</title>
+<meta name="description" content="企业安全生产网格化管理公示牌，安全生产可视化工具。" />
+<meta name="theme-color" content="#0F172A" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🕊</text></svg>" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
-    .signboard-container {
-      width: 420px;
-      background: #ffffff;
-      border-radius: 8px;
-      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
-      overflow: hidden;
-    }
+  body {
+    background: #0F172A;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: 'Noto Sans SC', sans-serif;
+  }
 
-    .sb-header {
-      background: linear-gradient(135deg, #1a5276, #2980b9);
-      color: #ffffff;
-      padding: 16px 20px;
-      text-align: center;
-    }
-    .sb-header h1 {
-      font-size: 20px;
-      font-weight: 700;
-      letter-spacing: 2px;
-      font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
-    }
-    .sb-header .subtitle {
-      font-size: 13px;
-      margin-top: 4px;
-      opacity: 0.9;
-      font-weight: 400;
-    }
+  .back-link {
+    position: fixed;
+    top: 16px;
+    left: 20px;
+    z-index: 100;
+    color: #94B8D8;
+    font-size: 13px;
+    text-decoration: none;
+    transition: color 0.2s;
+    font-family: 'Noto Sans SC', sans-serif;
+  }
+  .back-link:hover { color: #FFF; }
 
-    .profile-section {
-      display: flex;
-      align-items: center;
-      padding: 20px;
-      border-bottom: 1px solid #e8e8e8;
-      background: #fafbfc;
-    }
-    .profile-photo {
-      width: 80px;
-      height: 100px;
-      border-radius: 4px;
-      border: 2px solid #d9d9d9;
-      background: #f0f0f0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      overflow: hidden;
-    }
-    .profile-photo .photo-placeholder {
-      color: #bfbfbf;
-      font-size: 12px;
-      text-align: center;
-      line-height: 1.4;
-    }
-    .profile-info {
-      margin-left: 16px;
-      flex: 1;
-      font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
-    }
-    .profile-info .name {
-      font-size: 22px;
-      font-weight: 700;
-      color: #1a1a1a;
-      margin-bottom: 4px;
-    }
-    .profile-info .role {
-      font-size: 14px;
-      color: #666666;
-      margin-bottom: 8px;
-    }
-    .profile-info .phone {
-      font-size: 14px;
-      color: #1890ff;
-      font-weight: 500;
-    }
-    .profile-info .phone .label {
-      color: #8c8c8c;
-      font-weight: 400;
-      font-size: 12px;
-    }
+  .wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 48px 0 0 0;
+    width: 100%;
+  }
 
-    .details-section {
-      padding: 16px 20px;
-      font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
-    }
-    .detail-row {
-      display: flex;
-      padding: 8px 0;
-      border-bottom: 1px dashed #f0f0f0;
-      font-size: 14px;
-    }
-    .detail-row:last-child { border-bottom: none; }
-    .detail-label {
-      color: #8c8c8c;
-      width: 80px;
-      flex-shrink: 0;
-      font-weight: 500;
-    }
-    .detail-value {
-      color: #1a1a1a;
-      flex: 1;
-      font-weight: 500;
-    }
+  .board {
+    width: 1080px;
+    min-height: 1620px;
+    background: #F8FAFC;
+    display: flex;
+    flex-direction: column;
+    transform-origin: top center;
+    box-shadow: 0 0 30px rgba(0,0,0,0.3);
+  }
 
-    .duties-section {
-      padding: 0 20px 20px;
-      font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
-    }
-    .duties-title {
-      font-size: 15px;
-      font-weight: 700;
-      color: #1a5276;
-      margin-bottom: 12px;
-      padding-left: 10px;
-      border-left: 3px solid #2980b9;
-    }
-    .duties-list {
-      list-style: none;
-      padding: 0;
-    }
-    .duties-list li {
-      position: relative;
-      padding: 6px 0 6px 22px;
-      font-size: 13px;
-      color: #333333;
-      line-height: 1.7;
-    }
-    .duties-list li::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 12px;
-      width: 8px;
-      height: 8px;
-      background: #2980b9;
-      border-radius: 50%;
-    }
+  .header {
+    width: 1080px;
+    height: 190px;
+    background: #173F6F;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+  .header-title {
+    font-size: 72px;
+    font-weight: 700;
+    color: #FFFFFF;
+    text-align: center;
+    width: 720px;
+    line-height: normal;
+  }
+  .header-sub {
+    font-size: 30px;
+    font-weight: 400;
+    color: #94B8D8;
+    text-align: center;
+    width: 720px;
+    line-height: normal;
+  }
 
-    .sb-footer {
-      background: #fafbfc;
-      padding: 14px 20px;
-      border-top: 1px solid #e8e8e8;
-      text-align: center;
-      font-size: 12px;
-      color: #8c8c8c;
-      font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
-    }
-    .sb-footer .contact-info {
-      display: flex;
-      justify-content: center;
-      gap: 24px;
-      margin-bottom: 4px;
-    }
-    .sb-footer .contact-item {
-      font-size: 13px;
-      color: #1a1a1a;
-    }
-    .sb-footer .phone-number {
-      color: #e74c3c;
-      font-weight: 600;
-    }
-    .sb-footer .issuer {
-      font-size: 11px;
-      color: #bfbfbf;
-      margin-top: 4px;
-    }
+  .body-content {
+    width: 1080px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+  }
 
-    .action-bar {
-      display: flex;
-      justify-content: center;
-      gap: 8px;
-      padding: 12px 20px 16px;
-      background: #ffffff;
-      border-top: 1px solid #f0f0f0;
-      flex-wrap: wrap;
-    }
-    .action-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      padding: 6px 14px;
-      font-size: 12px;
-      color: #595959;
-      background: #fafafa;
-      border: 1px solid #d9d9d9;
-      border-radius: 4px;
-      cursor: pointer;
-      text-decoration: none;
-      transition: all 0.2s;
-      font-family: inherit;
-    }
-    .action-btn:hover {
-      color: #1890ff;
-      border-color: #1890ff;
-      background: #e6f7ff;
-    }
+  .photo-section {
+    width: 880px;
+    height: 516px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+  }
+  .photo-frame {
+    width: 340px;
+    height: 400px;
+    background: #F1F5F9;
+    border-radius: 12px;
+    border: 1px solid #2B6BA8;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 0;
+    position: relative;
+  }
+  .photo-frame img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 9px;
+  }
+  .photo-icon {
+    font-size: 110px;
+    line-height: normal;
+    color: #000;
+  }
+  .photo-hint {
+    font-size: 28px;
+    color: #94A3B8;
+    text-align: center;
+    line-height: normal;
+  }
 
-    /* 弹窗 */
-    .modal-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.45);
-      z-index: 1000;
-      justify-content: center;
-      align-items: center;
-    }
-    .modal-overlay.active { display: flex; }
-    .modal {
-      background: #ffffff;
-      border-radius: 8px;
-      width: 480px;
-      max-width: 90vw;
-      max-height: 85vh;
-      overflow-y: auto;
-      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15);
-      padding: 24px;
-    }
-    .modal h2 {
-      font-size: 18px;
-      font-weight: 700;
-      color: #1a1a1a;
-      margin-bottom: 20px;
-      text-align: center;
-    }
-    .form-group { margin-bottom: 16px; }
-    .form-group label {
-      display: block;
-      font-size: 13px;
-      font-weight: 500;
-      color: #595959;
-      margin-bottom: 6px;
-    }
-    .form-group input,
-    .form-group textarea {
-      width: 100%;
-      padding: 8px 12px;
-      font-size: 14px;
-      border: 1px solid #d9d9d9;
-      border-radius: 4px;
-      transition: border-color 0.2s;
-      font-family: inherit;
-    }
-    .form-group input:focus,
-    .form-group textarea:focus {
-      outline: none;
-      border-color: #1890ff;
-      box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
-    }
-    .form-group textarea { min-height: 120px; resize: vertical; line-height: 1.8; }
-    .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
-    .btn {
-      padding: 8px 20px;
-      font-size: 14px;
-      border-radius: 4px;
-      border: 1px solid #d9d9d9;
-      cursor: pointer;
-      transition: all 0.2s;
-      font-family: inherit;
-    }
-    .btn-default { background: #ffffff; color: #595959; }
-    .btn-default:hover { color: #1890ff; border-color: #1890ff; }
-    .btn-primary { background: #1890ff; color: #ffffff; border-color: #1890ff; }
-    .btn-primary:hover { background: #40a9ff; border-color: #40a9ff; }
-    .btn-warning { background: #ffffff; color: #fa8c16; border-color: #fa8c16; }
-    .btn-warning:hover { background: #fff7e6; }
+  .identity-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 360px;
+    height: 64px;
+  }
+  .identity-text {
+    font-size: 44px;
+    font-weight: 700;
+    color: #0F172A;
+    text-align: center;
+    line-height: normal;
+  }
 
-    /* 打印 */
-    @media print {
-      .detail { padding: 0; max-width: none; }
-      .detail-back, .grain, .site-footer { display: none !important; }
-      .signboard-container { box-shadow: none; border: 1px solid #000; width: 100%; max-width: 420px; }
-      .action-bar, .modal-overlay { display: none !important; }
-    }
+  .divider {
+    width: 880px;
+    height: 2px;
+    background: #C4D0E0;
+    flex-shrink: 0;
+    border: none;
+  }
 
-    @media (max-width: 480px) {
-      .signboard-container { width: 100%; }
-      .profile-section { flex-direction: column; text-align: center; }
-      .profile-info { margin-left: 0; margin-top: 12px; }
-      .sb-footer .contact-info { flex-direction: column; gap: 4px; }
-    }
-  </style>
+  .cards-grid {
+    width: 880px;
+    min-height: 280px;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .card-row {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    align-items: stretch;
+  }
+  .card {
+    width: 430px;
+    min-height: 133px;
+    background: #F8FAFC;
+    border-radius: 10px;
+    border: 1px solid rgba(43,107,168,0.5);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 16px;
+  }
+  .card-label {
+    font-size: 28px;
+    font-weight: 400;
+    color: #64748B;
+    line-height: normal;
+  }
+  .card-value {
+    font-size: 36px;
+    font-weight: 700;
+    color: #0F172A;
+    line-height: normal;
+    word-break: break-all;
+  }
+
+  .duty-section {
+    width: 880px;
+    height: 352px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .duty-title-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    height: 46px;
+  }
+  .duty-bar {
+    width: 6px;
+    height: 32px;
+    background: #2B6BA8;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+  .duty-title {
+    font-size: 32px;
+    font-weight: 700;
+    color: #0F172A;
+    line-height: 1;
+  }
+  .duty-item {
+    font-size: 30px;
+    font-weight: 400;
+    color: #334155;
+    line-height: normal;
+  }
+
+  .footer-bar {
+    width: 1080px;
+    height: 81px;
+    background: #173F6F;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    flex-shrink: 0;
+  }
+  .footer-logo {
+    width: 100px;
+    height: 36px;
+    object-fit: contain;
+  }
+  .footer-text {
+    font-size: 28px;
+    font-weight: 400;
+    color: #CBD5E1;
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  .toolbar {
+    display: flex;
+    gap: 12px;
+    padding: 12px 0 20px;
+  }
+  .tool-btn {
+    background: rgba(255,255,255,0.1);
+    color: #CBD5E1;
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 8px;
+    padding: 10px 24px;
+    font-size: 15px;
+    cursor: pointer;
+    font-family: 'Noto Sans SC', sans-serif;
+    transition: all 0.2s;
+  }
+  .tool-btn:hover { background: rgba(255,255,255,0.2); color: #FFF; }
+  .tool-btn.primary { background: #173F6F; border-color: #173F6F; color: #FFF; }
+  .tool-btn.primary:hover { background: #1D4F8A; }
+
+  .modal-overlay {
+    position: fixed; inset: 0; z-index: 2000;
+    background: rgba(0,0,0,0.5);
+    display: none; justify-content: center; align-items: center;
+  }
+  .modal-overlay.active { display: flex; }
+  .modal {
+    background: #FFF; border-radius: 12px; width: 680px;
+    max-height: 85vh; overflow-y: auto; padding: 32px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+  }
+  .modal h2 { font-size: 24px; color: #0F172A; margin-bottom: 24px; }
+  .modal label { display: block; font-size: 14px; color: #64748B; margin-bottom: 6px; margin-top: 16px; }
+  .modal label:first-of-type { margin-top: 0; }
+  .modal input, .modal textarea {
+    width: 100%; padding: 10px 14px; border: 1px solid #E2E8F0;
+    border-radius: 8px; font-size: 16px;
+    font-family: 'Noto Sans SC', sans-serif; outline: none;
+  }
+  .modal input:focus, .modal textarea:focus { border-color: #2B6BA8; }
+  .modal textarea { min-height: 60px; resize: vertical; }
+  .modal .row2 { display: flex; gap: 16px; }
+  .modal .row2 > div { flex: 1; }
+  .modal .photo-upload { display: flex; align-items: center; gap: 12px; }
+  .modal .photo-upload input[type=file] {
+    flex: 1; padding: 8px; border: 1px dashed #CBD5E1;
+    border-radius: 8px; background: #F8FAFC; font-size: 14px;
+  }
+  .modal .photo-preview { width: 60px; height: 72px; border-radius: 6px; object-fit: cover; border: 1px solid #E2E8F0; }
+  .modal-actions { display: flex; gap: 12px; margin-top: 24px; justify-content: flex-end; }
+  .btn-primary { background: #173F6F; color: #FFF; border: none; border-radius: 8px; padding: 10px 24px; font-size: 16px; cursor: pointer; font-family: 'Noto Sans SC', sans-serif; }
+  .btn-primary:hover { opacity: 0.85; }
+  .btn-secondary { background: #F1F5F9; color: #475569; border: 1px solid #E2E8F0; border-radius: 8px; padding: 10px 24px; font-size: 16px; cursor: pointer; font-family: 'Noto Sans SC', sans-serif; }
+  .btn-secondary:hover { background: #E2E8F0; }
+  .btn-reset { background: none; border: none; color: #DC2626; font-size: 14px; cursor: pointer; text-decoration: underline; margin-right: auto; }
+
+  .site-footer {
+    width: 100%;
+    padding: 20px 0 28px;
+    text-align: center;
+    color: #64748B;
+    font-size: 12px;
+    font-family: 'Noto Sans SC', sans-serif;
+  }
+  .site-footer a { color: #94B8D8; text-decoration: none; transition: color 0.2s; }
+  .site-footer a:hover { color: #FFF; }
+  .site-footer .sep { margin: 0 8px; opacity: 0.4; }
+  .site-footer .small { font-size: 11px; opacity: 0.5; margin-top: 4px; }
+
+  @media print {
+    @page { size: 1080px 1620px; margin: 0; }
+    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+    body { background: #FFF; margin: 0; padding: 0; }
+    .wrapper { padding: 0; }
+    .toolbar, .modal-overlay, .back-link, .site-footer { display: none !important; }
+    .board { box-shadow: none; transform: none !important; margin-bottom: 0 !important; }
+  }
+
+  #btnExport:disabled { opacity: 0.6; cursor: wait; }
+</style>
 </head>
 <body>
-  <div class="grain" aria-hidden="true"></div>
+<a href="../" class="back-link">← 作品集</a>
 
-  <article class="detail">
-    <a href="../" class="detail-back">← 作品集</a>
+<div class="wrapper">
+  <div class="board" id="board">
 
-    <header class="detail-head">
-      <h1>安全生产网格员公示牌</h1>
-      <div class="detail-meta">
-        <span class="detail-type">信息工具</span>
-        <span>HTML · CSS · Vanilla JS</span>
-      </div>
-    </header>
-
-    <div class="detail-body">
-      <div class="signboard-container" id="signboard">
-
-        <div class="sb-header">
-          <h1>安全生产网格员公示牌</h1>
-          <p class="subtitle">无锡天鹏菜篮子工程有限公司 · 安全生产网格化管理</p>
-        </div>
-
-        <div class="profile-section">
-          <div class="profile-photo">
-            <span class="photo-placeholder">一寸<br>免冠照片</span>
-          </div>
-          <div class="profile-info">
-            <div class="name">李卫东</div>
-            <div class="role">安全员</div>
-            <div class="phone">
-              <span class="label">联系电话</span><br>
-              138-0510-6829
-            </div>
-          </div>
-        </div>
-
-        <div class="details-section">
-          <div class="detail-row">
-            <span class="detail-label">责任区域</span>
-            <span class="detail-value">冷库及加工车间 A-F 区</span>
-          </div>
-          <div class="detail-row">
-            <span class="detail-label">所属部门</span>
-            <span class="detail-value">安全生产管理部</span>
-          </div>
-          <div class="detail-row">
-            <span class="detail-label">网格编号</span>
-            <span class="detail-value">TP-SC-0018</span>
-          </div>
-        </div>
-
-        <div class="duties-section">
-          <div class="duties-title">工作职责</div>
-          <ol class="duties-list">
-            <li>开展常态化安全巡查，排查消防、电气及设备设施等风险隐患</li>
-            <li>跟踪督促隐患整改，重大隐患及时上报，全程落实闭环管理</li>
-            <li>宣传安全法规制度，组织培训演练，普及应急防护知识技能</li>
-            <li>摸排网格场所情况底数，动态更新安全管理台账</li>
-            <li>监督落实安全操作规程，及时制止违章作业</li>
-            <li>联动处置险情，配合应急救援，接受全员监督</li>
-          </ol>
-        </div>
-
-        <div class="sb-footer">
-          <div class="contact-info">
-            <span class="contact-item">监督电话：<span class="phone-number">0510-82363173</span></span>
-            <span class="contact-item">应急电话：<span class="phone-number">0510-82363110</span></span>
-          </div>
-          <p class="issuer">苏豪天鹏安委办</p>
-        </div>
-
-        <div class="action-bar">
-          <button class="action-btn" onclick="editSignboard()">✏️ 编辑信息</button>
-          <button class="action-btn" onclick="saveAsPDF()">📄 保存为 PDF</button>
-          <button class="action-btn" onclick="saveAsPNG()">🖼 保存为 PNG</button>
-          <button class="action-btn" onclick="saveAsSVG()">🎨 保存为 SVG</button>
-        </div>
-      </div>
-
-      <!-- 编辑弹窗 -->
-      <div class="modal-overlay" id="editModal">
-        <div class="modal">
-          <h2>编辑公示牌信息</h2>
-          <div class="form-group">
-            <label for="companyName">公司名称</label>
-            <input type="text" id="companyName" value="无锡天鹏菜篮子工程有限公司">
-          </div>
-          <div class="form-group">
-            <label for="personName">姓名</label>
-            <input type="text" id="personName" value="李卫东">
-          </div>
-          <div class="form-group">
-            <label for="personRole">岗位</label>
-            <input type="text" id="personRole" value="安全员">
-          </div>
-          <div class="form-group">
-            <label for="personPhoto">照片</label>
-            <input type="file" id="personPhoto" accept="image/*">
-          </div>
-          <div class="form-group">
-            <label for="phoneNumber">联系电话</label>
-            <input type="text" id="phoneNumber" value="138-0510-6829">
-          </div>
-          <div class="form-group">
-            <label for="responsibleArea">责任区域</label>
-            <input type="text" id="responsibleArea" value="冷库及加工车间 A-F 区">
-          </div>
-          <div class="form-group">
-            <label for="department">所属部门</label>
-            <input type="text" id="department" value="安全生产管理部">
-          </div>
-          <div class="form-group">
-            <label for="gridNumber">网格编号</label>
-            <input type="text" id="gridNumber" value="TP-SC-0018">
-          </div>
-          <div class="form-group">
-            <label for="duties">工作职责（每行一条）</label>
-            <textarea id="duties" rows="6">开展常态化安全巡查，排查消防、电气及设备设施等风险隐患
-跟踪督促隐患整改，重大隐患及时上报，全程落实闭环管理
-宣传安全法规制度，组织培训演练，普及应急防护知识技能
-摸排网格场所情况底数，动态更新安全管理台账
-监督落实安全操作规程，及时制止违章作业
-联动处置险情，配合应急救援，接受全员监督</textarea>
-          </div>
-          <div class="form-group">
-            <label for="supervisionPhone">监督电话</label>
-            <input type="text" id="supervisionPhone" value="0510-82363173">
-          </div>
-          <div class="form-group">
-            <label for="emergencyPhone">应急电话</label>
-            <input type="text" id="emergencyPhone" value="0510-82363110">
-          </div>
-          <div class="form-group">
-            <label for="companyLogo">企业 Logo</label>
-            <input type="file" id="companyLogo" accept="image/*">
-          </div>
-          <div class="modal-actions">
-            <button class="btn btn-warning" onclick="resetDefault()">恢复默认</button>
-            <button class="btn btn-default" onclick="closeModal()">取消</button>
-            <button class="btn btn-primary" onclick="saveChanges()">保存并应用</button>
-          </div>
-        </div>
-      </div>
+    <div class="header">
+      <div class="header-title">安全生产网格员公示牌</div>
+      <div class="header-sub" id="headerSub">无锡天鹏菜篮子工程有限公司 · 安全生产网格化管理</div>
     </div>
-  </article>
 
-  <footer class="site-footer">
-    <p class="site-footer__row">
-      <a href="https://erma0.cn">主页</a>
-      <span class="sep" aria-hidden="true">·</span>
-      <a href="../">作品集</a>
-      <span class="sep" aria-hidden="true">·</span>
-      <a href="https://github.com/erma0" target="_blank" rel="noopener noreferrer">GitHub</a>
-    </p>
-    <p class="site-footer__small">© 2026 鸽子笼</p>
-  </footer>
+    <div class="body-content">
 
-  <script>
-    function editSignboard() {
-      document.getElementById('editModal').classList.add('active');
+      <div class="photo-section">
+        <div class="photo-frame" id="photoFrame">
+          <img id="photoImg" style="display:none" alt="">
+          <div class="photo-icon" id="photoIcon">👤</div>
+          <div class="photo-hint" id="photoHint">一寸免冠照片</div>
+        </div>
+        <div class="identity-row">
+          <div class="identity-text" id="identityText">李卫东 · 安全员</div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="cards-grid">
+        <div class="card-row">
+          <div class="card">
+            <div class="card-label">联系电话</div>
+            <div class="card-value" id="cardPhone">138-0510-6829</div>
+          </div>
+          <div class="card">
+            <div class="card-label">责任区域</div>
+            <div class="card-value" id="cardArea">冷库及加工车间 A-F 区</div>
+          </div>
+        </div>
+        <div class="card-row">
+          <div class="card">
+            <div class="card-label">所属部门</div>
+            <div class="card-value" id="cardDept">安全生产管理部</div>
+          </div>
+          <div class="card">
+            <div class="card-label">网格编号</div>
+            <div class="card-value" id="cardGridId">TP-SC-0018</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="duty-section">
+        <div class="duty-title-row">
+          <div class="duty-bar"></div>
+          <div class="duty-title">工作职责</div>
+        </div>
+        <div class="duty-item" id="duty1">1. 开展常态化安全巡查，排查消防、电气及设备设施等风险隐患</div>
+        <div class="duty-item" id="duty2">2. 跟踪督促隐患整改，重大隐患及时上报，全程落实闭环管理</div>
+        <div class="duty-item" id="duty3">3. 宣传安全法规制度，组织培训演练，普及应急防护知识技能</div>
+        <div class="duty-item" id="duty4">4. 摸排网格场所情况底数，动态更新安全管理台账</div>
+        <div class="duty-item" id="duty5">5. 监督落实安全操作规程，及时制止违章作业</div>
+        <div class="duty-item" id="duty6">6. 联动处置险情，配合应急救援，接受全员监督</div>
+      </div>
+
+    </div>
+
+    <div class="footer-bar">
+      <img class="footer-logo" id="footerLogo" src="" alt="">
+      <span class="footer-text" id="footerUnit">苏豪天鹏安委办</span>
+      <span class="footer-text" id="footerPhone">监督电话：0510-82363173    应急电话：0510-82363110</span>
+    </div>
+
+  </div>
+
+  <div class="toolbar">
+    <button class="tool-btn" onclick="openEdit()">✏️ 编辑信息</button>
+    <button class="tool-btn primary" id="btnExport" onclick="exportPDF()">📄 保存为 PDF</button>
+    <button class="tool-btn" id="btnPNG" onclick="exportPNG()">🖼 保存为 PNG</button>
+    <button class="tool-btn" id="btnSVG" onclick="exportSVG()">🎨 保存为 SVG</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <h2>编辑公示牌信息</h2>
+    <label>公司名称</label><input id="f_company" placeholder="例：无锡天鹏菜篮子工程有限公司">
+    <div class="row2" style="margin-top:16px">
+      <div><label>姓名</label><input id="f_name" placeholder="姓名"></div>
+      <div><label>岗位</label><input id="f_role" placeholder="岗位"></div>
+    </div>
+    <label>照片</label>
+    <div class="photo-upload">
+      <input type="file" id="f_photo" accept="image/*" onchange="previewPhoto(event)">
+      <img class="photo-preview" id="photoPreview" alt="">
+    </div>
+    <label>联系电话</label><input id="f_phone" placeholder="例：138-0510-6829">
+    <label>责任区域</label><textarea id="f_area" placeholder="例：冷库及加工车间 A-F 区"></textarea>
+    <div class="row2">
+      <div><label>所属部门</label><input id="f_dept" placeholder="例：安全生产管理部"></div>
+      <div><label>网格编号</label><input id="f_gridId" placeholder="例：TP-SC-0018"></div>
+    </div>
+    <label>工作职责（每行一条）</label><textarea id="f_duties" placeholder="1. 开展常态化安全巡查，排查消防、电气及设备设施等风险隐患&#10;2. 跟踪督促隐患整改，重大隐患及时上报，全程落实闭环管理&#10;3. …&#10;4. …&#10;5. …&#10;6. …" style="min-height:160px"></textarea>
+    <div class="row2">
+      <div><label>监督电话</label><input id="f_tel1" placeholder="例：0510-82363173"></div>
+      <div><label>应急电话</label><input id="f_tel2" placeholder="例：0510-82363110"></div>
+    </div>
+    <label>企业 Logo</label>
+    <div class="photo-upload">
+      <input type="file" id="f_logo" accept="image/*" onchange="previewLogo(event)">
+      <img class="photo-preview" id="logoPreview" style="width:100px;height:36px;border-radius:4px;object-fit:contain" alt="">
+    </div>
+    <div class="modal-actions">
+      <button class="btn-reset" onclick="resetAll()">恢复默认</button>
+      <button class="btn-secondary" onclick="closeEdit()">取消</button>
+      <button class="btn-primary" onclick="saveEdit()">保存并应用</button>
+    </div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <p>
+    <a href="https://erma0.cn">主页</a>
+    <span class="sep">·</span>
+    <a href="../">作品集</a>
+    <span class="sep">·</span>
+    <a href="https://github.com/erma0" target="_blank" rel="noopener noreferrer">GitHub</a>
+  </p>
+  <p class="small">© 2026 鸽子笼</p>
+</footer>
+
+<script>
+(function(){
+  var board = document.getElementById('board'), W = 1080, H = 1620;
+  function resize(){
+    var s = Math.min((window.innerWidth-16)/W, (window.innerHeight-80)/H);
+    board.style.transform = 'scale('+s+')';
+    board.style.marginBottom = (-(H*(1-s))) + 'px';
+  }
+  resize();
+  window.addEventListener('resize', resize);
+  setTimeout(resize, 100);
+})();
+
+function exportPDF(){
+  var btn = document.getElementById('btnExport');
+  var old = btn.textContent;
+  btn.textContent = '生成中…';
+  btn.disabled = true;
+  loadJsPDF().then(function(jsPDF){
+    try { buildPDF(jsPDF); }
+    catch(err) { alert('生成失败：'+err.message); console.error(err); }
+    btn.textContent = old;
+    btn.disabled = false;
+  }).catch(function(err){
+    alert('加载失败：'+err.message);
+    btn.textContent = old;
+    btn.disabled = false;
+  });
+}
+
+function exportPNG(){
+  var btn = document.getElementById('btnPNG');
+  var old = btn.textContent;
+  btn.textContent = '生成中…';
+  btn.disabled = true;
+  try {
+    var cv = _renderToCanvas();
+    var url = cv.toDataURL('image/png');
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = getName() + '.png';
+    a.click();
+  } catch(err) { alert('生成失败：'+err.message); console.error(err); }
+  btn.textContent = old;
+  btn.disabled = false;
+}
+
+function loadJsPDF(){
+  if (window.jspdf && window.jspdf.jsPDF) return Promise.resolve(window.jspdf.jsPDF);
+  return new Promise(function(resolve, reject){
+    var s = document.createElement('script');
+    s.src = 'https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js';
+    s.onload = function(){
+      if (window.jspdf && window.jspdf.jsPDF) resolve(window.jspdf.jsPDF);
+      else reject(new Error('jsPDF 未就绪'));
+    };
+    s.onerror = function(){ reject(new Error('CDN 加载失败')); };
+    document.head.appendChild(s);
+  });
+}
+
+function _renderToCanvas(){
+  var W = 1080, H0 = 1620, s = 4;
+  var tmpCv = document.createElement('canvas');
+  var tmpCtx = tmpCv.getContext('2d');
+  tmpCtx.font = 'bold 36px "Noto Sans SC"';
+  var cardInnerW = 430 - 32;
+  var rowHeights = [0, 0];
+  var cardIds = ['cardPhone','cardArea','cardDept','cardGridId'];
+  for(var r=0; r<2; r++){
+    for(var i=0; i<2; i++){
+      var tw = tmpCtx.measureText(document.getElementById(cardIds[r*2+i]).textContent).width;
+      var lines = Math.max(1, Math.ceil(tw / cardInnerW));
+      rowHeights[r] = Math.max(rowHeights[r], Math.max(133, 16+28+8+lines*40+16));
     }
-    function closeModal() {
-      document.getElementById('editModal').classList.remove('active');
+  }
+  var cardsTotalH = rowHeights[0] + 14 + rowHeights[1];
+  var cardsDelta = cardsTotalH - 280;
+  var H = Math.max(H0, H0 + cardsDelta);
+  var cw = W * s, ch = H * s;
+  var cv = document.createElement('canvas');
+  cv.width = cw; cv.height = ch;
+  var ctx = cv.getContext('2d');
+  ctx.scale(s, s);
+
+  ctx.fillStyle = '#F8FAFC';
+  ctx.fillRect(0, 0, W, H);
+  ctx.fillStyle = '#173F6F';
+  ctx.fillRect(0, 0, W, 190);
+
+  ctx.fillStyle = '#FFFFFF';
+  ctx.font = 'bold 72px "Noto Sans SC"';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('安全生产网格员公示牌', W/2, 70);
+
+  ctx.fillStyle = '#94B8D8';
+  ctx.font = '30px "Noto Sans SC"';
+  var sub = document.getElementById('headerSub').textContent;
+  ctx.fillText(sub, W/2, 151);
+
+  var bodyY = 190, bodyH = 1349;
+  var G = 12, DV = 2;
+  var totalH = 516 + G + DV + G + 280 + G + DV + G + 352;
+  var topMargin = (bodyH - totalH) / 2;
+  var y = bodyY + topMargin;
+  var px = (1080 - 880) / 2;
+
+  var fw = 340, fh = 400;
+  var fx = px + (880 - fw) / 2;
+  var fy = y + 20;
+
+  ctx.fillStyle = '#F1F5F9';
+  roundRect(ctx, fx, fy, fw, fh, 12);
+  ctx.fill();
+  ctx.strokeStyle = '#2B6BA8';
+  ctx.lineWidth = 1;
+  ctx.stroke();
+
+  var photoImg = document.getElementById('photoImg');
+  var hasPhoto = photoImg.src && photoImg.src.startsWith('data:') && photoImg.style.display !== 'none';
+  if (hasPhoto) {
+    try {
+      ctx.save();
+      roundRect(ctx, fx, fy, fw, fh, 12);
+      ctx.clip();
+      ctx.drawImage(photoImg, fx, fy, fw, fh);
+      ctx.restore();
+    } catch(e) { drawPersonIcon(ctx, fx, fy, fw, fh); }
+  } else {
+    drawPersonIcon(ctx, fx, fy, fw, fh);
+  }
+
+  var idY = fy + fh + 12;
+  ctx.fillStyle = '#0F172A';
+  ctx.font = 'bold 44px "Noto Sans SC"';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(document.getElementById('identityText').textContent, W/2, idY + 32);
+
+  y = y + 516 + G;
+  ctx.fillStyle = '#C4D0E0';
+  ctx.fillRect(px, y, 880, DV);
+  y += DV + G;
+
+  var cw1 = 430, cGap = 14, rGap = 20;
+  var rowW = cw1 * 2 + rGap;
+  var rowX = px + (880 - rowW) / 2;
+  var cards = [
+    [{l:'联系电话',v:document.getElementById('cardPhone').textContent},{l:'责任区域',v:document.getElementById('cardArea').textContent}],
+    [{l:'所属部门',v:document.getElementById('cardDept').textContent},{l:'网格编号',v:document.getElementById('cardGridId').textContent}]
+  ];
+
+  ctx.font = 'bold 36px "Noto Sans SC"';
+  var cardHeights = [[],[]], _rowHeights = [0,0];
+  for(var r=0; r<2; r++){
+    for(var i=0; i<2; i++){
+      var tw = ctx.measureText(cards[r][i].v).width;
+      var lines = Math.max(1, Math.ceil(tw / cardInnerW));
+      var ch = Math.max(133, 16 + 28 + 8 + lines * 40 + 16);
+      cardHeights[r][i] = ch;
+      _rowHeights[r] = Math.max(_rowHeights[r], ch);
     }
-    document.getElementById('editModal').addEventListener('click', function(e) {
-      if (e.target === this) closeModal();
-    });
+  }
+  var _cardsTotalH = _rowHeights[0] + cGap + _rowHeights[1];
 
-    function resetDefault() {
-      document.getElementById('companyName').value = '无锡天鹏菜篮子工程有限公司';
-      document.getElementById('personName').value = '李卫东';
-      document.getElementById('personRole').value = '安全员';
-      document.getElementById('phoneNumber').value = '138-0510-6829';
-      document.getElementById('responsibleArea').value = '冷库及加工车间 A-F 区';
-      document.getElementById('department').value = '安全生产管理部';
-      document.getElementById('gridNumber').value = 'TP-SC-0018';
-      document.getElementById('duties').value =
-        '开展常态化安全巡查，排查消防、电气及设备设施等风险隐患\n' +
-        '跟踪督促隐患整改，重大隐患及时上报，全程落实闭环管理\n' +
-        '宣传安全法规制度，组织培训演练，普及应急防护知识技能\n' +
-        '摸排网格场所情况底数，动态更新安全管理台账\n' +
-        '监督落实安全操作规程，及时制止违章作业\n' +
-        '联动处置险情，配合应急救援，接受全员监督';
-      document.getElementById('supervisionPhone').value = '0510-82363173';
-      document.getElementById('emergencyPhone').value = '0510-82363110';
+  for(var r=0; r<2; r++){
+    var ry = y + (r===0 ? 0 : _rowHeights[0] + cGap);
+    ctx.font = '28px "Noto Sans SC"';
+    for(var i=0; i<2; i++){
+      var cx = rowX + i * (cw1 + rGap);
+      var ch = _rowHeights[r];
+      ctx.fillStyle = '#F8FAFC';
+      roundRect(ctx, cx, ry, cw1, ch, 10);
+      ctx.fill();
+      ctx.save();
+      ctx.globalAlpha = 0.5;
+      ctx.strokeStyle = '#2B6BA8';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      ctx.restore();
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = '#64748B';
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'top';
+      ctx.font = '28px "Noto Sans SC"';
+      ctx.fillText(cards[r][i].l, cx + 16, ry + 16);
+      ctx.fillStyle = '#0F172A';
+      ctx.font = 'bold 36px "Noto Sans SC"';
+      _wrapText(ctx, cards[r][i].v, cx + 16, ry + 65, cardInnerW, 40);
     }
+  }
+  y += _cardsTotalH + G;
 
-    function saveChanges() {
-      var signboard = document.getElementById('signboard');
-      signboard.querySelector('.profile-info .name').textContent = document.getElementById('personName').value;
-      signboard.querySelector('.profile-info .role').textContent = document.getElementById('personRole').value;
-      signboard.querySelector('.profile-info .phone').innerHTML =
-        '<span class="label">联系电话</span><br>' + document.getElementById('phoneNumber').value;
-      var detailValues = signboard.querySelectorAll('.detail-value');
-      detailValues[0].textContent = document.getElementById('responsibleArea').value;
-      detailValues[1].textContent = document.getElementById('department').value;
-      detailValues[2].textContent = document.getElementById('gridNumber').value;
-      var dutiesArray = document.getElementById('duties').value.split('\n').filter(function(l) { return l.trim(); });
-      var list = signboard.querySelector('.duties-list');
-      list.innerHTML = '';
-      dutiesArray.forEach(function(d) {
-        var li = document.createElement('li');
-        li.textContent = d.trim();
-        list.appendChild(li);
-      });
-      var phones = signboard.querySelectorAll('.phone-number');
-      phones[0].textContent = document.getElementById('supervisionPhone').value;
-      phones[1].textContent = document.getElementById('emergencyPhone').value;
-      closeModal();
-      alert('公示牌信息已更新！');
+  ctx.fillStyle = '#C4D0E0';
+  ctx.fillRect(px, y, 880, DV);
+  y += DV + G;
+
+  ctx.fillStyle = '#2B6BA8';
+  roundRect(ctx, px, y + 7, 6, 32, 3);
+  ctx.fill();
+  ctx.fillStyle = '#0F172A';
+  ctx.font = 'bold 32px "Noto Sans SC"';
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('工作职责', px + 18, y + 23);
+  y += 46 + 8;
+
+  ctx.font = '30px "Noto Sans SC"';
+  ctx.fillStyle = '#334155';
+  ctx.textBaseline = 'top';
+  for (var k=1; k<=6; k++) {
+    var el = document.getElementById('duty'+k);
+    if (el && el.textContent.trim()) { ctx.fillText(el.textContent.trim(), px, y); }
+    y += 51;
+  }
+
+  var footerY = H - 81;
+  ctx.fillStyle = '#173F6F';
+  ctx.fillRect(0, footerY, W, 81);
+
+  var logoEl = document.getElementById('footerLogo');
+  if(logoEl.src && logoEl.complete && logoEl.naturalWidth > 0 && logoEl.src.startsWith('data:')){
+    ctx.drawImage(logoEl, 23, footerY + 22.5, 100, 36);
+  } else {
+    ctx.fillStyle = '#2B6BA8';
+    ctx.fillRect(23, footerY + 22.5, 100, 36);
+  }
+  ctx.fillStyle = '#CBD5E1';
+  ctx.font = '28px "Noto Sans SC"';
+  ctx.textBaseline = 'middle';
+  ctx.textAlign = 'left';
+  ctx.fillText(document.getElementById('footerUnit').textContent, 143, footerY + 40.5);
+  ctx.fillText(document.getElementById('footerPhone').textContent, 359, footerY + 40.5);
+
+  return cv;
+}
+
+function buildPDF(jsPDF){
+  var cv = _renderToCanvas();
+  var s = 4;
+  var W = 1080, H = cv.height / s;
+  var imgData = cv.toDataURL('image/jpeg', 0.95);
+  var pw = W * 0.75, ph = H * 0.75;
+  var pdf = new jsPDF({orientation:'portrait', unit:'pt', format:[pw, ph], compress:true});
+  pdf.addImage(imgData, 'JPEG', 0, 0, pw, ph);
+  pdf.save(getName() + '.pdf');
+}
+
+function roundRect(ctx, x, y, w, h, r){
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y);
+  ctx.arcTo(x + w, y, x + w, y + r, r);
+  ctx.lineTo(x + w, y + h - r);
+  ctx.arcTo(x + w, y + h, x + w - r, y + h, r);
+  ctx.lineTo(x + r, y + h);
+  ctx.arcTo(x, y + h, x, y + h - r, r);
+  ctx.lineTo(x, y + r);
+  ctx.arcTo(x, y, x + r, y, r);
+  ctx.closePath();
+}
+
+function _wrapText(ctx, text, x, y, maxW, lineH){
+  var chars = text.split('');
+  var line = '';
+  for(var i=0; i<chars.length; i++){
+    var trial = line + chars[i];
+    if(ctx.measureText(trial).width > maxW && line.length > 0){
+      ctx.fillText(line, x, y);
+      y += lineH;
+      line = chars[i];
+    } else { line = trial; }
+  }
+  if(line.length > 0) ctx.fillText(line, x, y);
+}
+
+function drawPersonIcon(ctx, x, y, w, h){
+  var cx = x + w/2, cy = y + h/2 - 10;
+  ctx.fillStyle = '#B4C3D7';
+  ctx.beginPath(); ctx.arc(cx, cy, 30, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = '#96AABF';
+  ctx.beginPath(); ctx.arc(cx, cy+55, 60, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = '#F1F5F9';
+  ctx.fillRect(x, cy+115, w, 50);
+  ctx.font = '28px "Noto Sans SC"';
+  ctx.fillStyle = '#94A3B8';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('一寸免冠照片', cx, y+h-20);
+}
+
+function exportSVG(){
+  var btn = document.getElementById('btnSVG');
+  var old = btn.textContent;
+  btn.textContent = '生成中…';
+  btn.disabled = true;
+  try {
+    var svg = _buildSVG();
+    var blob = new Blob([svg], {type:'image/svg+xml;charset=utf-8'});
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = getName() + '.svg';
+    a.click();
+    URL.revokeObjectURL(url);
+  } catch(err) { alert('生成失败：'+err.message); console.error(err); }
+  btn.textContent = old;
+  btn.disabled = false;
+}
+
+function _buildSVG(){
+  var W=1080, H=1620;
+  var sub = document.getElementById('headerSub').textContent;
+  var idText = document.getElementById('identityText').textContent;
+  var phone = document.getElementById('cardPhone').textContent;
+  var area = document.getElementById('cardArea').textContent;
+  var dept = document.getElementById('cardDept').textContent;
+  var gridId = document.getElementById('cardGridId').textContent;
+  var duties = [];
+  for(var k=1;k<=6;k++){
+    var el=document.getElementById('duty'+k);
+    if(el&&el.textContent.trim()) duties.push(el.textContent.trim());
+  }
+  var footerUnit = document.getElementById('footerUnit').textContent;
+  var footerPhone = document.getElementById('footerPhone').textContent;
+
+  var bodyY=190, G=12, DV=2;
+  var totalH=516+G+DV+G+280+G+DV+G+352;
+  var topMargin=(1349-totalH)/2;
+  var y=bodyY+topMargin;
+  var px=100;
+
+  var fw=340, fh=400;
+  var fx=px+(880-fw)/2;
+  var fy=y+20;
+  var idY=fy+fh+12;
+  var div1Y=y+516+G;
+  var cw1=430, cGap=14, rGap=20;
+  var cardInnerW=cw1-32;
+  var rowW=cw1*2+rGap;
+  var rowX=px+(880-rowW)/2;
+  var cardsY=div1Y+DV+G;
+
+  var cards=[
+    [{l:'联系电话',v:phone},{l:'责任区域',v:area}],
+    [{l:'所属部门',v:dept},{l:'网格编号',v:gridId}]
+  ];
+
+  var svgCardH=[], svgRowH=[0,0];
+  for(var r=0;r<2;r++){ svgCardH[r]=[]; for(var i=0;i<2;i++){
+    var lines=_svgEstLines(cards[r][i].v, cardInnerW);
+    var ch=Math.max(133, 16+28+8+lines*40+16);
+    svgCardH[r][i]=ch;
+    svgRowH[r]=Math.max(svgRowH[r], ch);
+  }}
+  var svgCardsTotalH=svgRowH[0]+cGap+svgRowH[1];
+  var svgCardsDelta=svgCardsTotalH-280;
+
+  var div2Y=cardsY+svgCardsTotalH+G;
+  var dutyY=div2Y+DV+G;
+  var footerBarY=H-81-svgCardsDelta;
+  var svgH=Math.max(H, footerBarY+81);
+
+  var photoImg=document.getElementById('photoImg');
+  var hasPhoto=photoImg.src&&photoImg.src.startsWith('data:')&&photoImg.style.display!=='none';
+
+  var svgParts = [];
+  svgParts.push('<?xml version="1.0" encoding="UTF-8"?>');
+  svgParts.push('<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="'+W+'" height="'+svgH+'" viewBox="0 0 '+W+' '+svgH+'">');
+  svgParts.push('<defs>');
+  svgParts.push('<style type="text/css">@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700&amp;display=swap");</style>');
+  svgParts.push('<clipPath id="photoClip"><rect x="'+fx+'" y="'+fy+'" width="'+fw+'" height="'+fh+'" rx="12"/></clipPath>');
+  svgParts.push('</defs>');
+  svgParts.push('<rect width="'+W+'" height="'+H+'" fill="#F8FAFC"/>');
+  svgParts.push('<rect width="'+W+'" height="190" fill="#173F6F"/>');
+  svgParts.push('<text x="'+W/2+'" y="70" text-anchor="middle" dominant-baseline="central" font-family="Noto Sans SC,sans-serif" font-size="72" font-weight="700" fill="#FFFFFF">安全生产网格员公示牌</text>');
+  svgParts.push('<text x="'+W/2+'" y="151" text-anchor="middle" dominant-baseline="central" font-family="Noto Sans SC,sans-serif" font-size="30" font-weight="400" fill="#94B8D8">'+_svgEsc(sub)+'</text>');
+  svgParts.push('<rect x="'+fx+'" y="'+fy+'" width="'+fw+'" height="'+fh+'" rx="12" fill="#F1F5F9" stroke="#2B6BA8" stroke-width="1"/>');
+
+  if(hasPhoto){
+    try {
+      var imgData = photoImg.src;
+      svgParts.push('<image x="'+fx+'" y="'+fy+'" width="'+fw+'" height="'+fh+'" xlink:href="'+imgData+'" clip-path="url(#photoClip)" preserveAspectRatio="xMidYMid slice"/>');
+    } catch(e) { svgParts.push(_svgPersonIcon(fx,fy,fw,fh)); }
+  } else { svgParts.push(_svgPersonIcon(fx,fy,fw,fh)); }
+
+  svgParts.push('<text x="'+W/2+'" y="'+(idY+32)+'" text-anchor="middle" dominant-baseline="central" font-family="Noto Sans SC,sans-serif" font-size="44" font-weight="700" fill="#0F172A">'+_svgEsc(idText)+'</text>');
+  svgParts.push('<rect x="'+px+'" y="'+div1Y+'" width="880" height="2" fill="#C4D0E0"/>');
+
+  for(var r=0;r<2;r++){
+    var ry=cardsY+(r===0?0:svgRowH[0]+cGap);
+    for(var i=0;i<2;i++){
+      var cx=rowX+i*(cw1+rGap);
+      var ch=svgRowH[r];
+      svgParts.push('<rect x="'+cx+'" y="'+ry+'" width="'+cw1+'" height="'+ch+'" rx="10" fill="#F8FAFC" stroke="#2B6BA8" stroke-opacity="0.5" stroke-width="1"/>');
+      svgParts.push('<text x="'+(cx+16)+'" y="'+(ry+16+14)+'" font-family="Noto Sans SC,sans-serif" font-size="28" font-weight="400" fill="#64748B">'+_svgEsc(cards[r][i].l)+'</text>');
+      svgParts.push(_svgMultiLineText(cards[r][i].v, cx+16, ry+65, 36, '#0F172A', 40, cardInnerW));
     }
+  }
 
-    function saveAsPDF() { window.print(); }
-    function saveAsPNG() { alert('正在生成 PNG 图片...\n\n提示：如需高质量 PNG，建议使用截图工具或浏览器扩展。'); }
-    function saveAsSVG() { alert('正在导出 SVG 矢量图...\n\n提示：SVG 格式适合缩放，可通过矢量编辑软件进一步处理。'); }
+  svgParts.push('<rect x="'+px+'" y="'+div2Y+'" width="880" height="2" fill="#C4D0E0"/>');
+  svgParts.push('<rect x="'+px+'" y="'+(dutyY+7)+'" width="6" height="32" rx="3" fill="#2B6BA8"/>');
+  svgParts.push('<text x="'+(px+18)+'" y="'+(dutyY+23)+'" dominant-baseline="central" font-family="Noto Sans SC,sans-serif" font-size="32" font-weight="700" fill="#0F172A">工作职责</text>');
 
-    document.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape') closeModal();
-    });
-  </script>
+  var dutyTextY=dutyY+46+8;
+  for(var d=0;d<duties.length;d++){
+    svgParts.push('<text x="'+px+'" y="'+dutyTextY+'" font-family="Noto Sans SC,sans-serif" font-size="30" font-weight="400" fill="#334155">'+_svgEsc(duties[d])+'</text>');
+    dutyTextY+=51;
+  }
+
+  svgParts.push('<rect x="0" y="'+footerBarY+'" width="'+W+'" height="81" fill="#173F6F"/>');
+  var logoSrc = document.getElementById('footerLogo').src;
+  if(logoSrc && logoSrc.startsWith('data:')){
+    svgParts.push('<image x="23" y="'+(footerBarY+22.5)+'" width="100" height="36" xlink:href="'+logoSrc+'" preserveAspectRatio="xMidYMid meet"/>');
+  } else { svgParts.push('<rect x="23" y="'+(footerBarY+22.5)+'" width="100" height="36" fill="#2B6BA8"/>'); }
+  svgParts.push('<text x="143" y="'+(footerBarY+40.5)+'" dominant-baseline="central" font-family="Noto Sans SC,sans-serif" font-size="28" font-weight="400" fill="#CBD5E1">'+_svgEsc(footerUnit)+'</text>');
+  svgParts.push('<text x="359" y="'+(footerBarY+40.5)+'" dominant-baseline="central" font-family="Noto Sans SC,sans-serif" font-size="28" font-weight="400" fill="#CBD5E1">'+_svgEsc(footerPhone)+'</text>');
+  svgParts.push('</svg>');
+  return svgParts.join('\n');
+}
+
+function _svgEsc(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function _svgPersonIcon(x,y,w,h){
+  var cx=x+w/2, cy=y+h/2-10;
+  var parts=[];
+  parts.push('<circle cx="'+cx+'" cy="'+cy+'" r="30" fill="#B4C3D7"/>');
+  parts.push('<circle cx="'+cx+'" cy="'+(cy+55)+'" r="60" fill="#96AABF"/>');
+  parts.push('<rect x="'+x+'" y="'+(cy+115)+'" width="'+w+'" height="50" fill="#F1F5F9"/>');
+  parts.push('<text x="'+cx+'" y="'+(y+h-20)+'" text-anchor="middle" dominant-baseline="central" font-family="Noto Sans SC,sans-serif" font-size="28" fill="#94A3B8">一寸免冠照片</text>');
+  return parts.join('\n');
+}
+
+function _svgEstLines(text, maxW){
+  var w=0;
+  for(var i=0;i<text.length;i++){ var c=text.charCodeAt(i); w+=(c>255)?36:18; }
+  return Math.max(1, Math.ceil(w/maxW));
+}
+
+function _svgMultiLineText(text, x, y, size, color, lineH, maxW){
+  var parts=[];
+  var line='', cy=y;
+  var chars=text.split('');
+  for(var i=0;i<chars.length;i++){
+    var trial=line+chars[i], trialW=0;
+    for(var j=0;j<trial.length;j++){ trialW+=(trial.charCodeAt(j)>255)?size:size*0.5; }
+    if(trialW>maxW && line.length>0){
+      parts.push('<tspan x="'+x+'" y="'+cy+'">'+_svgEsc(line)+'</tspan>');
+      cy+=lineH;
+      line=chars[i];
+    } else { line=trial; }
+  }
+  if(line.length>0) parts.push('<tspan x="'+x+'" y="'+cy+'">'+_svgEsc(line)+'</tspan>');
+  return '<text font-family="Noto Sans SC,sans-serif" font-size="'+size+'" font-weight="700" fill="'+color+'">'+parts.join('')+'</text>';
+}
+
+var SK = 'notice_board_data';
+var DF = {
+  company:'无锡天鹏菜篮子工程有限公司', name:'李卫东', role:'安全员', photo:'',
+  phone:'138-0510-6829', area:'冷库及加工车间 A-F 区', dept:'安全生产管理部',
+  gridId:'TP-SC-0018', tel1:'0510-82363173', tel2:'0510-82363110',
+  duties:'1. 开展常态化安全巡查，排查消防、电气及设备设施等风险隐患\n2. 跟踪督促隐患整改，重大隐患及时上报，全程落实闭环管理\n3. 宣传安全法规制度，组织培训演练，普及应急防护知识技能\n4. 摸排网格场所情况底数，动态更新安全管理台账\n5. 监督落实安全操作规程，及时制止违章作业\n6. 联动处置险情，配合应急救援，接受全员监督',
+  footerUnit:'苏豪天鹏安委办'
+};
+
+function ld(){ try{return JSON.parse(localStorage.getItem(SK))||{}}catch(e){return{}} }
+function sd(d){ localStorage.setItem(SK,JSON.stringify(d)); }
+
+function apply(d){
+  document.getElementById('headerSub').textContent = (d.company||DF.company)+' · 安全生产网格化管理';
+  document.getElementById('identityText').textContent = (d.name||DF.name)+' · '+(d.role||DF.role);
+  var img = document.getElementById('photoImg');
+  var ic = document.getElementById('photoIcon');
+  var hi = document.getElementById('photoHint');
+  var photoSrc = d.photo || DF.photo || '';
+  if(photoSrc){
+    img.src = photoSrc;
+    img.style.display = '';
+    ic.style.display = 'none';
+    hi.style.display = 'none';
+  } else {
+    img.style.display = 'none';
+    ic.style.display = '';
+    hi.style.display = '';
+  }
+  document.getElementById('cardPhone').textContent = d.phone||DF.phone||'';
+  document.getElementById('cardArea').textContent = d.area||DF.area||'';
+  document.getElementById('cardDept').textContent = d.dept||DF.dept||'';
+  document.getElementById('cardGridId').textContent = d.gridId||DF.gridId||'';
+  var dutiesText = d.duties||DF.duties||'';
+  var dutiesList = dutiesText.split('\n').filter(function(l){return l.trim();});
+  for(var i=1;i<=6;i++){
+    var el = document.getElementById('duty'+i);
+    if(el){
+      el.textContent = dutiesList[i-1]||('');
+      el.style.display = dutiesList[i-1] ? '' : 'none';
+    }
+  }
+  document.getElementById('footerUnit').textContent = d.footerUnit||DF.footerUnit||'';
+  document.getElementById('footerPhone').textContent = '监督电话：'+(d.tel1||DF.tel1||'')+'    应急电话：'+(d.tel2||DF.tel2||'');
+  var logoEl = document.getElementById('footerLogo');
+  var logoSrc = d.logo || DF.logo || '';
+  if(logoSrc){ logoEl.src = logoSrc; logoEl.style.display = ''; }
+  else { logoEl.style.display = 'none'; }
+}
+
+function openEdit(){
+  var d = ld();
+  document.getElementById('f_company').value = d.company !== undefined ? d.company : DF.company;
+  document.getElementById('f_name').value = d.name !== undefined ? d.name : DF.name;
+  document.getElementById('f_role').value = d.role !== undefined ? d.role : DF.role;
+  document.getElementById('f_phone').value = d.phone !== undefined ? d.phone : DF.phone;
+  document.getElementById('f_area').value = d.area !== undefined ? d.area : DF.area;
+  document.getElementById('f_dept').value = d.dept !== undefined ? d.dept : DF.dept;
+  document.getElementById('f_gridId').value = d.gridId !== undefined ? d.gridId : DF.gridId;
+  document.getElementById('f_duties').value = d.duties !== undefined ? d.duties : DF.duties;
+  document.getElementById('f_tel1').value = d.tel1 !== undefined ? d.tel1 : DF.tel1;
+  document.getElementById('f_tel2').value = d.tel2 !== undefined ? d.tel2 : DF.tel2;
+  var pp = document.getElementById('photoPreview');
+  var ps = d.photo||'';
+  pp.src = ps;
+  pp.style.display = ps ? '' : 'none';
+  document.getElementById('f_photo').value = '';
+  var lp = document.getElementById('logoPreview');
+  var ls = d.logo || DF.logo || '';
+  lp.src = ls;
+  lp.style.display = ls ? '' : 'none';
+  document.getElementById('f_logo').value = '';
+  document.getElementById('modalOverlay').classList.add('active');
+}
+
+function closeEdit(){ document.getElementById('modalOverlay').classList.remove('active'); }
+
+function previewPhoto(e){ _previewImg(e, 'photoPreview'); }
+function previewLogo(e){ _previewImg(e, 'logoPreview'); }
+
+function _previewImg(e, previewId){
+  var f = e.target.files[0];
+  if(!f) return;
+  var r = new FileReader();
+  r.onload = function(ev){
+    var el = document.getElementById(previewId);
+    el.src = ev.target.result;
+    el.style.display = '';
+  };
+  r.readAsDataURL(f);
+}
+
+function _saveImgData(previewId){
+  var el = document.getElementById(previewId);
+  if(el.src && el.src.startsWith('data:') && el.style.display !== 'none') return el.src;
+  return undefined;
+}
+
+function saveEdit(){
+  var d = ld();
+  d.company = document.getElementById('f_company').value.trim();
+  d.name = document.getElementById('f_name').value.trim();
+  d.role = document.getElementById('f_role').value.trim();
+  d.phone = document.getElementById('f_phone').value.trim();
+  d.area = document.getElementById('f_area').value.trim();
+  d.dept = document.getElementById('f_dept').value.trim();
+  d.gridId = document.getElementById('f_gridId').value.trim();
+  d.duties = document.getElementById('f_duties').value.trim();
+  d.tel1 = document.getElementById('f_tel1').value.trim();
+  d.tel2 = document.getElementById('f_tel2').value.trim();
+  var newPhoto = _saveImgData('photoPreview');
+  var newLogo = _saveImgData('logoPreview');
+  if(newPhoto !== undefined) d.photo = newPhoto;
+  if(newLogo !== undefined) d.logo = newLogo;
+  sd(d);
+  apply(d);
+  closeEdit();
+}
+
+function resetAll(){
+  if(!confirm('确定恢复默认信息？当前编辑的内容将丢失。')) return;
+  localStorage.removeItem(SK);
+  apply(DF);
+  closeEdit();
+}
+
+apply(ld());
+document.getElementById('modalOverlay').addEventListener('click', function(e){
+  if(e.target === this) closeEdit();
+});
+</script>
 </body>
 </html>
