@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>安全生产网格员公示牌 · 鸽子笼</title>
+  <meta name="description" content="企业安全生产网格化管理公示牌，安全生产可视化工具。" />
+  <meta name="theme-color" content="#f6f3ec" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🕊</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+  <link rel="stylesheet" href="detail.css" />
+  <style>
+    .detail-body { display: flex; justify-content: center; }
+
+    .signboard-container {
+      width: 420px;
+      background: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+
+    .sb-header {
+      background: linear-gradient(135deg, #1a5276, #2980b9);
+      color: #ffffff;
+      padding: 16px 20px;
+      text-align: center;
+    }
+    .sb-header h1 {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    }
+    .sb-header .subtitle {
+      font-size: 13px;
+      margin-top: 4px;
+      opacity: 0.9;
+      font-weight: 400;
+    }
+
+    .profile-section {
+      display: flex;
+      align-items: center;
+      padding: 20px;
+      border-bottom: 1px solid #e8e8e8;
+      background: #fafbfc;
+    }
+    .profile-photo {
+      width: 80px;
+      height: 100px;
+      border-radius: 4px;
+      border: 2px solid #d9d9d9;
+      background: #f0f0f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+    .profile-photo .photo-placeholder {
+      color: #bfbfbf;
+      font-size: 12px;
+      text-align: center;
+      line-height: 1.4;
+    }
+    .profile-info {
+      margin-left: 16px;
+      flex: 1;
+      font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    }
+    .profile-info .name {
+      font-size: 22px;
+      font-weight: 700;
+      color: #1a1a1a;
+      margin-bottom: 4px;
+    }
+    .profile-info .role {
+      font-size: 14px;
+      color: #666666;
+      margin-bottom: 8px;
+    }
+    .profile-info .phone {
+      font-size: 14px;
+      color: #1890ff;
+      font-weight: 500;
+    }
+    .profile-info .phone .label {
+      color: #8c8c8c;
+      font-weight: 400;
+      font-size: 12px;
+    }
+
+    .details-section {
+      padding: 16px 20px;
+      font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    }
+    .detail-row {
+      display: flex;
+      padding: 8px 0;
+      border-bottom: 1px dashed #f0f0f0;
+      font-size: 14px;
+    }
+    .detail-row:last-child { border-bottom: none; }
+    .detail-label {
+      color: #8c8c8c;
+      width: 80px;
+      flex-shrink: 0;
+      font-weight: 500;
+    }
+    .detail-value {
+      color: #1a1a1a;
+      flex: 1;
+      font-weight: 500;
+    }
+
+    .duties-section {
+      padding: 0 20px 20px;
+      font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    }
+    .duties-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #1a5276;
+      margin-bottom: 12px;
+      padding-left: 10px;
+      border-left: 3px solid #2980b9;
+    }
+    .duties-list {
+      list-style: none;
+      padding: 0;
+    }
+    .duties-list li {
+      position: relative;
+      padding: 6px 0 6px 22px;
+      font-size: 13px;
+      color: #333333;
+      line-height: 1.7;
+    }
+    .duties-list li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 12px;
+      width: 8px;
+      height: 8px;
+      background: #2980b9;
+      border-radius: 50%;
+    }
+
+    .sb-footer {
+      background: #fafbfc;
+      padding: 14px 20px;
+      border-top: 1px solid #e8e8e8;
+      text-align: center;
+      font-size: 12px;
+      color: #8c8c8c;
+      font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    }
+    .sb-footer .contact-info {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      margin-bottom: 4px;
+    }
+    .sb-footer .contact-item {
+      font-size: 13px;
+      color: #1a1a1a;
+    }
+    .sb-footer .phone-number {
+      color: #e74c3c;
+      font-weight: 600;
+    }
+    .sb-footer .issuer {
+      font-size: 11px;
+      color: #bfbfbf;
+      margin-top: 4px;
+    }
+
+    .action-bar {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 20px 16px;
+      background: #ffffff;
+      border-top: 1px solid #f0f0f0;
+      flex-wrap: wrap;
+    }
+    .action-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 6px 14px;
+      font-size: 12px;
+      color: #595959;
+      background: #fafafa;
+      border: 1px solid #d9d9d9;
+      border-radius: 4px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+    .action-btn:hover {
+      color: #1890ff;
+      border-color: #1890ff;
+      background: #e6f7ff;
+    }
+
+    /* 弹窗 */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.45);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal {
+      background: #ffffff;
+      border-radius: 8px;
+      width: 480px;
+      max-width: 90vw;
+      max-height: 85vh;
+      overflow-y: auto;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15);
+      padding: 24px;
+    }
+    .modal h2 {
+      font-size: 18px;
+      font-weight: 700;
+      color: #1a1a1a;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .form-group { margin-bottom: 16px; }
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: #595959;
+      margin-bottom: 6px;
+    }
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 8px 12px;
+      font-size: 14px;
+      border: 1px solid #d9d9d9;
+      border-radius: 4px;
+      transition: border-color 0.2s;
+      font-family: inherit;
+    }
+    .form-group input:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #1890ff;
+      box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+    }
+    .form-group textarea { min-height: 120px; resize: vertical; line-height: 1.8; }
+    .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+    .btn {
+      padding: 8px 20px;
+      font-size: 14px;
+      border-radius: 4px;
+      border: 1px solid #d9d9d9;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+    .btn-default { background: #ffffff; color: #595959; }
+    .btn-default:hover { color: #1890ff; border-color: #1890ff; }
+    .btn-primary { background: #1890ff; color: #ffffff; border-color: #1890ff; }
+    .btn-primary:hover { background: #40a9ff; border-color: #40a9ff; }
+    .btn-warning { background: #ffffff; color: #fa8c16; border-color: #fa8c16; }
+    .btn-warning:hover { background: #fff7e6; }
+
+    /* 打印 */
+    @media print {
+      .detail { padding: 0; max-width: none; }
+      .detail-back, .grain, .site-footer { display: none !important; }
+      .signboard-container { box-shadow: none; border: 1px solid #000; width: 100%; max-width: 420px; }
+      .action-bar, .modal-overlay { display: none !important; }
+    }
+
+    @media (max-width: 480px) {
+      .signboard-container { width: 100%; }
+      .profile-section { flex-direction: column; text-align: center; }
+      .profile-info { margin-left: 0; margin-top: 12px; }
+      .sb-footer .contact-info { flex-direction: column; gap: 4px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="grain" aria-hidden="true"></div>
+
+  <article class="detail">
+    <a href="../" class="detail-back">← 作品集</a>
+
+    <header class="detail-head">
+      <h1>安全生产网格员公示牌</h1>
+      <div class="detail-meta">
+        <span class="detail-type">信息工具</span>
+        <span>HTML · CSS · Vanilla JS</span>
+      </div>
+    </header>
+
+    <div class="detail-body">
+      <div class="signboard-container" id="signboard">
+
+        <div class="sb-header">
+          <h1>安全生产网格员公示牌</h1>
+          <p class="subtitle">无锡天鹏菜篮子工程有限公司 · 安全生产网格化管理</p>
+        </div>
+
+        <div class="profile-section">
+          <div class="profile-photo">
+            <span class="photo-placeholder">一寸<br>免冠照片</span>
+          </div>
+          <div class="profile-info">
+            <div class="name">李卫东</div>
+            <div class="role">安全员</div>
+            <div class="phone">
+              <span class="label">联系电话</span><br>
+              138-0510-6829
+            </div>
+          </div>
+        </div>
+
+        <div class="details-section">
+          <div class="detail-row">
+            <span class="detail-label">责任区域</span>
+            <span class="detail-value">冷库及加工车间 A-F 区</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">所属部门</span>
+            <span class="detail-value">安全生产管理部</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">网格编号</span>
+            <span class="detail-value">TP-SC-0018</span>
+          </div>
+        </div>
+
+        <div class="duties-section">
+          <div class="duties-title">工作职责</div>
+          <ol class="duties-list">
+            <li>开展常态化安全巡查，排查消防、电气及设备设施等风险隐患</li>
+            <li>跟踪督促隐患整改，重大隐患及时上报，全程落实闭环管理</li>
+            <li>宣传安全法规制度，组织培训演练，普及应急防护知识技能</li>
+            <li>摸排网格场所情况底数，动态更新安全管理台账</li>
+            <li>监督落实安全操作规程，及时制止违章作业</li>
+            <li>联动处置险情，配合应急救援，接受全员监督</li>
+          </ol>
+        </div>
+
+        <div class="sb-footer">
+          <div class="contact-info">
+            <span class="contact-item">监督电话：<span class="phone-number">0510-82363173</span></span>
+            <span class="contact-item">应急电话：<span class="phone-number">0510-82363110</span></span>
+          </div>
+          <p class="issuer">苏豪天鹏安委办</p>
+        </div>
+
+        <div class="action-bar">
+          <button class="action-btn" onclick="editSignboard()">✏️ 编辑信息</button>
+          <button class="action-btn" onclick="saveAsPDF()">📄 保存为 PDF</button>
+          <button class="action-btn" onclick="saveAsPNG()">🖼 保存为 PNG</button>
+          <button class="action-btn" onclick="saveAsSVG()">🎨 保存为 SVG</button>
+        </div>
+      </div>
+
+      <!-- 编辑弹窗 -->
+      <div class="modal-overlay" id="editModal">
+        <div class="modal">
+          <h2>编辑公示牌信息</h2>
+          <div class="form-group">
+            <label for="companyName">公司名称</label>
+            <input type="text" id="companyName" value="无锡天鹏菜篮子工程有限公司">
+          </div>
+          <div class="form-group">
+            <label for="personName">姓名</label>
+            <input type="text" id="personName" value="李卫东">
+          </div>
+          <div class="form-group">
+            <label for="personRole">岗位</label>
+            <input type="text" id="personRole" value="安全员">
+          </div>
+          <div class="form-group">
+            <label for="personPhoto">照片</label>
+            <input type="file" id="personPhoto" accept="image/*">
+          </div>
+          <div class="form-group">
+            <label for="phoneNumber">联系电话</label>
+            <input type="text" id="phoneNumber" value="138-0510-6829">
+          </div>
+          <div class="form-group">
+            <label for="responsibleArea">责任区域</label>
+            <input type="text" id="responsibleArea" value="冷库及加工车间 A-F 区">
+          </div>
+          <div class="form-group">
+            <label for="department">所属部门</label>
+            <input type="text" id="department" value="安全生产管理部">
+          </div>
+          <div class="form-group">
+            <label for="gridNumber">网格编号</label>
+            <input type="text" id="gridNumber" value="TP-SC-0018">
+          </div>
+          <div class="form-group">
+            <label for="duties">工作职责（每行一条）</label>
+            <textarea id="duties" rows="6">开展常态化安全巡查，排查消防、电气及设备设施等风险隐患
+跟踪督促隐患整改，重大隐患及时上报，全程落实闭环管理
+宣传安全法规制度，组织培训演练，普及应急防护知识技能
+摸排网格场所情况底数，动态更新安全管理台账
+监督落实安全操作规程，及时制止违章作业
+联动处置险情，配合应急救援，接受全员监督</textarea>
+          </div>
+          <div class="form-group">
+            <label for="supervisionPhone">监督电话</label>
+            <input type="text" id="supervisionPhone" value="0510-82363173">
+          </div>
+          <div class="form-group">
+            <label for="emergencyPhone">应急电话</label>
+            <input type="text" id="emergencyPhone" value="0510-82363110">
+          </div>
+          <div class="form-group">
+            <label for="companyLogo">企业 Logo</label>
+            <input type="file" id="companyLogo" accept="image/*">
+          </div>
+          <div class="modal-actions">
+            <button class="btn btn-warning" onclick="resetDefault()">恢复默认</button>
+            <button class="btn btn-default" onclick="closeModal()">取消</button>
+            <button class="btn btn-primary" onclick="saveChanges()">保存并应用</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <footer class="site-footer">
+    <p class="site-footer__row">
+      <a href="https://erma0.cn">主页</a>
+      <span class="sep" aria-hidden="true">·</span>
+      <a href="../">作品集</a>
+      <span class="sep" aria-hidden="true">·</span>
+      <a href="https://github.com/erma0" target="_blank" rel="noopener noreferrer">GitHub</a>
+    </p>
+    <p class="site-footer__small">© 2026 鸽子笼</p>
+  </footer>
+
+  <script>
+    function editSignboard() {
+      document.getElementById('editModal').classList.add('active');
+    }
+    function closeModal() {
+      document.getElementById('editModal').classList.remove('active');
+    }
+    document.getElementById('editModal').addEventListener('click', function(e) {
+      if (e.target === this) closeModal();
+    });
+
+    function resetDefault() {
+      document.getElementById('companyName').value = '无锡天鹏菜篮子工程有限公司';
+      document.getElementById('personName').value = '李卫东';
+      document.getElementById('personRole').value = '安全员';
+      document.getElementById('phoneNumber').value = '138-0510-6829';
+      document.getElementById('responsibleArea').value = '冷库及加工车间 A-F 区';
+      document.getElementById('department').value = '安全生产管理部';
+      document.getElementById('gridNumber').value = 'TP-SC-0018';
+      document.getElementById('duties').value =
+        '开展常态化安全巡查，排查消防、电气及设备设施等风险隐患\n' +
+        '跟踪督促隐患整改，重大隐患及时上报，全程落实闭环管理\n' +
+        '宣传安全法规制度，组织培训演练，普及应急防护知识技能\n' +
+        '摸排网格场所情况底数，动态更新安全管理台账\n' +
+        '监督落实安全操作规程，及时制止违章作业\n' +
+        '联动处置险情，配合应急救援，接受全员监督';
+      document.getElementById('supervisionPhone').value = '0510-82363173';
+      document.getElementById('emergencyPhone').value = '0510-82363110';
+    }
+
+    function saveChanges() {
+      var signboard = document.getElementById('signboard');
+      signboard.querySelector('.profile-info .name').textContent = document.getElementById('personName').value;
+      signboard.querySelector('.profile-info .role').textContent = document.getElementById('personRole').value;
+      signboard.querySelector('.profile-info .phone').innerHTML =
+        '<span class="label">联系电话</span><br>' + document.getElementById('phoneNumber').value;
+      var detailValues = signboard.querySelectorAll('.detail-value');
+      detailValues[0].textContent = document.getElementById('responsibleArea').value;
+      detailValues[1].textContent = document.getElementById('department').value;
+      detailValues[2].textContent = document.getElementById('gridNumber').value;
+      var dutiesArray = document.getElementById('duties').value.split('\n').filter(function(l) { return l.trim(); });
+      var list = signboard.querySelector('.duties-list');
+      list.innerHTML = '';
+      dutiesArray.forEach(function(d) {
+        var li = document.createElement('li');
+        li.textContent = d.trim();
+        list.appendChild(li);
+      });
+      var phones = signboard.querySelectorAll('.phone-number');
+      phones[0].textContent = document.getElementById('supervisionPhone').value;
+      phones[1].textContent = document.getElementById('emergencyPhone').value;
+      closeModal();
+      alert('公示牌信息已更新！');
+    }
+
+    function saveAsPDF() { window.print(); }
+    function saveAsPNG() { alert('正在生成 PNG 图片...\n\n提示：如需高质量 PNG，建议使用截图工具或浏览器扩展。'); }
+    function saveAsSVG() { alert('正在导出 SVG 矢量图...\n\n提示：SVG 格式适合缩放，可通过矢量编辑软件进一步处理。'); }
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeModal();
+    });
+  </script>
+</body>
+</html>
