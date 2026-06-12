@@ -13,7 +13,7 @@
 | 主站 | erma0.cn — 个人导航页，含"作品集"按钮跳转至此 |
 | 类型 | 静态作品展示 + 在线工具集 |
 | 部署 | Vercel，纯静态，零构建 |
-| 技术栈 | HTML + CSS + Vanilla JS，无框架，零依赖 |
+| 技术栈 | HTML + CSS + Vanilla JS（icons/renderer/animations 三文件分工），无框架，零依赖 |
 | 字体 | Noto Serif SC（标题衬线）、Inter（正文无衬线）、JetBrains Mono（等宽/标签） |
 | 主题 | 米白纸质感 + 暗色工具区，双主题共存 |
 
@@ -35,20 +35,23 @@ erma0.cn（主站 · 极简导航页）
 portfolio/
 ├── index.html              # 作品集主页
 ├── works.js                # ★ 作品数据配置（独立文件）
+├── icons.js                # ★ 图标 SVG 映射（独立文件，window.__ICONS）
+├── renderer.js             # ★ 卡片渲染（数据驱动 DOM 生成，IIFE）
+├── animations.js           # ★ 动效系统（IO/tilt/glow/split，IIFE）
 ├── styles.css              # 全局样式（米白纸主题、卡片、动效）
-├── main.js                 # 动效 + 卡片渲染 + 图标映射 + action 路由
-├── AGENT.md                # 本文件
-├── .workbuddy/memory/      # 项目记忆（不提交 Git）
+├── AGENT.md               # 本文件
+├── .workbuddy/memory/     # 项目记忆（不提交 Git）
 ├── works/                  # ★ 各作品详情页
 │   ├── detail.css          # 详情页共享样式
+│   ├── detail-template.html # 详情页标准模板（复制后替换标记）
 │   ├── invoice.html        # 发票打印系统详情页
 │   └── ...                 # 后续按需创建
-└── online_tools/           # 在线工具子模块（暗色主题，复刻）
+└── online_tools/           # 在线工具子模块（❄️ 冻结，不再新增）
     ├── index.html          # 工具集首页 — 分类导航
     ├── css/                # style.css / main.css / tool.css / mobile.css
     ├── js/                 # 工具用库
     ├── img/                # 图标
-    └── *.htm               # 各工具页（~37 个）
+    └── *.htm               # 各工具页（~37 个，冻结）
 ```
 
 ---
@@ -79,24 +82,24 @@ portfolio/
 | `--bg-card` | `rgba(255,255,255,.04)` | 工具分类卡 |
 | `--text-primary` | `#ffffff` | 主文字 |
 
-### 动效系统
+### 动效系统（animations.js）
 
 | 动效 | 实现 | 触发 |
 |---|---|---|
-| 噪点纹理 | SVG feTurbulence + multiply 混合 | 全局常驻 |
-| 鼠标光晕 | radial-gradient + requestAnimationFrame lerp | 全局跟随 |
-| 字符拆分入场 | `[data-split]` → JS 逐字 `<span class="char">` + stagger delay | Hero 标题 |
+| 噪点纹理 | SVG feTurbulence + multiply 混合（CSS） | 全局常驻 |
+| 鼠标光晕 | radial-gradient + requestAnimationFrame lerp（JS） | 全局跟随 |
+| 字符拆分入场 | `[data-split]` → JS 逐字 `<span class="char">` | Hero 标题 |
 | IntersectionObserver | `[data-reveal]` / `[data-split]` / `.card` 滚动触发 `.is-in` | 所有卡片/区块 |
 | 3D 倾斜 + 光斑 | `[data-tilt]` → mousemove 计算 rotateX/Y + CSS `--mx`/`--my` | 卡片悬停 |
 | 导航滚动实底 | scroll > 8px → `.is-scrolled` + backdrop-filter blur | 顶部导航 |
-| 下划线滑入 | `::after` scaleX(0→1) + transform-origin 切换 | 导航链接 |
-| 减少动效 | `prefers-reduced-motion` 媒体查询全局关闭 | 无障碍 |
+| 下划线滑入 | `::after` scaleX(0→1) + transform-origin 切换（CSS） | 导航链接 |
+| 减少动效 | `prefers-reduced-motion` 媒体查询全局关闭（CSS） | 无障碍 |
 
 ---
 
 ## 卡片系统（数据驱动）
 
-卡片通过 JS 数组驱动渲染。**配置在 `works.js`（独立文件），渲染在 `main.js`**。增删改项目只需编辑 `works.js`，不碰 DOM 和渲染逻辑。
+卡片通过 JS 数组驱动渲染。**配置在 `works.js`，图标映射在 `icons.js`，渲染在 `renderer.js`，动效在 `animations.js`**。四个文件职责分离，增删改项目只需编辑 `works.js`，不碰其他文件。
 
 ### 数据字段
 
@@ -157,11 +160,11 @@ portfolio/
 
 ### 图标系统
 
-图标 ID 与 SVG 代码的映射定义在 `main.js` 的 `ICONS` 对象中。所有图标统一 24×24 viewBox，描边风格（`fill="none" stroke="currentColor" stroke-width="1.5"`）。
+图标 ID 与 SVG 代码的映射定义在 `icons.js` 的 `window.__ICONS` 对象中。所有图标统一 24×24 viewBox，描边风格（`fill="none" stroke="currentColor" stroke-width="1.5"`）。
 
 添加新图标：
 ```js
-// 在 main.js 的 ICONS 对象中添加一条
+// 在 icons.js 的 window.__ICONS 对象中添加一条
 newIcon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">...</svg>',
 ```
 
@@ -270,19 +273,21 @@ newIcon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-widt
 3. 保持暗色主题风格
 4. 在 `online_tools/index.html` 对应分类下添加链接
 
-### 修改样式
+### 修改样式 / JS
 - 全局样式 → `styles.css`（CSS 变量在 `:root` 统一管理）
 - 详情页样式 → `works/detail.css`
 - 工具页样式 → `online_tools/css/style.css`
 - 单工具页公用 → `online_tools/css/tool.css`
-- 动效 + 卡片渲染 + action 路由 → `main.js`
+- 图标映射 → `icons.js`（`window.__ICONS`）
+- 卡片渲染 → `renderer.js`（数据驱动 DOM 生成）
+- 动效系统 → `animations.js`（IO/tilt/glow/split）
 
 ### 配置新项目
 编辑 `works.js`：在合适位置插入配置对象，设置 `action`、`detail`、`tags` 等字段。
-如需要详情页：在 `works/` 下新建 HTML，复制 `works/invoice.html` 为模板。
+如需要详情页：在 `works/` 下新建 HTML，复制 `works/detail-template.html`，替换 `<!-- -->` 标记内容。
 
 ### 添加新图标
-在 `main.js` 的 `ICONS` 对象中添加一项，key 与 `works.js` 中的 `icon` 字段对应。
+在 `icons.js` 的 `window.__ICONS` 对象中添加一项，key 与 `works.js` 中的 `icon` 字段对应。
 
 ### 部署
 - 推送 Git → Vercel 自动部署（默认即可服务多页面静态文件，无需 rewrite）
@@ -299,3 +304,26 @@ newIcon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-widt
 | 博客 | — | 技术/生活记录 | blog.erma0.cn |
 | 在线工具集（复刻） | HTML · Vanilla JS | 编码/哈希/转换工具 | works.erma0.cn/online_tools/ |
 | 网格员公示牌 | Ardot MCP · jsPDF · Noto Sans SC | 安全生产可视化 | 内部项目 |
+
+---
+
+## online_tools/ 冻结声明
+
+`online_tools/` 是历史复刻工具集（~37 个独立 `.htm`），**不再新增工具页**。
+
+若需新增在线工具，应新建独立项目或采用配置驱动模板（见下方"出路"），不在本目录下堆砌。
+
+### 出路
+
+- **接受现状**：本目录保持冻结，只修 bug，不新增
+- **模板化**（未实施）：用 `tools.json` 配置 + 一个通用模板页渲染所有工具，消灭 37 个重复 HTML
+  - 触发条件：工具数量继续增长或需要统一改样式时
+  - 当前状态：❄️ 冻结，暂不实施
+
+---
+
+## 架构变更记录
+
+| 日期 | 变更 |
+|---|---|
+| 2026-06-12 | `main.js` 拆分为 `icons.js` + `renderer.js` + `animations.js`；`index.html` 脚本全部加 `defer`；新增 `works/detail-template.html`；`online_tools/` 冻结 |
