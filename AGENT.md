@@ -124,7 +124,7 @@ portfolio/
 
   // ── 元信息 ──
   stack: 'Tauri 2 · Rust · JS',// 技术栈（显示在卡片 footer）
-  repo: 'erma0/invoice-sauce', // GitHub 仓库（可选，详情页显示）
+  repo: 'erma0/fapiao-print', // GitHub 仓库（可选，详情页显示）
   status: 'active',            // 'active'|'wip'|'archived'（可选，影响卡片透明度）
   note: '非原创...'            // 备注行（可选，斜体弱化）
 }

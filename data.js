@@ -31,7 +31,7 @@ window.__WORKS = [
     detail: 'works/invoice.html',
     link: '#',
     stack: 'Tauri 2 · Rust · pdf-lib · print.js',
-    repo: 'erma0/invoice-sauce',
+    repo: 'erma0/fapiao-print',
     status: 'active',
     tags: [
       { text: '主推', color: 'accent' },
