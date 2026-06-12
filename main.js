@@ -42,18 +42,33 @@
   const grid = document.getElementById('worksGrid');
   const works = window.__WORKS || [];
 
-  // pinned 置顶，其余保持数组顺序
   works.sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0));
 
+  // type → {按钮文字, 链接, 是否外链}
+  const TYPE_META = {
+    desktop:  { action: '查看 →', external: false },
+    mobile:   { action: '查看 →', external: false },
+    web:      { action: '打开 →', external: false },
+    embed:    { action: '打开 →', external: false },
+    external: { action: '访问 →', external: false }
+  };
+
   works.forEach((w) => {
+    const meta = TYPE_META[w.type] || { action: '查看 →', external: false };
+    // 链接解析：detail 优先，否则用 link
+    const href = (w.detail && w.detail !== '#') ? w.detail : (w.link || '#');
+    const isExternal = w.type === 'external' || (!w.detail && w.link && w.link.startsWith('http'));
+
     const card = document.createElement('a');
     card.className = 'card' + (w.featured ? ' card--feature' : '');
-    card.href = w.link;
+    card.href = href;
     card.setAttribute('data-tilt', '');
-    if (w.external) {
+    if (isExternal) {
       card.target = '_blank';
       card.rel = 'noopener';
     }
+    if (w.status === 'wip') card.classList.add('card--wip');
+    if (w.status === 'archived') card.classList.add('card--archived');
 
     // 标签
     let tagsHTML = '';
@@ -67,7 +82,7 @@
     // 图标
     const iconHTML = `<div class="card__icon" aria-hidden="true">${ICONS[w.icon] || ''}</div>`;
 
-    // 备注行（仅非原创作品显示）
+    // 备注行
     const noteHTML = w.note ? `<div class="card__note">${w.note}</div>` : '';
 
     card.innerHTML = `
@@ -78,7 +93,7 @@
       ${noteHTML}
       <div class="card__foot">
         <span class="card__stack">${w.stack}</span>
-        <span class="card__link">查看 →</span>
+        <span class="card__link">${meta.action}</span>
       </div>
       <span class="card__sheen" aria-hidden="true"></span>
     `;

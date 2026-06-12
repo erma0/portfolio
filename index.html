@@ -51,83 +51,9 @@
       </header>
 
       <div class="grid" id="worksGrid">
-        <!-- JS 数据驱动渲染，见下方 WORKS 数组 -->
+        <!-- JS 数据驱动渲染，配置见 works.js -->
       </div>
     </section>
-
-    <!--
-      ══════════════════════════════════════════════
-      卡片数据配置：增/删/改项目只需编辑这个数组
-      ══════════════════════════════════════════════
-    -->
-    <script>
-    window.__WORKS = [
-      {
-        id: 'invoice',
-        title: '发票打印系统',
-        desc: '为内部财务流程做的小桌面应用，从开票到模板打印一条龙，Tauri + Rust 写就。',
-        stack: 'Tauri 2 · Rust · JS',
-        link: '#',
-        icon: 'invoice',
-        pinned: true,
-        featured: true,
-        tags: [
-          { text: '主推', color: 'accent' },
-          { text: '桌面应用', color: 'mute' }
-        ]
-      },
-      {
-        id: 'scanner',
-        title: 'std_scanner 标准抓取工具',
-        desc: '面向标准文档的结构化抓取与导出工具，工作中用来减少重复劳动的私人项目。',
-        stack: 'Python · FastAPI · pywebview',
-        link: '#',
-        icon: 'scanner',
-        pinned: false,
-        tags: [
-          { text: '工具', color: 'mute' }
-        ]
-      },
-      {
-        id: 'tools',
-        title: '在线工具集',
-        desc: '编码解码、Base64、哈希、正则测试等日常小工具的合集，打开即用无需登录。',
-        stack: 'HTML · Vanilla JS',
-        link: './online_tools/',
-        icon: 'tools',
-        pinned: false,
-        tags: [
-          { text: '复刻', color: 'mute' }
-        ],
-        note: '非原创作品，仅为方便使用保留的复刻版。'
-      },
-      {
-        id: 'blog',
-        title: '博客',
-        desc: '记录技术折腾、读书笔记与生活琐碎。频率不高，但愿每篇都值得一读。',
-        stack: 'blog.erma0.cn',
-        link: 'https://blog.erma0.cn',
-        external: true,
-        icon: 'blog',
-        pinned: false,
-        tags: [
-          { text: '链接', color: 'mute' }
-        ]
-      },
-      {
-        id: 'more',
-        title: '更多项目',
-        desc: 'GitHub 上还有一些小玩具和未完工的实验，等收拾干净了再放到这里。',
-        stack: 'GitHub · 持续更新',
-        link: '#',
-        icon: 'more',
-        pinned: false,
-        tags: [
-          { text: '预告', color: 'mute' }
-        ]
-      }
-    ];
-    </script>
   </main>
 
   <footer class="site-footer">
@@ -145,6 +71,7 @@
 
   <div class="cursor-glow" id="cursorGlow" aria-hidden="true"></div>
 
+  <script src="works.js"></script>
   <script src="main.js"></script>
 </body>
 </html>

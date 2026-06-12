@@ -327,6 +327,11 @@ body:hover .cursor-glow { opacity: 1; }
   transform: translateY(-3px) rotate(-4deg);
   color: var(--accent);
 }
+
+/* 状态：制作中 / 已归档 */
+.card--wip { opacity: .75; }
+.card--archived { opacity: .55; }
+
 .card__title {
   font-family: 'Noto Serif SC', serif;
   font-weight: 600;

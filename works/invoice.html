@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>发票打印系统 · 鸽子笼</title>
+  <meta name="description" content="发票打印系统 — Tauri 2 跨平台桌面应用，OFD/XML 数电票解析与 PDF 矢量嵌入打印。" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🕊️</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+  <link rel="stylesheet" href="detail.css" />
+</head>
+<body>
+  <div class="grain" aria-hidden="true"></div>
+
+  <div class="detail">
+    <a href="../" class="detail-back">← 作品集</a>
+
+    <header class="detail-head">
+      <h1>发票打印系统</h1>
+      <div class="detail-meta">
+        <span class="detail-type desktop">桌面应用</span>
+        <span>Tauri 2 · Rust · pdf-lib · print.js</span>
+      </div>
+    </header>
+
+    <div class="detail-body">
+      <p>
+        面向内部财务流程的跨平台桌面应用，覆盖 OFD / XML 数电票解析、PDF 矢量嵌入打印、批量模板管理等场景。
+        三个分支并行维护：<code>master</code>（v2.0.7 稳定版）、<code>dev</code>（开发版）、<code>feat/web-cross-platform</code>（v2.2.0 纯前端版）。
+      </p>
+
+      <h2>核心功能</h2>
+      <ul>
+        <li>OFD / XML 数电票自动解析与结构化提取</li>
+        <li>PDF 矢量嵌入打印：页面布局、水印、页脚、页码全支持</li>
+        <li>批量模板管理与一键打印</li>
+        <li>跨平台：Windows / macOS / Linux（Tauri 2 底座）</li>
+        <li>纯前端版可脱离桌面环境，浏览器直接运行</li>
+      </ul>
+
+      <h2>技术栈</h2>
+      <ul>
+        <li><strong>Tauri 2.x</strong> — Rust 桌面壳，轻量跨平台</li>
+        <li><strong>pdf-lib</strong> — PDF 生成引擎，支持矢量中文字体嵌入</li>
+        <li><strong>print.js</strong> — 打印逻辑核心，静默批量打印</li>
+        <li><strong>Noto Sans SC</strong> — CJK 字体，保证打印效果一致</li>
+      </ul>
+
+      <h2>截图</h2>
+      <div class="detail-placeholder">
+        截图待补充 — 部署后替换为实际截图
+      </div>
+
+      <h2>下载</h2>
+      <div class="detail-downloads">
+        <a class="btn-dl" href="#">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M4 10v2a2 2 0 002 2h4a2 2 0 002-2v-2M8 1v9M5 7l3 3 3-3"/>
+          </svg>
+          Windows x64
+        </a>
+        <a class="btn-dl" href="#">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M4 10v2a2 2 0 002 2h4a2 2 0 002-2v-2M8 1v9M5 7l3 3 3-3"/>
+          </svg>
+          macOS arm64
+        </a>
+      </div>
+
+      <p style="margin-top:2rem;">
+        <a class="detail-repo" href="https://github.com/erma0/invoice-sauce" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          erma0/invoice-sauce
+        </a>
+      </p>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <p class="site-footer__row">
+      <a href="https://erma0.cn">主页</a>
+      <span class="sep">·</span>
+      <a href="../">作品集</a>
+      <span class="sep">·</span>
+      <a href="https://github.com/erma0" target="_blank" rel="noopener">GitHub</a>
+    </p>
+    <p class="site-footer__small">© 2026 鸽子笼</p>
+  </footer>
+</body>
+</html>

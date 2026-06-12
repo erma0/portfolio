@@ -33,20 +33,21 @@ erma0.cn（主站 · 极简导航页）
 
 ```
 portfolio/
-├── index.html              # 作品集主页 — JS 数据驱动卡片渲染
+├── index.html              # 作品集主页
+├── works.js                # ★ 作品数据配置（独立文件）
 ├── styles.css              # 全局样式（米白纸主题、卡片、动效）
-├── main.js                 # 动效 + 卡片渲染 + 图标映射
+├── main.js                 # 动效 + 卡片渲染 + 图标映射 + type 路由
 ├── vercel.json             # Vercel rewrite 配置
 ├── AGENT.md                # 本文件
-├── .workbuddy/memory/      # 项目记忆（按日记录 + MEMORY.md）
-└── online_tools/           # 在线工具子模块（暗色主题，非原创复刻）
+├── .workbuddy/memory/      # 项目记忆（不提交 Git）
+├── works/                  # ★ 各作品详情页
+│   ├── detail.css          # 详情页共享样式
+│   ├── invoice.html        # 发票打印系统详情页
+│   └── ...                 # 后续按需创建
+└── online_tools/           # 在线工具子模块（暗色主题，复刻）
     ├── index.html          # 工具集首页 — 分类导航
-    ├── css/
-    │   ├── style.css       # 工具页全局样式（暗色）
-    │   ├── main.css        # 公共布局
-    │   ├── tool.css        # 单工具页通用样式
-    │   └── mobile.css      # 移动端适配
-    ├── js/                 # 工具用库（jQuery、MD5、Rusha 等）
+    ├── css/                # style.css / main.css / tool.css / mobile.css
+    ├── js/                 # 工具用库
     ├── img/                # 图标
     └── *.htm               # 各工具页（~37 个）
 ```
@@ -96,42 +97,64 @@ portfolio/
 
 ## 卡片系统（数据驱动）
 
-卡片通过 JS 数组驱动渲染，**增删改项目只需编辑 `index.html` 中的 `window.__WORKS` 数组**，无需碰 DOM。
+卡片通过 JS 数组驱动渲染。**配置在 `works.js`（独立文件），渲染在 `main.js`**。增删改项目只需编辑 `works.js`，不碰 DOM 和渲染逻辑。
 
 ### 数据字段
 
 ```js
 {
-  id: 'invoice',           // 唯一标识（用于图标匹配）
-  title: '发票打印系统',     // 卡片标题
-  desc: '...',              // 描述文字
-  stack: 'Tauri 2 · Rust',  // 技术栈（显示在 footer）
-  link: '#',                // 链接地址（# 表示暂无）
-  external: false,          // 是否新窗口打开
-  icon: 'invoice',          // 图标 ID（见 ICONS 映射）
-  pinned: true,             // 置顶（pinned 的项目始终排在最前）
-  featured: true,           // 精选卡（跨双列 + 渐变背景，每页仅一个）
-  tags: [                   // 标签数组
+  // ── 基础信息 ──
+  id: 'invoice',              // 唯一标识（对应 ICONS 图标映射）
+  title: '发票打印系统',        // 卡片标题
+  desc: '...',                 // 描述文字
+  icon: 'invoice',             // 图标 ID（见 main.js ICONS 对象）
+
+  // ── 展示控制 ──
+  pinned: true,                // 置顶：pinned 项目始终排在最前
+  featured: true,              // 精选：跨双列 + 渐变背景，仅一个生效
+  tags: [                      // 标签数组
     { text: '主推', color: 'accent' },
-    { text: '桌面应用', color: 'mute' }
+    { text: '桌面', color: 'mute' }
   ],
-  note: '非原创作品...'     // 可选，备注行（斜体弱化文字）
+
+  // ── 类型与路由 ★ ──
+  type: 'desktop',             // 驱动行为：desktop|mobile|web|embed|external
+  detail: 'works/invoice.html',// 详情页路径（desktop/mobile/web 用）
+  link: '#',                   // 外部链接或备用链接
+
+  // ── 元信息 ──
+  stack: 'Tauri 2 · Rust · JS',// 技术栈（显示在卡片 footer）
+  repo: 'erma0/invoice-sauce', // GitHub 仓库（可选，详情页显示）
+  status: 'active',            // 'active'|'wip'|'archived'（可选，影响卡片透明度）
+  note: '非原创...'            // 备注行（可选，斜体弱化）
 }
 ```
+
+### type 字段驱动规则
+
+| type | 卡片链接 | 按钮文字 | 详情页 | 典型场景 |
+|---|---|---|---|---|
+| `desktop` | `detail` 或 `link` | 查看 → | `works/xxx.html` | 桌面应用、发票酱 |
+| `mobile` | `detail` 或 `link` | 查看 → | `works/xxx.html` | 安卓 APP、小程序 |
+| `web` | `detail` 或 `link` | 打开 → | `works/xxx.html` | 在线服务、独立部署 |
+| `embed` | `link` 直接 | 打开 → | 无需详情页 | 站内工具集 |
+| `external` | `link` 外链 | 访问 → | 无需详情页 | 博客、GitHub 等 |
+
+链接解析优先级：`detail`（非空且非 `#`）→ `link` → `#`（禁用）
 
 ### 标签系统
 
 | color 值 | 效果 | 适用 |
 |---|---|---|
 | `'accent'` | 朱砂红底，醒目 | 主推、精选 |
-| `'mute'` | 灰底，低调 | 工具、预告、复刻、链接等常规标记 |
+| `'mute'` | 灰底，低调 | 工具、预告、复刻、外链等常规标记 |
 
 ### 排序规则
 
-1. `pinned: true` → 置顶组（按数组顺序）
-2. `pinned: false` → 普通组（按数组顺序）
-3. `featured: true` → 加 `card--feature` 样式类（跨双列、渐变背景）
-4. 精选卡只有一个，如果有多个 `featured: true`，只有第一个生效
+1. `pinned: true` → 置顶组（保持数组顺序）
+2. `pinned: false` → 普通组（保持数组顺序）
+3. `featured: true` → 加 `card--feature` 类（跨双列、渐变背景）
+4. 多个 `featured: true` 时只有第一个生效
 
 ### 图标系统
 
@@ -142,6 +165,62 @@ portfolio/
 // 在 main.js 的 ICONS 对象中添加一条
 newIcon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">...</svg>',
 ```
+
+---
+
+## 详情页系统
+
+每个作品可拥有独立详情页，放在 `works/` 目录下。结构与主页同源，共享 `styles.css` 和字体，额外加载 `works/detail.css`。
+
+### 详情页模板
+
+```html
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <!-- 字体 + 全局样式 + 详情页样式 -->
+  <link rel="stylesheet" href="../styles.css" />
+  <link rel="stylesheet" href="detail.css" />
+</head>
+<body>
+  <div class="grain" aria-hidden="true"></div>
+  <div class="detail">
+    <a href="../" class="detail-back">← 作品集</a>
+    <header class="detail-head">
+      <h1>项目名</h1>
+      <div class="detail-meta">
+        <span class="detail-type desktop">桌面应用</span>
+        <span>技术栈</span>
+      </div>
+    </header>
+    <div class="detail-body">
+      <!-- 自由内容：截图、下载、功能介绍、GitHub 链接 -->
+    </div>
+  </div>
+  <footer class="site-footer">...</footer>
+</body>
+</html>
+```
+
+### 可用的 detail.css 组件
+
+| 类名 | 用途 |
+|---|---|
+| `.detail` | 详情页容器（max-width + padding） |
+| `.detail-back` | 返回链接 |
+| `.detail-head` / `.detail-meta` / `.detail-type` | 标题 + 元信息 + 类型徽标 |
+| `.detail-body` | 正文容器 |
+| `.detail-screens` | 截图网格（auto-fit 自适应列） |
+| `.detail-downloads` | 下载按钮 flex 容器 |
+| `.btn-dl` | 下载按钮（带图标的 JetBrains Mono 等宽按钮） |
+| `.detail-repo` | GitHub 仓库链接 |
+| `.detail-placeholder` | 占位区域（截图位未补时的虚线框） |
+
+### 新增项目的完整流程
+
+1. 在 `works.js` 对应位置插入配置项（设置 `type` + `detail`）
+2. 如需要详情页：复制 `works/invoice.html` 为模板，改内容
+3. 如需要新图标：在 `main.js` 的 `ICONS` 中添加 SVG
 
 ---
 
@@ -193,13 +272,18 @@ newIcon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-widt
 4. 在 `online_tools/index.html` 对应分类下添加链接
 
 ### 修改样式
-- 主页样式 → `styles.css`（CSS 变量在 `:root` 统一管理）
+- 全局样式 → `styles.css`（CSS 变量在 `:root` 统一管理）
+- 详情页样式 → `works/detail.css`
 - 工具页样式 → `online_tools/css/style.css`
 - 单工具页公用 → `online_tools/css/tool.css`
-- 动效 + 卡片渲染 → `main.js`
+- 动效 + 卡片渲染 + type 路由 → `main.js`
+
+### 配置新项目
+编辑 `works.js`：在合适位置插入配置对象，设置 `type`、`detail`、`tags` 等字段。
+如需要详情页：在 `works/` 下新建 HTML，复制 `works/invoice.html` 为模板。
 
 ### 添加新图标
-在 `main.js` 的 `ICONS` 对象中添加一项，key 与卡片数据的 `icon` 字段对应。
+在 `main.js` 的 `ICONS` 对象中添加一项，key 与 `works.js` 中的 `icon` 字段对应。
 
 ### 部署
 - 推送 Git → Vercel 自动部署
