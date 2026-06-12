@@ -13,7 +13,7 @@
 | 主站 | erma0.cn — 个人导航页，含"作品集"按钮跳转至此 |
 | 类型 | 静态作品展示 + 在线工具集 |
 | 部署 | Vercel，纯静态，零构建 |
-| 技术栈 | HTML + CSS + Vanilla JS（icons/renderer/animations 三文件分工），无框架，零依赖 |
+| 技术栈 | HTML + CSS + Vanilla JS（data/renderer/animations 三文件分工），无框架，零依赖 |
 | 字体 | Noto Serif SC（标题衬线）、Inter（正文无衬线）、JetBrains Mono（等宽/标签） |
 | 主题 | 米白纸质感 + 暗色工具区，双主题共存 |
 
@@ -34,13 +34,11 @@ erma0.cn（主站 · 极简导航页）
 ```
 portfolio/
 ├── index.html              # 作品集主页
-├── works.js                # ★ 作品数据配置（独立文件）
-├── icons.js                # ★ 图标 SVG 映射（独立文件，window.__ICONS）
+├── data.js                 # ★ 作品数据 + 图标（唯一数据源，新增项目只改此文件）
 ├── renderer.js             # ★ 卡片渲染（数据驱动 DOM 生成，IIFE）
 ├── animations.js           # ★ 动效系统（IO/tilt/glow/split，IIFE）
 ├── styles.css              # 全局样式（米白纸主题、卡片、动效）
 ├── AGENT.md               # 本文件
-├── .workbuddy/memory/     # 项目记忆（不提交 Git）
 ├── works/                  # ★ 各作品详情页
 │   ├── detail.css          # 详情页共享样式
 │   ├── detail-template.html # 详情页标准模板（复制后替换标记）
@@ -99,17 +97,17 @@ portfolio/
 
 ## 卡片系统（数据驱动）
 
-卡片通过 JS 数组驱动渲染。**配置在 `works.js`，图标映射在 `icons.js`，渲染在 `renderer.js`，动效在 `animations.js`**。四个文件职责分离，增删改项目只需编辑 `works.js`，不碰其他文件。
+卡片通过 JS 数组驱动渲染。**数据与图标在 `data.js`，渲染在 `renderer.js`，动效在 `animations.js`**。三个文件职责分离，增删改项目只需编辑 `data.js`，不碰其他文件。
 
 ### 数据字段
 
 ```js
 {
   // ── 基础信息 ──
-  id: 'invoice',              // 唯一标识（对应 ICONS 图标映射）
+  id: 'invoice',              // 唯一标识
   title: '发票打印系统',        // 卡片标题
   desc: '...',                 // 描述文字
-  icon: 'invoice',             // 图标 ID（见 main.js ICONS 对象）
+  icon: '<svg ...>...</svg>',  // SVG 图标（24×24 viewBox，描边风格）
 
   // ── 展示控制 ──
   pinned: true,                // 置顶：pinned 项目始终排在最前
@@ -160,13 +158,9 @@ portfolio/
 
 ### 图标系统
 
-图标 ID 与 SVG 代码的映射定义在 `icons.js` 的 `window.__ICONS` 对象中。所有图标统一 24×24 viewBox，描边风格（`fill="none" stroke="currentColor" stroke-width="1.5"`）。
+图标以 SVG 字符串形式内联在 `data.js` 每条项目的 `icon` 字段中。所有图标统一 24×24 viewBox，描边风格（`fill="none" stroke="currentColor" stroke-width="1.5"`）。
 
-添加新图标：
-```js
-// 在 icons.js 的 window.__ICONS 对象中添加一条
-newIcon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">...</svg>',
-```
+添加新图标：直接在新项目的 `icon` 字段中写入 SVG 即可。
 
 ---
 
@@ -260,8 +254,8 @@ newIcon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-widt
 ## 常见任务指南
 
 ### 新增/修改项目卡片
-编辑 `works.js` 中 `window.__WORKS` 数组：
-- **新增**：在合适位置插入一个新对象
+编辑 `data.js` 中 `window.__WORKS` 数组：
+- **新增**：在合适位置插入一个新对象（含 `icon` SVG 字段）
 - **修改**：直接改对应字段
 - **删除**：移除整个对象
 - **置顶**：改 `pinned: true`
@@ -278,16 +272,13 @@ newIcon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-widt
 - 详情页样式 → `works/detail.css`
 - 工具页样式 → `online_tools/css/style.css`
 - 单工具页公用 → `online_tools/css/tool.css`
-- 图标映射 → `icons.js`（`window.__ICONS`）
+- 数据与图标 → `data.js`（`window.__WORKS`）
 - 卡片渲染 → `renderer.js`（数据驱动 DOM 生成）
 - 动效系统 → `animations.js`（IO/tilt/glow/split）
 
 ### 配置新项目
-编辑 `works.js`：在合适位置插入配置对象，设置 `action`、`detail`、`tags` 等字段。
+编辑 `data.js`：在合适位置插入配置对象，设置 `icon`、`action`、`detail`、`tags` 等字段。
 如需要详情页：在 `works/` 下新建 HTML，复制 `works/detail-template.html`，替换 `<!-- -->` 标记内容。
-
-### 添加新图标
-在 `icons.js` 的 `window.__ICONS` 对象中添加一项，key 与 `works.js` 中的 `icon` 字段对应。
 
 ### 部署
 - 推送 Git → Vercel 自动部署（默认即可服务多页面静态文件，无需 rewrite）
@@ -327,3 +318,5 @@ newIcon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-widt
 | 日期 | 变更 |
 |---|---|
 | 2026-06-12 | `main.js` 拆分为 `icons.js` + `renderer.js` + `animations.js`；`index.html` 脚本全部加 `defer`；新增 `works/detail-template.html`；`online_tools/` 冻结 |
+| 2026-06-12 | `works.js` + `icons.js` 合并为 `data.js`（图标内联到数据）；`renderer.js` 移除 `__ICONS` 依赖；修复 wip/archived 卡片 opacity bug；光标光晕 rAF 空转优化；触控设备禁用光晕/倾斜；CSS 标签样式去重；补充 `more` 图标 |
+| 2026-06-12 | 深度架构复盘：①修复 `base64.htm`/`bin_decoder.htm` 缺失 `createFile.js` 引用导致「转换为文件」功能宕机；②清理 4 个无引用的死文件（`main.css`/`mobile.css`/`tree.js`/`jquery-2.1.3.min.js`）；③`renderer.js` 重构——提取 `resolveLink()`/`actionLabel()` 辅助函数，标签生成改用 `map().join()`，增加 per-card try-catch 错误边界；④`animations.js` 去掉冗余外层 IIFE；⑤CSS `no-js` 渐进增强——内联脚本注入 `.js` class，动画初始态全部加 `.js` 前缀，无 JS 时卡片全可见；加 `<noscript>` 回退；删除死选择器 `.about__body` |

@@ -174,6 +174,8 @@ body:hover .cursor-glow { opacity: 1; }
   letter-spacing: 0.3em;
   color: var(--ink-mute);
   margin: 0 0 24px;
+}
+.js .hero__eyebrow {
   opacity: 0;
   transform: translateY(12px);
 }
@@ -196,6 +198,8 @@ body:hover .cursor-glow { opacity: 1; }
   line-height: 1.8;
   margin: 0;
   max-width: 520px;
+}
+.js .hero__sub {
   opacity: 0;
   transform: translateY(12px);
 }
@@ -267,10 +271,12 @@ body:hover .cursor-glow { opacity: 1; }
   transition: transform .5s var(--ease-out), box-shadow .5s var(--ease-out), border-color .4s var(--ease);
   will-change: transform;
   transform-style: preserve-3d;
+}
+.js .card {
   opacity: 0;
   transform: translateY(20px);
 }
-.card.is-in {
+.js .card.is-in {
   opacity: 1;
   transform: translateY(0);
   transition: opacity .8s var(--ease-out), transform .8s var(--ease-out), box-shadow .5s var(--ease-out);
@@ -291,22 +297,16 @@ body:hover .cursor-glow { opacity: 1; }
 .card__tag {
   font-family: 'JetBrains Mono', monospace;
   font-size: 10px;
-  color: var(--ink-mute);
   letter-spacing: 0.1em;
   padding: 3px 8px;
-  background: rgba(138, 138, 130, 0.1);
   border-radius: 999px;
   white-space: nowrap;
+  color: var(--ink-mute);
+  background: rgba(138, 138, 130, 0.1);
 }
 .card__tag--accent {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
   color: var(--accent);
-  letter-spacing: 0.1em;
-  padding: 3px 8px;
   background: rgba(184, 69, 31, 0.1);
-  border-radius: 999px;
-  white-space: nowrap;
 }
 .card__note {
   font-size: 12px;
@@ -328,9 +328,9 @@ body:hover .cursor-glow { opacity: 1; }
   color: var(--accent);
 }
 
-/* 状态：制作中 / 已归档 */
-.card--wip { opacity: .75; }
-.card--archived { opacity: .55; }
+/* 状态：制作中 / 已归档（入场后仍保持半透明） */
+.card--wip.is-in { opacity: .75; }
+.card--archived.is-in { opacity: .55; }
 
 .card__title {
   font-family: 'Noto Serif SC', serif;
@@ -426,13 +426,13 @@ body:hover .cursor-glow { opacity: 1; }
 }
 
 /* ====== Reveal 动效初始态 ====== */
-[data-reveal] { opacity: 0; transform: translateY(14px); }
-[data-reveal].is-in {
+.js [data-reveal] { opacity: 0; transform: translateY(14px); }
+.js [data-reveal].is-in {
   opacity: 1;
   transform: translateY(0);
   transition: opacity .9s var(--ease-out), transform .9s var(--ease-out);
 }
-[data-split] .char {
+.js [data-split] .char {
   display: inline-block;
   opacity: 0;
   transform: translateY(100%);
@@ -449,7 +449,7 @@ body:hover .cursor-glow { opacity: 1; }
     animation-duration: .01ms !important;
     transition-duration: .01ms !important;
   }
-  [data-reveal], [data-split] .char, .card { opacity: 1; transform: none; }
+  .js [data-reveal], .js [data-split] .char, .js .card { opacity: 1; transform: none; }
   .cursor-glow { display: none; }
 }
 
@@ -459,7 +459,7 @@ body:hover .cursor-glow { opacity: 1; }
   .site-nav { gap: 16px; }
   .site-nav__ghost { display: none; }
   .hero { padding: 130px 20px 40px; }
-  .section-head, .grid, .about__body { padding-left: 20px; padding-right: 20px; }
+  .section-head, .grid { padding-left: 20px; padding-right: 20px; }
   .works { padding-top: 20px; padding-bottom: 50px; }
   .card { padding: 24px; min-height: 200px; }
 }

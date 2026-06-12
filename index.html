@@ -10,6 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
+  <script>document.documentElement.className='js'</script>
 </head>
 <body>
   <div class="grain" aria-hidden="true"></div>
@@ -51,7 +52,13 @@
       </header>
 
       <div class="grid" id="worksGrid">
-        <!-- JS 数据驱动渲染，配置见 works.js -->
+        <!-- JS 数据驱动渲染，配置见 data.js -->
+        <noscript>
+          <div class="card" style="opacity:1;transform:none;grid-column:1/-1;text-align:center;padding:48px 32px;">
+            <p style="color:var(--ink-mute);margin:0;">请启用 JavaScript 以查看作品列表。</p>
+            <p style="color:var(--ink-mute);margin:8px 0 0;font-size:13px;">Please enable JavaScript to view the portfolio.</p>
+          </div>
+        </noscript>
       </div>
     </section>
   </main>
@@ -71,8 +78,7 @@
 
   <div class="cursor-glow" id="cursorGlow" aria-hidden="true"></div>
 
-  <script defer src="works.js"></script>
-  <script defer src="icons.js"></script>
+  <script defer src="data.js"></script>
   <script defer src="renderer.js"></script>
   <script defer src="animations.js"></script>
 </body>
