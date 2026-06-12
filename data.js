@@ -23,7 +23,7 @@ window.__WORKS = [
   {
     id: 'invoice',
     title: '发票打印系统',
-    desc: '为内部财务流程做的小桌面应用，从开票到模板打印一条龙，Tauri + Rust 写就。',
+    desc: '面向内部财务的跨平台桌面应用，覆盖 OFD/XML 数电票解析、PDF 矢量打印与批量模板管理。',
     icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="2" width="18" height="20" rx="2"/><path d="M7 6h10M7 10h10M7 14h6"/><circle cx="17" cy="17" r="3"/></svg>',
     pinned: true,
     featured: true,
@@ -41,7 +41,7 @@ window.__WORKS = [
   {
     id: 'douyin',
     title: '抖音采集工具',
-    desc: '多模式抖音数据采集，GUI / Web / CLI 三种走法，开源社区反响最好的项目。',
+    desc: '获取抖音平台公开信息的采集工具，支持 GUI / Web / CLI 三种模式，集成 Aria2 批量下载。',
     icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="3" width="12" height="18" rx="2"/><polygon points="10,8 16,12 10,16"/></svg>',
     pinned: true,
     action: 'link',
@@ -58,7 +58,7 @@ window.__WORKS = [
   {
     id: 'scanner',
     title: 'std_scanner 标准抓取工具',
-    desc: '面向标准文档的结构化抓取与导出工具，工作中用来减少重复劳动的私人项目。',
+    desc: '面向标准文档的结构化抓取与导出工具。',
     icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M16 16l4 4"/><path d="M9 11h4M11 9v4"/></svg>',
     pinned: false,
     action: 'detail',
@@ -90,7 +90,7 @@ window.__WORKS = [
   {
     id: 'veilcrawler',
     title: 'VeilCrawler 网页采集器',
-    desc: '轻量 Chrome 扩展，可视化点击生成采集规则。解决"所见即不可得"的数据获取痛点。',
+    desc: '轻量级可视化 Web 数据采集扩展，所见即所得点击生成规则，支持自动翻页、数据去重与 JSON API 拦截。',
     icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2v20M4.93 4.93l14.14 14.14M19.07 4.93L4.93 19.07"/></svg>',
     pinned: false,
     action: 'link',
@@ -106,7 +106,7 @@ window.__WORKS = [
   {
     id: 'grid-board',
     title: '安全生产网格员公示牌',
-    desc: '企业安全生产网格化管理公示牌，服务"六化"建设中网格化任务，实际在用。',
+    desc: '企业安全生产网格化管理公示牌，安全生产可视化工具，服务"六化"建设中网格化任务。',
     icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>',
     pinned: false,
     action: 'link',
