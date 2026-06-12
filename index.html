@@ -50,85 +50,84 @@
         </h2>
       </header>
 
-      <div class="grid">
-        <!-- 在线工具 — 置顶，保留原页面入口 -->
-        <a class="card card--feature" href="./online_tools/" rel="noopener" data-tilt>
-          <div class="card__tag">★ 工具</div>
-          <div class="card__icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
-            </svg>
-          </div>
-          <h3 class="card__title">在线工具集</h3>
-          <p class="card__desc">从主页跳转过来的那个老朋友 — JSON 格式化、Base64、UUID、正则测试等日常小工具的合集，无需登录打开即用。</p>
-          <div class="card__foot">
-            <span class="card__stack">HTML · Vanilla JS</span>
-            <span class="card__link">打开 →</span>
-          </div>
-          <span class="card__sheen" aria-hidden="true"></span>
-        </a>
-
-        <a class="card" href="#" data-tilt>
-          <div class="card__icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/>
-            </svg>
-          </div>
-          <h3 class="card__title">std_scanner 标准抓取工具</h3>
-          <p class="card__desc">面向标准文档的结构化抓取与导出工具，工作中用来减少重复劳动的私人项目。</p>
-          <div class="card__foot">
-            <span class="card__stack">Python · FastAPI · pywebview</span>
-            <span class="card__link">查看 →</span>
-          </div>
-          <span class="card__sheen" aria-hidden="true"></span>
-        </a>
-
-        <a class="card" href="#" data-tilt>
-          <div class="card__icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/>
-            </svg>
-          </div>
-          <h3 class="card__title">发票打印系统</h3>
-          <p class="card__desc">为内部财务流程做的小桌面应用，从开票到模板打印一条龙，Tauri + Rust 写就。</p>
-          <div class="card__foot">
-            <span class="card__stack">Tauri 2 · Rust · JS</span>
-            <span class="card__link">查看 →</span>
-          </div>
-          <span class="card__sheen" aria-hidden="true"></span>
-        </a>
-
-        <a class="card" href="https://blog.erma0.cn" target="_blank" rel="noopener" data-tilt>
-          <div class="card__icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <path d="M4 4h16v16H4z"/><path d="M4 8h16M8 4v16"/>
-            </svg>
-          </div>
-          <h3 class="card__title">博客</h3>
-          <p class="card__desc">记录技术折腾、读书笔记与生活琐碎。频率不高，但愿每篇都值得一读。</p>
-          <div class="card__foot">
-            <span class="card__stack">blog.erma0.cn</span>
-            <span class="card__link">访问 →</span>
-          </div>
-          <span class="card__sheen" aria-hidden="true"></span>
-        </a>
-
-        <a class="card" href="#" data-tilt>
-          <div class="card__icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <path d="M12 2v20M2 12h20M5 5l14 14M19 5L5 19"/>
-            </svg>
-          </div>
-          <h3 class="card__title">更多项目</h3>
-          <p class="card__desc">GitHub 上还有一些小玩具和未完工的实验，等收拾干净了再放到这里。</p>
-          <div class="card__foot">
-            <span class="card__stack">GitHub · 持续更新</span>
-            <span class="card__link">即将 →</span>
-          </div>
-          <span class="card__sheen" aria-hidden="true"></span>
-        </a>
+      <div class="grid" id="worksGrid">
+        <!-- JS 数据驱动渲染，见下方 WORKS 数组 -->
       </div>
     </section>
+
+    <!--
+      ══════════════════════════════════════════════
+      卡片数据配置：增/删/改项目只需编辑这个数组
+      ══════════════════════════════════════════════
+    -->
+    <script>
+    window.__WORKS = [
+      {
+        id: 'invoice',
+        title: '发票打印系统',
+        desc: '为内部财务流程做的小桌面应用，从开票到模板打印一条龙，Tauri + Rust 写就。',
+        stack: 'Tauri 2 · Rust · JS',
+        link: '#',
+        icon: 'invoice',
+        pinned: true,
+        featured: true,
+        tags: [
+          { text: '主推', color: 'accent' },
+          { text: '桌面应用', color: 'mute' }
+        ]
+      },
+      {
+        id: 'scanner',
+        title: 'std_scanner 标准抓取工具',
+        desc: '面向标准文档的结构化抓取与导出工具，工作中用来减少重复劳动的私人项目。',
+        stack: 'Python · FastAPI · pywebview',
+        link: '#',
+        icon: 'scanner',
+        pinned: false,
+        tags: [
+          { text: '工具', color: 'mute' }
+        ]
+      },
+      {
+        id: 'tools',
+        title: '在线工具集',
+        desc: '编码解码、Base64、哈希、正则测试等日常小工具的合集，打开即用无需登录。',
+        stack: 'HTML · Vanilla JS',
+        link: './online_tools/',
+        icon: 'tools',
+        pinned: false,
+        tags: [
+          { text: '复刻', color: 'mute' }
+        ],
+        note: '非原创作品，仅为方便使用保留的复刻版。'
+      },
+      {
+        id: 'blog',
+        title: '博客',
+        desc: '记录技术折腾、读书笔记与生活琐碎。频率不高，但愿每篇都值得一读。',
+        stack: 'blog.erma0.cn',
+        link: 'https://blog.erma0.cn',
+        external: true,
+        icon: 'blog',
+        pinned: false,
+        tags: [
+          { text: '链接', color: 'mute' }
+        ]
+      },
+      {
+        id: 'more',
+        title: '更多项目',
+        desc: 'GitHub 上还有一些小玩具和未完工的实验，等收拾干净了再放到这里。',
+        stack: 'GitHub · 持续更新',
+        link: '#',
+        icon: 'more',
+        pinned: false,
+        tags: [
+          { text: '预告', color: 'mute' }
+        ]
+      }
+    ];
+    </script>
   </main>
 
   <footer class="site-footer">

@@ -1,5 +1,5 @@
 /* ============================================
-   鸽子笼 · 作品集  动效脚本
+   鸽子笼 · 作品集  动效 & 卡片渲染脚本
    纯原生，零依赖
    ============================================ */
 (() => {
@@ -8,12 +8,8 @@
 
   /* ---------- 1. 顶部导航：滚动后变实底 ---------- */
   const header = document.getElementById('siteHeader');
-  let lastY = 0;
   const onScroll = () => {
-    const y = window.scrollY;
-    if (y > 8) header.classList.add('is-scrolled');
-    else header.classList.remove('is-scrolled');
-    lastY = y;
+    header.classList.toggle('is-scrolled', window.scrollY > 8);
   };
   window.addEventListener('scroll', onScroll, { passive: true });
   onScroll();
@@ -23,9 +19,7 @@
   if (glow && !reduceMotion && window.matchMedia('(hover: hover)').matches) {
     let gx = window.innerWidth / 2, gy = window.innerHeight / 2;
     let tx = gx, ty = gy;
-    document.addEventListener('mousemove', (e) => {
-      tx = e.clientX; ty = e.clientY;
-    });
+    document.addEventListener('mousemove', (e) => { tx = e.clientX; ty = e.clientY; });
     const tick = () => {
       gx += (tx - gx) * 0.12;
       gy += (ty - gy) * 0.12;
@@ -35,7 +29,64 @@
     requestAnimationFrame(tick);
   }
 
-  /* ---------- 3. 标题字符拆分（为每个字符包一层 span） ---------- */
+  /* ---------- 3. 图标 SVG 映射 ---------- */
+  const ICONS = {
+    invoice: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>',
+    scanner: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>',
+    tools:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>',
+    blog:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4h16v16H4z"/><path d="M4 8h16M8 4v16"/></svg>',
+    more:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2v20M2 12h20M5 5l14 14M19 5L5 19"/></svg>'
+  };
+
+  /* ---------- 4. 卡片渲染 ---------- */
+  const grid = document.getElementById('worksGrid');
+  const works = window.__WORKS || [];
+
+  // pinned 置顶，其余保持数组顺序
+  works.sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0));
+
+  works.forEach((w) => {
+    const card = document.createElement('a');
+    card.className = 'card' + (w.featured ? ' card--feature' : '');
+    card.href = w.link;
+    card.setAttribute('data-tilt', '');
+    if (w.external) {
+      card.target = '_blank';
+      card.rel = 'noopener';
+    }
+
+    // 标签
+    let tagsHTML = '';
+    if (w.tags && w.tags.length) {
+      tagsHTML = w.tags.map((t) => {
+        const cls = t.color === 'accent' ? 'card__tag--accent' : 'card__tag';
+        return `<span class="${cls}">${t.text}</span>`;
+      }).join('');
+    }
+
+    // 图标
+    const iconHTML = `<div class="card__icon" aria-hidden="true">${ICONS[w.icon] || ''}</div>`;
+
+    // 备注行（仅非原创作品显示）
+    const noteHTML = w.note ? `<div class="card__note">${w.note}</div>` : '';
+
+    card.innerHTML = `
+      <div class="card__tags">${tagsHTML}</div>
+      ${iconHTML}
+      <h3 class="card__title">${w.title}</h3>
+      <p class="card__desc">${w.desc}</p>
+      ${noteHTML}
+      <div class="card__foot">
+        <span class="card__stack">${w.stack}</span>
+        <span class="card__link">查看 →</span>
+      </div>
+      <span class="card__sheen" aria-hidden="true"></span>
+    `;
+
+    grid.appendChild(card);
+  });
+
+  /* ---------- 5. 标题字符拆分 ---------- */
   const splitTargets = document.querySelectorAll('[data-split]');
   splitTargets.forEach((el) => {
     const text = el.textContent;
@@ -49,7 +100,7 @@
     });
   });
 
-  /* ---------- 4. IntersectionObserver：触发进入动画 ---------- */
+  /* ---------- 6. IntersectionObserver：触发进入动画 ---------- */
   const io = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
       if (entry.isIntersecting) {
@@ -61,10 +112,10 @@
 
   document.querySelectorAll('[data-reveal], [data-split], .card').forEach((el) => io.observe(el));
 
-  /* ---------- 5. 卡片 3D 倾斜 + 光斑位置（仅支持 hover 的设备） ---------- */
+  /* ---------- 7. 卡片 3D 倾斜 + 光斑位置 ---------- */
   if (!reduceMotion && window.matchMedia('(hover: hover)').matches) {
     document.querySelectorAll('[data-tilt]').forEach((card) => {
-      const MAX = 4; // 最大倾斜角度
+      const MAX = 4;
       let raf = null;
       const onMove = (e) => {
         const r = card.getBoundingClientRect();
@@ -88,7 +139,7 @@
     });
   }
 
-  /* ---------- 6. 平滑滚动到锚点 ---------- */
+  /* ---------- 8. 平滑滚动到锚点 ---------- */
   document.querySelectorAll('a[href^="#"]').forEach((a) => {
     a.addEventListener('click', (e) => {
       const id = a.getAttribute('href');
