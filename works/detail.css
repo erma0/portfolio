@@ -20,16 +20,12 @@
   margin-bottom: 2rem;
   transition: color .25s var(--ease);
 }
-.detail-back:hover {
-  color: var(--ink);
-}
+.detail-back:hover { color: var(--ink); }
 
 /* 标题区 */
-.detail-head {
-  margin-bottom: 2.5rem;
-}
+.detail-head { margin-bottom: 2.5rem; }
 .detail-head h1 {
-  font-family: 'Noto Serif SC', serif;
+  font-family: var(--font-serif);
   font-size: 2.4rem;
   font-weight: 600;
   color: var(--ink);
@@ -45,7 +41,7 @@
   color: var(--ink-mute);
 }
 .detail-type {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 11px;
   padding: 3px 10px;
   border-radius: 999px;
@@ -56,7 +52,7 @@
 .detail-type.web      { color: #4e9af1;        background: rgba(78,154,241,.08); }
 .detail-type.embed    { color: #8a8a82;        background: rgba(138,138,130,.1); }
 
-/* 主体内容区 — 截图 / 下载 / 介绍 自由组合 */
+/* 主体内容区 */
 .detail-body {
   font-size: 16px;
   line-height: 1.8;
@@ -65,7 +61,7 @@
 
 /* 节标题 */
 .detail-body h2 {
-  font-family: 'Noto Serif SC', serif;
+  font-family: var(--font-serif);
   font-size: 1.3rem;
   font-weight: 600;
   color: var(--ink);
@@ -81,8 +77,16 @@
 }
 
 /* 段落 */
-.detail-body p {
-  margin: 0 0 1rem;
+.detail-body p { margin: 0 0 1rem; }
+
+/* 行内代码 */
+.detail-body code {
+  font-family: var(--font-mono);
+  font-size: .9em;
+  padding: 2px 6px;
+  background: rgba(138,138,130,.08);
+  border-radius: 4px;
+  color: var(--accent);
 }
 
 /* 列表 */
@@ -137,12 +141,12 @@
   padding: .65rem 1.4rem;
   border: 1px solid var(--line);
   border-radius: 8px;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 13px;
   color: var(--ink);
   text-decoration: none;
   background: var(--bg-soft);
-  transition: background .2s var(--ease), border-color .2s;
+  transition: background .2s var(--ease), border-color .2s, color .2s;
 }
 .btn-dl:hover {
   background: var(--bg);
@@ -160,7 +164,7 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 13px;
   color: var(--ink-mute);
   text-decoration: none;
@@ -190,12 +194,50 @@
   font-size: 14px;
 }
 
+/* 版本对比表格 */
+.detail-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin: 12px 0 24px;
+}
+.detail-table th,
+.detail-table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+}
+.detail-table th {
+  font-weight: 600;
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  background: var(--bg-soft);
+}
+.detail-table td { color: var(--ink-soft); }
+.detail-table td:first-child { color: var(--ink-mute); font-weight: 500; }
+.detail-table code {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  background: var(--bg-soft);
+  padding: 1px 6px;
+  border-radius: 3px;
+}
+
+/* 仓库链接行 */
+.detail-repo-wrap {
+  margin-top: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
 /* 响应式 */
 @media (max-width: 640px) {
-  .detail {
-    padding: 4rem 1.2rem 3rem;
-  }
-  .detail-head h1 {
-    font-size: 1.8rem;
-  }
+  .detail { padding: 4rem 1.2rem 3rem; }
+  .detail-head h1 { font-size: 1.8rem; }
+  .detail-downloads { flex-direction: column; }
+  .btn-dl { justify-content: center; }
 }

@@ -3,16 +3,73 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>发票打印系统 · 鸽子笼</title>
-  <meta name="description" content="发票打印系统 — Tauri 2 跨平台桌面应用，OFD/XML 数电票解析与 PDF 矢量嵌入打印。" />
+  <title>发票酱 · 发票打印系统 · 鸽子笼</title>
+  <meta name="description" content="发票酱 — 双版本跨平台发票打印工具，支持 OFD/XML 数电票解析与 PDF 矢量打印。" />
   <meta name="theme-color" content="#f6f3ec" />
   <link rel="canonical" href="https://works.erma0.cn/works/invoice.html" />
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🕊️</text></svg>" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🕊</text></svg>" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../styles.css" />
   <link rel="stylesheet" href="detail.css" />
+  <style>
+    .version-card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-bottom: 24px;
+      background: var(--bg-soft);
+    }
+    .version-card h3 {
+      margin: 0 0 8px;
+      font-family: var(--font-serif);
+      font-size: 20px;
+    }
+    .version-card .ver-tag {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      padding: 3px 10px;
+      border-radius: 999px;
+      margin-left: 10px;
+      vertical-align: middle;
+    }
+    .ver-tag--desktop {
+      color: var(--accent);
+      background: rgba(184, 69, 31, 0.1);
+    }
+    .ver-tag--web {
+      color: var(--accent-2);
+      background: rgba(44, 74, 62, 0.1);
+    }
+    .version-card ul { margin: 8px 0 0; }
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+      margin: 16px 0;
+    }
+    .feature-item {
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      background: var(--bg);
+    }
+    .feature-item h4 {
+      margin: 0 0 6px;
+      font-family: var(--font-serif);
+      font-size: 16px;
+      font-weight: 600;
+    }
+    .feature-item p {
+      margin: 0;
+      font-size: 13px;
+      color: var(--ink-soft);
+      line-height: 1.6;
+    }
+  </style>
 </head>
 <body>
   <div class="grain" aria-hidden="true"></div>
@@ -21,35 +78,100 @@
     <a href="../" class="detail-back">← 作品集</a>
 
     <header class="detail-head">
-      <h1>发票打印系统</h1>
+      <h1>发票酱 · 发票打印系统</h1>
       <div class="detail-meta">
         <span class="detail-type desktop">桌面应用</span>
-        <span>Tauri 2 · Rust · pdf-lib · print.js</span>
+        <span class="detail-type" style="background:rgba(44,74,62,.1);color:var(--accent-2);">Web 应用</span>
+        <span>Tauri 2 · Rust · pdf-lib · 纯前端</span>
       </div>
     </header>
 
     <div class="detail-body">
       <p>
-        面向内部财务流程的跨平台桌面应用，覆盖 OFD / XML 数电票解析、PDF 矢量嵌入打印、批量模板管理等场景。
-        三个分支并行维护：<code>master</code>（v2.0.7 稳定版）、<code>dev</code>（开发版）、<code>feat/web-cross-platform</code>（v2.2.0 纯前端版）。
+        跨平台发票批量打印工具，支持 OFD / XML 数电票自动解析、PDF 矢量嵌入打印与批量模板管理。
+        提供两个独立版本，核心功能一致，覆盖不同使用场景：
       </p>
 
-      <h2>核心功能</h2>
-      <ul>
-        <li>OFD / XML 数电票自动解析与结构化提取</li>
-        <li>PDF 矢量嵌入打印：页面布局、水印、页脚、页码全支持</li>
-        <li>批量模板管理与一键打印</li>
-        <li>跨平台：Windows / macOS / Linux（Tauri 2 底座）</li>
-        <li>纯前端版可脱离桌面环境，浏览器直接运行</li>
-      </ul>
+      <div class="version-card">
+        <h3>
+          桌面版
+          <span class="ver-tag ver-tag--desktop">v2.0.7</span>
+        </h3>
+        <p style="margin:0 0 8px;color:var(--ink-soft)">master 分支 — 跨平台桌面安装包，性能优先</p>
+        <ul>
+          <li>Tauri 2 底座，原生性能，安装包小巧（~8MB）</li>
+          <li>Rust 后端：OFD 解析、PDF 排版引擎、静默批量打印</li>
+          <li>系统级打印能力：直接调用打印机驱动，支持静默输出</li>
+          <li>Windows / macOS / Linux 三平台安装包</li>
+        </ul>
+        <p style="margin:8px 0 0;font-family:var(--font-mono);font-size:12px;color:var(--ink-mute);">
+          技术栈：Tauri 2 · Rust · pdf-lib · print.js · Noto Sans SC
+        </p>
+      </div>
 
-      <h2>技术栈</h2>
-      <ul>
-        <li><strong>Tauri 2.x</strong> — Rust 桌面壳，轻量跨平台</li>
-        <li><strong>pdf-lib</strong> — PDF 生成引擎，支持矢量中文字体嵌入</li>
-        <li><strong>print.js</strong> — 打印逻辑核心，静默批量打印</li>
-        <li><strong>Noto Sans SC</strong> — CJK 字体，保证打印效果一致</li>
-      </ul>
+      <div class="version-card">
+        <h3>
+          Web 版
+          <span class="ver-tag ver-tag--web">v3.0.0</span>
+        </h3>
+        <p style="margin:0 0 8px;color:var(--ink-soft);">web 分支 — 纯静态前端，浏览器直接运行，零安装</p>
+        <ul>
+          <li>纯 HTML / CSS / JavaScript，无构建步骤，无服务端依赖</li>
+          <li>浏览器内完成 OFD / XML 解析、PDF 生成、打印预览</li>
+          <li>与服务端无交互，所有数据仅存于本地浏览器</li>
+          <li>可部署到任意静态服务器，打开即用</li>
+        </ul>
+        <p style="margin:8px 0 0;font-family:var(--font-mono);font-size:12px;color:var(--ink-mute);">
+          技术栈：pdf-lib · pdf.js · ofd-client.js · xml-client.js · Local Font Access API
+        </p>
+      </div>
+
+      <h2>核心功能（两版通用）</h2>
+      <div class="feature-grid">
+        <div class="feature-item">
+          <h4>OFD 解析</h4>
+          <p>自动识别 OFD 格式数电票，提取发票号码、日期、金额、购销方等全部字段</p>
+        </div>
+        <div class="feature-item">
+          <h4>XML 解析</h4>
+          <p>支持 XML 格式数电票数据提取，兼容多版本 XML 结构</p>
+        </div>
+        <div class="feature-item">
+          <h4>PDF 矢量打印</h4>
+          <p>矢量 PDF 生成引擎，中文嵌入不失真。页面布局、水印、页脚、页码全可配</p>
+        </div>
+        <div class="feature-item">
+          <h4>批量模板管理</h4>
+          <p>多套打印模板切换，批量文件拖入一键处理，支持预览与单票微调</p>
+        </div>
+        <div class="feature-item">
+          <h4>智能识别</h4>
+          <p>自动检测发票类型、方向，匹配对应模板，减少手动操作</p>
+        </div>
+        <div class="feature-item">
+          <h4>多格式导出</h4>
+          <p>支持 PDF 直接打印、文件重命名、归档输出，适配财务归档流程</p>
+        </div>
+      </div>
+
+      <h2>版本对比</h2>
+      <table class="detail-table">
+        <thead>
+          <tr><th></th><th>桌面版 v2.0.7</th><th>Web 版 v3.0.0</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>分支</td><td><code>master</code></td><td><code>web</code></td></tr>
+          <tr><td>运行方式</td><td>安装包</td><td>浏览器打开</td></tr>
+          <tr><td>OFD 解析</td><td>✅ Rust 原生</td><td>✅ JS 解析</td></tr>
+          <tr><td>XML 解析</td><td>✅ Rust 原生</td><td>✅ JS 解析</td></tr>
+          <tr><td>PDF 矢量打印</td><td>✅ pdf-lib + 系统驱动</td><td>✅ pdf-lib + 浏览器打印</td></tr>
+          <tr><td>静默打印</td><td>✅ 系统级</td><td>受浏览器限制</td></tr>
+          <tr><td>安装包大小</td><td>~8 MB</td><td>无需安装</td></tr>
+          <tr><td>平台</td><td>Win / Mac / Linux</td><td>任意现代浏览器</td></tr>
+          <tr><td>本地字体</td><td>内嵌 Noto Sans SC</td><td>Local Font Access API</td></tr>
+          <tr><td>离线使用</td><td>✅ 完全离线</td><td>✅ 首次加载后可离线</td></tr>
+        </tbody>
+      </table>
 
       <h2>截图</h2>
       <div class="detail-placeholder" role="img" aria-label="截图待补充">
@@ -58,25 +180,28 @@
 
       <h2>下载</h2>
       <div class="detail-downloads">
-        <a class="btn-dl" href="#" aria-label="下载 Windows x64 版本">
+        <a class="btn-dl" href="#" aria-label="下载桌面版 Windows x64">
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
             <path d="M4 10v2a2 2 0 002 2h4a2 2 0 002-2v-2M8 1v9M5 7l3 3 3-3"/>
           </svg>
-          Windows x64
+          桌面版 · Windows x64
         </a>
-        <a class="btn-dl" href="#" aria-label="下载 macOS arm64 版本">
+        <a class="btn-dl" href="#" aria-label="下载桌面版 macOS arm64">
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
             <path d="M4 10v2a2 2 0 002 2h4a2 2 0 002-2v-2M8 1v9M5 7l3 3 3-3"/>
           </svg>
-          macOS arm64
+          桌面版 · macOS arm64
         </a>
       </div>
 
-      <p style="margin-top:2rem;">
+      <p class="detail-repo-wrap">
         <a class="detail-repo" href="https://github.com/erma0/fapiao-print" target="_blank" rel="noopener noreferrer">
           <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
           erma0/fapiao-print
         </a>
+        <span style="color:var(--ink-mute);font-size:13px;">
+          master (桌面 v2.0.7) · web (纯前端 v3.0.0)
+        </span>
       </p>
     </div>
   </article>
