@@ -24,14 +24,24 @@
   if (glow && !reduceMotion && window.matchMedia('(hover: hover)').matches) {
     let gx = window.innerWidth / 2, gy = window.innerHeight / 2;
     let tx = gx, ty = gy;
-    document.addEventListener('mousemove', (e) => { tx = e.clientX; ty = e.clientY; });
+    let rafId = null;
+    document.addEventListener('mousemove', (e) => {
+      tx = e.clientX; ty = e.clientY;
+      if (!rafId) rafId = requestAnimationFrame(tick);
+    });
     const tick = () => {
+      if (document.hidden) { rafId = null; return; }
       gx += (tx - gx) * 0.12;
       gy += (ty - gy) * 0.12;
       glow.style.transform = `translate(${gx}px, ${gy}px) translate(-50%, -50%)`;
-      requestAnimationFrame(tick);
+      const dx = Math.abs(gx - tx), dy = Math.abs(gy - ty);
+      if (dx > 0.3 || dy > 0.3) {
+        rafId = requestAnimationFrame(tick);
+      } else {
+        rafId = null;
+      }
     };
-    requestAnimationFrame(tick);
+    rafId = requestAnimationFrame(tick);
   }
 
   /* ---------- 3. 图标 SVG 映射 ---------- */

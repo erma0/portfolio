@@ -394,9 +394,6 @@ body:hover .cursor-glow { opacity: 1; }
   .card--feature .card__title { font-size: 22px; }
 }
 
-/* ====== About —— 移除（与主页重复） ====== */
-/* 旧 .about 相关样式已删，避免空白锚点 */
-.about { display: none; }
 
 /* ====== Footer —— 改成横向一行链接 ====== */
 .site-footer {
