@@ -290,11 +290,13 @@ portfolio/
 
 | 项目 | 技术栈 | 类型 | 链接 |
 |---|---|---|---|
-| 发票打印系统 | Tauri 2 · Rust · pdf-lib · print.js | 跨平台桌面应用 | 主推项目 |
+| 发票打印系统 | Tauri 2 · Rust · pdf-lib · print.js | 跨平台桌面应用 | 主推 |
+| 抖音采集工具 | Python · FastAPI · React · Vite · Aria2 | 桌面/Web/CLI | GitHub |
 | std_scanner | Python · FastAPI · pywebview | 标准文档抓取 | GitHub |
+| 在线工具集（复刻） | HTML · Vanilla JS | 编码/哈希/转换工具 | /online_tools/ |
+| VeilCrawler | TypeScript · React · Chrome MV3 | 浏览器扩展 | GitHub |
+| 网格员公示牌 | HTML · CSS · 静态页面 | 安全生产可视化 | CloudStudio |
 | 博客 | — | 技术/生活记录 | blog.erma0.cn |
-| 在线工具集（复刻） | HTML · Vanilla JS | 编码/哈希/转换工具 | works.erma0.cn/online_tools/ |
-| 网格员公示牌 | Ardot MCP · jsPDF · Noto Sans SC | 安全生产可视化 | 内部项目 |
 
 ---
 
