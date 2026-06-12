@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Base64 → 十六进制解码器</title>
+  <link rel="stylesheet" href="./css/tool.css">
+  <script src="./js/utils.js"></script>
+</head>
+<body>
+<div id="bg"></div>
+<main class="container">
+  <nav class="top-nav">
+    <a href="./index.html">← 工具列表</a>
+  </nav>
+  <header class="tool-header">
+    <h1>Base64 → 十六进制解码器</h1>
+    <p class="tool-desc">在线 Base64 转十六进制字符串解码工具，支持导出二进制文件</p>
+  </header>
+  <section class="tool-body">
+
+<script>
+// 将解码结果显示为可读文本（HTML 转义已处理）
+function showDecodedText(val) {
+    const target = document.getElementById('divDecodedText');
+    target.innerHTML = val;
+}
+
+function convert() {
+    const input = document.frmConvert.encoded.value;
+    const bytes = base64Decode(input);
+
+    // 生成十六进制输出
+    const useSeparator = document.frmConvert.chbSeparator.checked;
+    const useLowercase = document.frmConvert.chbLowercaseOutput.checked;
+    const separator = useSeparator ? ' 0x' : '';
+    const hexText = bytes2hex(bytes, separator, useLowercase);
+    document.frmConvert.hex.value = hexText;
+
+    // 生成 ASCII 可读文本显示
+    let htmlStr = '<p style="font-family: courier new, monospace"><b>';
+    for (let i = 0; i < bytes.length; i++) {
+        const byte = bytes[i];
+        if (byte >= 32 && byte <= 126) {
+            const ch = String.fromCharCode(byte);
+            switch (ch) {
+                case '&': htmlStr += '&amp;'; break;
+                case '<': htmlStr += '&lt;'; break;
+                case '>': htmlStr += '&gt;'; break;
+                case '"': htmlStr += '&quot;'; break;
+                case "'": htmlStr += '&#039;'; break;
+                default: htmlStr += ch;
+            }
+        } else {
+            htmlStr += '<i>[' + byte + ']</i>';
+        }
+    }
+    htmlStr += '</b></p>';
+    showDecodedText(htmlStr);
+}
+
+function convertToFile() {
+    convert();
+    const hex = document.frmConvert.hex.value;
+    const fileName = document.frmConvert.filename.value || 'myfile.dat';
+    createFileFromHex(hex, fileName);
+}
+</script>
+
+<form name="frmConvert" action="">
+  <p><label for="encoded">Base64 字符串：</label></p>
+  <p><input type="text" name="encoded" id="encoded" value=""></p>
+
+  <p>选项：</p>
+  <p>
+    <input type="checkbox" name="chbSeparator" value="sep" id="chbSep">
+    <label for="chbSep">输出添加 0x 前缀</label>
+    <br>
+    <input type="checkbox" name="chbLowercaseOutput" value="lowercaseHex" id="chbLower">
+    <label for="chbLower">使用小写十六进制字符</label>
+  </p>
+
+  <p><label for="hex">解码数据（十六进制）</label></p>
+  <p><input type="text" name="hex" id="hex" value="" readonly></p>
+
+  <p>解码数据（ASCII 文本），32~126 范围外的字节以斜体显示为 <i>[byte value]</i>：</p>
+  <div id="divDecodedText">
+    <p><i>（解码后的文本将显示在此处）</i></p>
+  </div>
+
+  <p><button type="button" onclick="convert()">转换</button></p>
+
+  <h2>转换为原始二进制文件（客户端）</h2>
+  <p><label for="filename">创建文件名：</label></p>
+  <p><input type="text" name="filename" id="filename" value="myfile.dat"></p>
+  <p><button type="button" onclick="convertToFile()">转换为文件</button></p>
+</form>
+
+<p>相关工具：<a href="base64_multi.htm">批量 Base64 → 十六进制转换器</a>。</p>
+  </section>
+  <footer class="page-footer">
+    <p class="copyright">@鸽子笼 2020-2026</p>
+  </footer>
+</main>
+</body>
+</html>

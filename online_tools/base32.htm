@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Base32 → 十六进制解码器</title>
+  <link rel="stylesheet" href="./css/tool.css">
+
+</head>
+<body>
+<div id="bg"></div>
+<main class="container">
+  <nav class="top-nav">
+    <a href="./index.html">← 工具列表</a>
+  </nav>
+  <header class="tool-header">
+    <h1>Base32 → 十六进制解码器</h1>
+    <p class="tool-desc">在线 Base32 转十六进制字符串解码工具</p>
+  </header>
+  <section class="tool-body">
+<script type="text/javascript">
+//<!--
+    var hD='0123456789ABCDEF';
+    function dec2hex(d) {
+        var h = hD.substr(d&15,1);
+        while (d>15) {
+            d>>=4;
+            h=hD.substr(d&15,1)+h;
+        }
+        if (document.frmConvert.chbLowercaseOutput.checked) {
+            h = h.toLowerCase();
+        }        
+        return h;
+    }
+
+    var keyStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567="
+    function base32_decode(input) {
+        var buffer = 0;
+        var bitsLeft = 0;    
+        var output = new Array();
+        var i = 0;
+        var count = 0;
+        
+        while (i < input.length) {
+            var val = keyStr.indexOf(input.charAt(i++));
+            if (val >= 0 && val < 32) {
+              buffer <<= 5;
+              buffer |= val;
+              bitsLeft += 5;
+              if (bitsLeft >= 8) {
+                output[count++] = (buffer >> (bitsLeft - 8)) & 0xFF;
+                bitsLeft -= 8;
+              }            
+            }                         
+        }        
+        return {output : output, bitsLeft : bitsLeft};
+    }
+    
+   
+    function ShowDecodedAsText(val)
+    {
+        var target = document.getElementById('divDecodedText'); 
+        target.innerHTML = val;    
+    }     
+
+    function ShowWarn(val)
+    {
+        var target = document.getElementById('divWarn'); 
+        target.innerHTML = val;    
+    }    
+    
+    function Convert() {
+        var input = document.frmConvert.encoded.value.toUpperCase();
+        var cleaned = "";
+        var myRegExp = /[A-Z0-7]/ ;        
+        for (i=0; i<input.length; i++) {
+          var ch = input.charAt(i);
+          if (ch == '0') {
+            ch = 'O';
+          } else if (ch == '1') {
+            ch = 'L';
+          } else if (ch == '8') {
+            ch = 'B';
+          } else if (myRegExp.test(ch) == false) {
+            continue;
+          }
+          cleaned += ch;          
+        }
+        document.frmConvert.cleaned.value = cleaned;
+        var result = base32_decode(cleaned);
+        var output = result.output;
+        var bitsLeft = result.bitsLeft;
+        var separator = "";
+        if (document.frmConvert.chbSeparator.checked)
+            separator = " 0x";
+        var hexText = "";
+        //if (bitsLeft > 0) {
+        // var htmlWarn = "<p" + ">" + "Warning: input data is not a multiple of 8 bits, ";
+        //  htmlWarn += "last output byte was padded with " + (8-bitsLeft) + " zero bits on the right.</p" + ">";
+        //  ShowWarn(htmlWarn);        
+        //} else
+        {
+          var htmlWarn = "<p" + ">" + "</p" + ">";
+          ShowWarn(htmlWarn);          
+        }
+        var htmlStr = "<p style=\"font-family: courier new, monospace\"><b>";
+        for (i=0; i<output.length; i++) {
+          hexText = hexText + separator + (output[i]<16?"0":"") + dec2hex(output[i]);
+          if (output[i] >= 32 && output[i] <= 126)
+          {
+            switch(String.fromCharCode(output[i])) {
+            case '&': htmlStr += "&amp;";
+              break;
+            case '<': htmlStr += "&lt;";
+              break;
+            case '>': htmlStr += "&gt;";
+              break;
+            case '"': htmlStr += "&quot;";
+              break;
+            case '\'': htmlStr += "&#039;";
+              break;
+            default: htmlStr += String.fromCharCode(output[i]);
+            }          
+          }
+          else {
+            htmlStr += "<i>[" + output[i] + "]<" + "/i>";
+          }
+        }
+        htmlStr += "<" + "/b><" + "/p>";  // stupid W3C validator...
+        document.frmConvert.hex.value = hexText;
+                
+        ShowDecodedAsText(htmlStr);   
+    } 
+
+//-->
+</script>
+<h3>Base32 → 十六进制字符串解码器</h3>
+      <form name="frmConvert" action="">
+				<p>Base32 string:</p>
+			    <p><input type="text" name="encoded" value="" style="width: 550px;"></p>
+				<p>Cleaned-up string (uppercase only, fixed common mistypes like 8 - B, removed characters outside base32 set):</p>
+			    <p><input type="text" name="cleaned" readonly="readonly" value="" style="width: 550px;"></p>
+        <p>选项：</p>
+          <p><input type="checkbox" name="chbSeparator" value="sep">输出添加 0x 前缀
+          <br>
+          <input type="checkbox" name="chbLowercaseOutput" value="lowercaseHex">使用小写十六进制字符</p>  
+        <div id="divWarn">
+        <p></p>
+        </div>	          
+				<p>解码数据（十六进制）</p>
+			    <p><input type="text" name="hex" value="" style="width: 550px;"></p>
+        <p>解码数据（ASCII 文本），32~126 范围外的字节以斜体显示为 <i>[byte value]</i>:<br>        
+        <div id="divDecodedText">
+        <p><i>（解码后的文本将显示在此处）</i></p>
+        </div>	 			    
+			  <p>
+			    <button type=button name="btnConvert"
+            onclick="Convert()">
+            转换
+          </button>
+			  </p>
+			</form>
+  </section>
+  <footer class="page-footer">
+    <p class="copyright">@鸽子笼 2020-2026</p>
+  </footer>
+</main>
+</body>
+</html>

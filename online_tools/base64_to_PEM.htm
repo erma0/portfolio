@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Base64 → PEM 转换器</title>
+  <link rel="stylesheet" href="./css/tool.css">
+
+</head>
+<body>
+<div id="bg"></div>
+<main class="container">
+  <nav class="top-nav">
+    <a href="./index.html">← 工具列表</a>
+  </nav>
+  <header class="tool-header">
+    <h1>Base64 → PEM 转换器</h1>
+    <p class="tool-desc">将 Base64 编码的证书数据转换为 PEM 格式</p>
+  </header>
+  <section class="tool-body">
+
+<p>客户端处理（JavaScript，数据不会上传服务器）。将 Base64 字符串转换为 PEM（"Privacy-enhanced Electronic Mail"）格式，
+    本质是将 Base64 按每行 64 字符换行，并可选添加 PEM 头尾标识。</p>
+    <form name="frmConvert" action="">
+        <p>输入 Base64（单行或多行）：</p>
+        <p><textarea name="edInput" rows="4" cols="67" style="width: 550px;"></textarea></p>
+        <p>头/尾标识类型：
+            <select name="headerType">
+                <option value="- none -">- 无 -</option>
+                <option value="CERTIFICATE">CERTIFICATE</option>
+                <option value="PRIVATE KEY">PRIVATE KEY</option>
+                <option value="PUBLIC KEY">PUBLIC KEY</option>
+                <option value="RSA PRIVATE KEY">RSA PRIVATE KEY</option>
+                <option value="RSA PUBLIC KEY">RSA PUBLIC KEY</option>
+                <option value="EC PRIVATE KEY">EC PRIVATE KEY</option>
+            </select>    
+        </p>
+
+        <p>
+            <button type="button" name="btnConvert" onclick="Convert()">转换</button>
+        </p>        
+
+        <p>清理后的 Base64：</p>
+        <p><input type="text" name="cleanedBase64" readonly="readonly" value="" style="width: 550px;"></p>				      
+        <p>输出 PEM：</p>
+        <p><textarea name="edOutput" rows="12" cols="67" style="width: 550px;"></textarea></p>
+    </form>
+    <script type="text/javascript">
+    //<!--
+    //var base64chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+    function cleanBase64(input) {
+        var output = input.replace(/[^A-Za-z0-9+/=]/g, "");
+        if (output != input)
+            alert("警告：输入中的非 Base64 字符（含换行符）已被忽略。");
+        return output;
+    }
+
+
+    function Convert() {
+        var cleanedBase64 = cleanBase64(document.frmConvert.edInput.value);
+        document.frmConvert.cleanedBase64.value = cleanedBase64;
+
+        var wrapped = cleanedBase64.replace(/(\S{64}(?!$))/g, "$1\r\n");
+        var header = document.frmConvert.headerType.value;
+        if (header != "- none -") {
+            wrapped = "-----BEGIN " + header + "-----\r\n"
+                + wrapped
+                + "\r\n-----END " + header + "-----\r\n";
+        }
+        document.frmConvert.edOutput.value = wrapped;
+    }
+
+    //-->
+    </script>
+  </section>
+  <footer class="page-footer">
+    <p class="copyright">@鸽子笼 2020-2026</p>
+  </footer>
+</main>
+</body>
+</html>

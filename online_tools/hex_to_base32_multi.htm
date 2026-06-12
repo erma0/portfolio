@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>批量十六进制 → Base32 转换器</title>
+  <link rel="stylesheet" href="./css/tool.css">
+
+</head>
+<body>
+<div id="bg"></div>
+<main class="container">
+  <nav class="top-nav">
+    <a href="./index.html">← 工具列表</a>
+  </nav>
+  <header class="tool-header">
+    <h1>批量十六进制 → Base32 转换器</h1>
+    <p class="tool-desc">逐行批量转换多个十六进制字符串为 Base32</p>
+  </header>
+  <section class="tool-body">
+<script type="text/javascript">
+//<!--
+    function clean_hex(input, remove_0x) {
+        input = input.toUpperCase();
+        
+        if (remove_0x) {
+          input = input.replace(/0x/gi, "");        
+        }
+        
+        var orig_input = input;
+        input = input.replace(/[^A-Fa-f0-9]/g, "");
+        if (orig_input != input)
+            alert ("警告：输入中的非十六进制字符已被忽略。");
+        return input;    
+    }
+
+    /*
+    RFC4648 test vectors:     
+     BASE32("f" = 0x66) = "MY======"
+     BASE32("fo") = "MZXQ===="
+     BASE32("foo") = "MZXW6==="
+     BASE32("foob") = "MZXW6YQ="
+     BASE32("fooba") = "MZXW6YTB"
+     BASE32("foobar") = "MZXW6YTBOI======"
+    
+    hex: 
+    66
+    666F
+    666F6F
+    666F6F62
+    666F6F6261
+    666F6F626172             
+    */
+
+    var base32_chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567"
+    function binary_to_base32(input) {
+      var ret = new Array();
+      var ret_len = 0;
+      var i = 0;
+    
+      var unpadded_length = input.length;
+      while (input.length % 5) {
+        input[input.length] = 0;
+      }
+    
+    	for(i=0; i<input.length; i+=5) {
+    		ret += base32_chars.charAt((input[i] >> 3));
+    		ret += base32_chars.charAt(((input[i] & 0x07) << 2) | ((input[i+1] & 0xc0) >> 6));
+        if (i+1 >= unpadded_length) {
+          ret += "======"
+          break;
+        }
+    		ret += base32_chars.charAt(((input[i+1] & 0x3e) >> 1));       
+    		ret += base32_chars.charAt(((input[i+1] & 0x01) << 4) | ((input[i+2] & 0xf0) >> 4));
+        if (i+2 >= unpadded_length) {
+          ret += "===="
+          break;
+        }        
+    		ret += base32_chars.charAt(((input[i+2] & 0x0f) << 1) | ((input[i+3] & 0x80) >> 7));
+        if (i+3 >= unpadded_length) {
+          ret += "==="
+          break;
+        }        
+    		ret += base32_chars.charAt(((input[i+3] & 0x7c) >> 2));
+    		ret += base32_chars.charAt(((input[i+3] & 0x03) << 3) | ((input[i+4] & 0xe0) >> 5));
+        if (i+4 >= unpadded_length) {
+          ret += "="
+          break;
+        }          
+    		ret += base32_chars.charAt(((input[i+4] & 0x1f))); 		
+    	}
+    	return ret;
+    }
+
+    function base32_encode(input, remove_0x) {
+        var cleaned_hex = clean_hex(input, remove_0x);
+        if (cleaned_hex.length % 2) {      
+            return ["", "错误：清理后的十六进制字符串长度为奇数。"];
+        }
+        var binary = new Array();
+        for (var i=0; i<cleaned_hex.length/2; i++) {
+            var h = cleaned_hex.substr(i*2, 2);
+            binary[i] = parseInt(h,16);        
+        }
+        var output = binary_to_base32(binary);
+        return [output, ""];
+    }        
+    
+    function Convert() {
+        var lines = document.frmConvert.hexList.value.split('\n');
+        var remove_0x = document.frmConvert.chbSeparator.checked;
+        var skip_comment = document.frmConvert.chbSkipComment.checked;
+        var outputText = "";
+        for(var i = 0;i < lines.length; i++){
+            var line = lines[i].trim();
+            var outputArr = base32_encode(line);
+            var output = outputArr[0];
+            var status = outputArr[1];
+            outputText += output;
+            if (skip_comment) {
+              outputText += "\r\n";
+            } else {
+              outputText += ", " + status + "\r\n";
+            }                        
+        }    
+        document.frmConvert.base32List.value = outputText;    
+    } 
+
+//-->
+</script>
+<p>本表单将十六进制字符串列表（每行一个，可从 Libre/OpenOffice Calc 的单列表格导出为 CSV 文件或直接选中复制）转换为 Base32 字符串列表。
+    <br>
+    每行输出包含 Base32 字符串（转换成功时）及逗号后的可选注释（转换失败时，如十六进制字符数为奇数）。可将输出视为两列 CSV 文件，导入回 Calc（使用"粘贴特殊"选项并在文本导入对话框中标记逗号为分隔符）。
+    </p>
+          
+      <form name="frmConvert" action="">
+				<p>十六进制字符串列表（每行一个 = 1 列 CSV）：</p>
+			    <p>
+            <textarea name="hexList" rows="10" cols="67" style="width: 550px;""></textarea>
+          </p>
+        <p>
+          Note: all characters outside hex set will be ignored, thus "12AB34" = "12 AB 34" = "12, AB, 34", etc.
+          输入不区分大小写。
+        </p>
+        
+        <p>选项：</p>
+          <p>
+            <input type="checkbox" name="chbSeparator" value="sep" checked="yes">移除输入中的 "0x" 前缀
+            <br>
+            <input type="checkbox" name="chbSkipComment" value="skipComment" checked="yes">跳过注释列（逗号及后面的可选文本）
+          </p>			
+        
+        <p>输出（Base32 + 注释，两列 CSV，第二列为空 = 无错误）：</p>
+			    <p>
+    			    <textarea name="base32List" rows="10" cols="67" style="width: 550px;""></textarea>                    
+          </p>    
+			  
+        <p>
+          <button type=button name="btnConvert"
+            onclick="Convert()">
+            转换
+          </button>
+			  </p>
+			</form>
+  </section>
+  <footer class="page-footer">
+    <p class="copyright">@鸽子笼 2020-2026</p>
+  </footer>
+</main>
+</body>
+</html>

@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ASCII → u16/u32/u64 十六进制转换器</title>
+  <link rel="stylesheet" href="./css/tool.css">
+
+</head>
+<body>
+<div id="bg"></div>
+<main class="container">
+  <nav class="top-nav">
+    <a href="./index.html">← 工具列表</a>
+  </nav>
+  <header class="tool-header">
+    <h1>ASCII → u16/u32/u64 十六进制转换器</h1>
+    <p class="tool-desc">将 ASCII 文本转换为 Unicode 宽字符十六进制数组</p>
+  </header>
+  <section class="tool-body">
+<script type="text/javascript">
+//<!--
+    var hD='0123456789ABCDEF';
+    function dec2hex(d) {
+        var h = hD.substr(d&15,1);
+        while (d>15) {
+            d>>=4;
+            h=hD.substr(d&15,1)+h;
+        }
+        return h;
+    }
+    
+    function copyOutputToClipboard(btn) {
+        var target;
+        if (btn == document.frmConvert.btnCopy2B)
+          target = document.frmConvert.hex2B;
+        else if (btn == document.frmConvert.btnCopy4B)
+          target = document.frmConvert.hex4B;
+        else if (btn == document.frmConvert.btnCopy8B)
+          target = document.frmConvert.hex8B;
+        else
+          return;
+        
+        // https://stackoverflow.com/questions/51158061/copy-data-to-clipboard-without-selecting-any-text
+        // - restoring original selection doesn't seem to work        
+        var origSelectionStart, origSelectionEnd;
+        origSelectionStart = target.selectionStart;
+        origSelectionEnd = target.selectionEnd;
+        // select the content
+        var currentFocus = document.activeElement;
+        target.focus();
+        target.setSelectionRange(0, target.value.length);
+        var succeed;
+        try {
+            succeed = document.execCommand("copy");
+        } catch(e) {
+            succeed = false;
+        }
+        // restore original focus
+        if (currentFocus && typeof currentFocus.focus === "function") {
+            currentFocus.focus();
+        }
+        // restore prior selection
+        target.setSelectionRange(origSelectionStart, origSelectionEnd);                        
+    }        
+    
+    function Convert() {
+        var input = document.frmConvert.ed_input.value;
+        var separator1 = "", separator2 = "";
+        if (document.frmConvert.chbSeparator.checked) {
+          separator1 = "0x";
+          separator2 = ", "
+        }
+        var bigEndian = document.frmConvert.chbBigEndian.checked;
+        var suffix4B = document.frmConvert.suffix4B.value;        
+        var suffix8B = document.frmConvert.suffix8B.value;                
+        
+        var hexText;
+        
+        if (input.length % 2) {
+          document.frmConvert.hex2B.value = "无效：字符数为奇数，无法组成 16 位整数";      
+        } else {
+          hexText = "";
+          if (bigEndian) {
+            i = 0;
+            while (i < input.length) {
+              hexText += separator1;
+              for (j=0; j<2; j++) {            
+                  charVal = input.charCodeAt(i+j);
+                  hexText += (charVal<16?"0":"") + dec2hex(charVal);
+              }
+              hexText += separator2;       
+              i += 2;
+            }
+          } else {
+            i = 0;
+            while (i < input.length) {
+              hexText += separator1;            
+              for (j=1; j>=0; j--) {            
+                  charVal = input.charCodeAt(i+j);
+                  hexText += (charVal<16?"0":"") + dec2hex(charVal);
+              }
+              hexText += separator2;       
+              i += 2;
+            }          
+          }
+          document.frmConvert.hex2B.value = hexText;
+        }
+        
+        if (input.length % 4) {
+          document.frmConvert.hex4B.value = "无效：字符数不是 4 的整数倍";      
+        } else {
+          hexText = "";
+          if (bigEndian) {
+            i = 0;
+            while (i < input.length) {
+              hexText += separator1;            
+              charVal = input.charCodeAt(i);
+              for (j=0; j<4; j++) {            
+                  charVal = input.charCodeAt(i+j);
+                  hexText += (charVal<16?"0":"") + dec2hex(charVal);
+              }
+              hexText += suffix4B;
+              hexText += separator2;       
+              i += 4;
+            }
+          } else {
+            i = 0;
+            while (i < input.length) {
+              hexText += separator1;            
+              charVal = input.charCodeAt(i);
+              for (j=3; j>=0; j--) {            
+                  charVal = input.charCodeAt(i+j);
+                  hexText += (charVal<16?"0":"") + dec2hex(charVal);
+              }
+              hexText += suffix4B;
+              hexText += separator2;       
+              i += 4;
+            }       
+          }
+          document.frmConvert.hex4B.value = hexText;
+        }
+
+        if (input.length % 8) {
+          document.frmConvert.hex8B.value = "无效：字符数不是 8 的整数倍";      
+        } else {
+          hexText = "";
+          if (bigEndian) {
+            i = 0;
+            while (i < input.length) {
+              hexText += separator1;            
+              charVal = input.charCodeAt(i);
+              for (j=0; j<8; j++) {            
+                  charVal = input.charCodeAt(i+j);
+                  hexText += (charVal<16?"0":"") + dec2hex(charVal);
+              }
+              hexText += suffix8B;
+              hexText += separator2;       
+              i += 8;
+            }
+          } else {
+            i = 0;
+            while (i < input.length) {
+              hexText += separator1;            
+              charVal = input.charCodeAt(i);
+              for (j=7; j>=0; j--) {            
+                  charVal = input.charCodeAt(i+j);
+                  hexText += (charVal<16?"0":"") + dec2hex(charVal);
+              }
+              hexText += suffix8B;
+              hexText += separator2;       
+              i += 8;
+            }       
+          }
+          document.frmConvert.hex8B.value = hexText;
+        }
+
+    }
+    
+    function onInputChange() {
+      if (document.frmConvert.chbConvertOnChange.checked) {
+        Convert();
+      }    
+    } 
+
+//-->
+</script>
+<p>
+    将文本转换为 16位/32位/64位十六进制整数数组。 
+    </p>
+      <form name="frmConvert" action="">
+				<p>输入文本：</p>
+			    <p>
+            <textarea name="ed_input" rows="10" cols="67" style="width: 550px;" oninput="onInputChange()"></textarea>
+          </p>
+        <p>选项：<br>
+          <input type="checkbox" name="chbSeparator" value="sep" checked="yes">输出添加 0x 前缀及逗号分隔符<br>
+          <input type="checkbox" name="chbBigEndian" value="sep">大端序输出<br>
+          <input type="checkbox" name="chbConvertOnChange" value="sep">输入变化时立即转换<br>
+          32 位值的后缀（例如 UL） <input type="text" name="suffix4B" value="" style="width: 50px;"><br>          
+          64 位值的后缀（例如 ULL） <input type="text" name="suffix8B" value="ULL" style="width: 50px;">
+        </p>
+        <p>
+			    <button type=button name="btnConvert"
+            onclick="Convert()">
+            转换
+          </button>
+			  </p>
+				<p>输出：16 位整数</p>
+			  <p><input type="text" name="hex2B" value="" style="width: 550px;"><button type=button name="btnCopy2B" onclick="copyOutputToClipboard(this)">复制</button></p>			    
+				<p>输出：32 位整数</p>
+			  <p><input type="text" name="hex4B" value="" style="width: 550px;"><button type=button name="btnCopy4B" onclick="copyOutputToClipboard(this)">复制</button></p>				    
+				<p>输出：64 位整数</p>
+			  <p><input type="text" name="hex8B" value="" style="width: 550px;"><button type=button name="btnCopy8B" onclick="copyOutputToClipboard(this)">复制</button></p>			    
+			  
+			</form>
+  </section>
+  <footer class="page-footer">
+    <p class="copyright">@鸽子笼 2020-2026</p>
+  </footer>
+</main>
+</body>
+</html>

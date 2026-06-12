@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>十六进制 → 文件（新版）</title>
+  <link rel="stylesheet" href="./css/tool.css">
+
+</head>
+<body>
+<div id="bg"></div>
+<main class="container">
+  <nav class="top-nav">
+    <a href="./index.html">← 工具列表</a>
+  </nav>
+  <header class="tool-header">
+    <h1>十六进制 → 文件（新版）</h1>
+    <p class="tool-desc">十六进制转二进制文件的新版实现</p>
+  </header>
+  <section class="tool-body">
+<script type="text/javascript">
+//<!--
+    function clean_hex(input, remove_0x) {
+        input = input.toUpperCase();
+        
+        if (remove_0x) {
+          input = input.replace(/0x/gi, "");        
+        }
+        
+        var orig_input = input;
+        input = input.replace(/[^A-Fa-f0-9]/g, "");
+        if (orig_input != input)
+            alert ("警告：输入中的非十六进制字符（含换行符）已被忽略。");
+        return input;    
+    } 
+    
+    function Convert() {
+      console.time("cleaning hex");
+      var cleaned_hex = clean_hex(document.frmConvert.hex.value, document.frmConvert.chbSeparator.checked);
+      var filename = document.frmConvert.filename.value;	  
+      document.frmConvert.cleaned_hex.value = cleaned_hex;
+      console.timeEnd("cleaning hex");
+      if (cleaned_hex.length % 2) {
+        alert ("错误：清理后的十六进制字符串长度为奇数。");     
+        return;
+      }
+
+      console.time("parsing hex");
+      var binary = new Array();
+      for (var i=0; i<cleaned_hex.length/2; i++) {
+        var h = cleaned_hex.substr(i*2, 2);
+        binary[i] = parseInt(h,16);        
+      }
+      console.timeEnd("parsing hex");
+
+        var byteArray = new Uint8Array(binary);
+        var a = window.document.createElement('a');
+        
+        a.href = window.URL.createObjectURL(new Blob([byteArray], { type: 'application/octet-stream' }));
+        a.download = filename;
+        
+        // Append anchor to body.
+        document.body.appendChild(a)
+        a.click();
+        
+        // Remove anchor from body
+        document.body.removeChild(a)        
+    } 
+
+//-->
+</script>
+<p>从十六进制字符串生成任意二进制文件（新版，JavaScript 客户端）。已在 PaleMoon 25.2.1、Chromium 46 上测试。
+	  </p>
+	  <form name="frmConvert" action="">
+				<p>十六进制字符串：</p>
+			    <p>
+				<textarea name="hex" rows="8" cols="67" style="width: 550px;"></textarea>
+				</p>
+        <p>注意：十六进制集合以外的字符将被忽略，因此 "12AB34" = "12 AB 34" = "12, AB, 34" 等价。
+        输入不区分大小写。</p>
+        <p>选项：</p>
+          <p><input type="checkbox" name="chbSeparator" value="sep" checked="checked">移除输入中的 "0x" 前缀</p>
+				<p>清理后的输入：</p>
+			    <p><input type="text" name="cleaned_hex" readonly="readonly" value="" style="width: 550px;"></p>				      
+      
+				<p>创建文件名：</p>
+			    <p>
+				<input type="text" name="filename" value="myfile.dat" style="width: 550px;">
+				</p>	  
+	  
+			  <p>
+			    <button type=button name="btnConvert"
+            onclick="Convert()">
+            转换
+          </button>
+			  </p>
+			</form>
+  </section>
+  <footer class="page-footer">
+    <p class="copyright">@鸽子笼 2020-2026</p>
+  </footer>
+</main>
+</body>
+</html>

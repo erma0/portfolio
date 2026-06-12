@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SHA1 哈希计算器</title>
+  <link rel="stylesheet" href="./css/tool.css">
+<script type="text/javascript" src="./js/rusha.js"></script>
+</head>
+<body>
+<div id="bg"></div>
+<main class="container">
+  <nav class="top-nav">
+    <a href="./index.html">← 工具列表</a>
+  </nav>
+  <header class="tool-header">
+    <h1>SHA1 哈希计算器</h1>
+    <p class="tool-desc">在线计算文本或文件的 SHA1 哈希值</p>
+  </header>
+  <section class="tool-body">
+<script type="text/javascript">
+//<!--
+	var rusha = new Rusha();
+
+  var hD='0123456789ABCDEF';
+  function dec2hex(d) {
+      var h = hD.substr(d&15,1);
+      while (d>15) {
+          d>>=4;
+          h=hD.substr(d&15,1)+h;
+      }
+      return h;
+  }
+  
+  function hex2dec(h) {
+    return parseInt(h, 16);
+  }
+
+  var initialized = false;
+  function HashInit() {
+    rusha.resetState();
+    document.frmCalc.output.value = "";    
+    initialized = true;
+  }
+  
+  function HashUpdateText() {
+    if (!initialized) {
+      HashInit();
+    }
+    var inp = document.frmCalc.input.value;
+		rusha.append(inp);    
+  }
+  
+  function HashUpdateHex() {
+    if (!initialized) {
+      HashInit();
+    }
+    var inp = document.frmCalc.input.value.toUpperCase();
+    var Chars = "0123456789ABCDEF";   
+    for (var i = 0; i < inp.length; i++)
+    { 
+      if (Chars.indexOf(inp.charAt(i)) == -1) {
+        alert ("错误：不是有效的十六进制字符串，包含非十六进制字符。");
+        return;
+      }
+    }    
+    if (inp.length % 2) {
+      alert ("错误：不是有效的十六进制字符串，长度不是 2 字节的整数倍。");
+      return;    
+    }
+    var arr = new Array();
+    for (var i=0; i<inp.length; i+=2) {
+			arr.push(hex2dec(inp.substr(i, 2)));      
+    }
+    rusha.append(arr);
+  }
+  
+  function HashFinish() {
+    initialized = false;
+    var hexHash = rusha.end();
+    document.frmCalc.output.value = "";
+    document.frmCalc.output.value = hexHash;
+  }
+  
+
+	function readFileAsArray(file) {
+	    var reader = new FileReader();
+	    reader.onload = function(){
+	      //var text = reader.result;
+		  	var arr = reader.result;
+		  	uint8View = new Uint8Array(arr);
+		    if (!initialized) {
+		      HashInit();
+		    }
+				rusha.append(uint8View);					  
+	    };
+	    reader.readAsArrayBuffer(file);    
+	}    
+	
+	var openFile = function(event) {
+	    var input = event.target;
+	    readFileAsArray(input.files[0]);
+	};  
+//-->
+</script>
+<p>客户端 JavaScript SHA1 计算器，支持混合输入（文本、十六进制或文件，可任意组合添加到哈希）。
+      使用 <a href="https://github.com/srijs/rusha">Rusha</a> 库。
+      <form name="frmCalc" action="">
+			  <p>
+			    <button type=button name="btnInit" style="width: 470px"
+            onclick="HashInit()">
+            重新初始化（清空哈希状态）
+          </button>
+			  </p>
+
+				<p>输入：</p>
+		    <p><input type="text" name="input" value="" style="width: 470px; font-family: courier, monospace; font-size: large;"><br>
+			    <button type=button name="btnUpdateText" style="width: 470px"
+            onclick="HashUpdateText()">
+            以文本方式更新
+          </button>          
+			    <button type=button name="btnUpdateHex" style="width: 470px"
+            onclick="HashUpdateHex()">
+            以十六进制方式更新
+          </button>
+					<br>
+					或使用文件内容更新（选择文件后立即处理）：
+					<br>					 
+					<input type="file" name="fileinput" onchange='openFile(event)' />					          
+        </p>
+			  <p>
+			    <br>
+          <button type=button name="btnFinish" style="width: 470px"
+            onclick="HashFinish()">
+            完成计算 / 获取结果
+          </button>
+			  </p>
+        <p>SHA1 结果：</p>
+        <p><input type="text" name="output" value="" style="width: 470px; font-family: courier, monospace; font-size: large;"></p>  
+			</form>
+  </section>
+  <footer class="page-footer">
+    <p class="copyright">@鸽子笼 2020-2026</p>
+  </footer>
+</main>
+</body>
+</html>

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>文本 → C++ 字符串转义工具</title>
+  <link rel="stylesheet" href="./css/tool.css">
+
+</head>
+<body>
+<div id="bg"></div>
+<main class="container">
+  <nav class="top-nav">
+    <a href="./index.html">← 工具列表</a>
+  </nav>
+  <header class="tool-header">
+    <h1>文本 → C++ 字符串转义工具</h1>
+    <p class="tool-desc">将文本转换为 C/C++ 字符串字面量（转义特殊字符）</p>
+  </header>
+  <section class="tool-body">
+<script type="text/javascript">
+//<!--
+
+function insertAtCursor(myField, myValue)
+    {
+    //IE support
+    if (document.selection) 
+        {
+        myField.focus();
+        sel = document.selection.createRange();
+        sel.text = myValue;
+        }
+    
+    //MOZILLA/NETSCAPE support
+    else if (myField.selectionStart || myField.selectionStart == '0') 
+        {
+        var startPos = myField.selectionStart;
+        var endPos = myField.selectionEnd;
+        restoreTop = myField.scrollTop;
+        
+        myField.value = myField.value.substring(0, startPos) + myValue + myField.value.substring(endPos, myField.value.length);
+        
+        myField.selectionStart = startPos + myValue.length; 
+        myField.selectionEnd = startPos + myValue.length;
+        
+        if (restoreTop>0)
+            {
+            myField.scrollTop = restoreTop;
+            }
+        } 
+    else 
+        {
+        myField.value += myValue;
+        }
+    }
+
+    function interceptTabs(evt, control)
+        {
+        key = evt.keyCode ? evt.keyCode : evt.which ? evt.which : evt.charCode;
+        if (key==9)
+            {
+            insertAtCursor(control, '\t');
+            return false; 
+            }
+        else
+            {
+            return key;
+            }
+        }
+
+    function cstr_encode(input) {
+        var output = "\"";
+        var splitLines = document.frmConvert.chbSplitLines.checked;
+        var escapePercent = document.frmConvert.chbEscapePercent.checked;
+        for (i = 0; i < input.length; i++) {
+            switch (input[i]) {
+            case '\f':
+              output += "\\f";
+              break;
+            case '\n':
+              if (splitLines) {
+                output += "\\n\"\n\"";
+              } else {
+                output += "\\n";              
+              }
+              break;
+            case '\r':
+              output += "\\r";
+              break;
+            case '\t':
+              output += "\\t";
+              break;
+            case '\"':
+              output += "\\\"";
+              break;
+            case '\\':
+              output += "\\\\";
+              break;
+            case '%':
+              if (escapePercent) {
+                output += "%%";
+              } else {
+                output += "%";
+              }
+              break;
+            default:
+              output += input[i];
+              break;	     
+            }                       
+        }
+        output += "\"";
+        return output;
+    } 
+    
+    function Convert() {
+        var output = cstr_encode(document.frmConvert.ed_input.value);
+        document.frmConvert.ed_output.value = output;
+    } 
+
+//-->
+</script>
+<p>将文本转换为 C 风格字符串字面量（转义换行符、制表符、引号、反斜杠）。</p>
+      <form name="frmConvert" action="">
+				<p>源文本：</p>
+			    <p><textarea onkeydown="return interceptTabs(event, this);" name="ed_input" rows="10" cols="67" style="width: 550px;"></textarea></p>
+        <p>选项：</p>
+          <p><input type="checkbox" name="chbSplitLines" value="split" checked="yes">将输出拆分为多行</p>			  
+          <p><input type="checkbox" name="chbEscapePercent" value="escapePercent">转义 % 字符为 %%（用于 printf 格式字符串）</p>			  
+			  <p>
+			    <button type=button name="btnConvert"
+            onclick="Convert()">
+            转换
+          </button>
+			  </p>
+				<p>C/C++ string</p>
+			    <p>
+            <textarea name="ed_output" rows="10" cols="67" style="width: 550px;"></textarea>          
+          </p> 
+			</form>
+  </section>
+  <footer class="page-footer">
+    <p class="copyright">@鸽子笼 2020-2026</p>
+  </footer>
+</main>
+</body>
+</html>

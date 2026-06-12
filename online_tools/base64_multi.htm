@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>批量 Base64 → 十六进制转换器</title>
+  <link rel="stylesheet" href="./css/tool.css">
+
+</head>
+<body>
+<div id="bg"></div>
+<main class="container">
+  <nav class="top-nav">
+    <a href="./index.html">← 工具列表</a>
+  </nav>
+  <header class="tool-header">
+    <h1>批量 Base64 → 十六进制转换器</h1>
+    <p class="tool-desc">逐行将多个 Base64 字符串转换为十六进制</p>
+  </header>
+  <section class="tool-body">
+<script type="text/javascript">
+//<!--
+    var hD='0123456789ABCDEF';
+    function dec2hex(d) {
+        var h = hD.substr(d&15,1);
+        while (d>15) {
+            d>>=4;
+            h=hD.substr(d&15,1)+h;
+        }
+        if (document.frmConvert.chbLowercaseOutput.checked) {
+            h = h.toLowerCase();
+        }
+        return h;
+    }
+
+    var keyStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/="
+    function base64_decode(input) {
+        var output = new Array();
+        var chr1, chr2, chr3;
+        var enc1, enc2, enc3, enc4;
+        var i = 0;
+
+        var orig_input = input;
+        input = input.replace(/[^A-Za-z0-9\+\/\=]/g, "");
+        if (input.length % 4) {
+            status = "错误：输入长度不是 4 字节的整数倍";
+            return [output, status];
+        }
+        
+        var j=0;
+        while (i < input.length) {
+
+            enc1 = keyStr.indexOf(input.charAt(i++));
+            enc2 = keyStr.indexOf(input.charAt(i++));
+            enc3 = keyStr.indexOf(input.charAt(i++));
+            enc4 = keyStr.indexOf(input.charAt(i++));
+
+            chr1 = (enc1 << 2) | (enc2 >> 4);
+            chr2 = ((enc2 & 15) << 4) | (enc3 >> 2);
+            chr3 = ((enc3 & 3) << 6) | enc4;
+            
+            output[j++] = chr1;
+            if (enc3 != 64)
+              output[j++] = chr2;
+            if (enc4 != 64)
+              output[j++] = chr3;
+              
+        }
+        var status;
+        if (orig_input != input) {
+            status = "警告：输入字符串中超出 Base64 范围的字符已被忽略。";
+        } else {
+            status = "";
+        }        
+        return [output, status];
+    }
+           
+    function Convert() {
+        var hexText = "";
+        var separator = "";
+        if (document.frmConvert.chbSeparator.checked)
+            separator = " 0x";    
+        var lines = document.frmConvert.encoded.value.split('\n');
+        for(var i = 0;i < lines.length; i++){
+            var line = lines[i].trim();
+            var outputArr = base64_decode(line);
+            var output = outputArr[0];
+            var status = outputArr[1];    
+            for (var j=0; j<output.length; j++) {
+              hexText = hexText + separator + (output[j]<16?"0":"") + dec2hex(output[j]);
+            }
+            hexText += ", " + status + "\r\n";                        
+        }    
+        document.frmConvert.hex.value = hexText;                
+    }
+     
+
+//-->
+</script>
+<p>将 Base64 字符串列表（每行一个，可从 LibreOffice/OpenOffice Calc 单列导出为 CSV）批量转换为十六进制字符串列表。<br>每行输出包含十六进制字符串（转换成功时）及逗号后的状态信息，若转换失败或含非法字符则会标注，输出结果可作为两列 CSV 再次导入 Calc（粘贴为"特殊格式"并将逗号设为分隔符）。
+    </p>
+      <form name="frmConvert" action="">
+				<p>Base64 字符串列表（每行一个 = 1 个 CSV 列）：</p>
+			    <p><textarea name="encoded" rows="10" cols="67" style="width: 550px;""></textarea> </p>
+        <p>选项：</p>
+          <p><input type="checkbox" name="chbSeparator" value="sep">输出添加 0x 前缀
+          <br>
+          <input type="checkbox" name="chbLowercaseOutput" value="lowercaseHex">使用小写十六进制字符</p>          
+				<p>解码数据（十六进制）+ 注释，双列 CSV 格式</p>
+			    <p>
+    			    <textarea name="hex" rows="10" cols="67" style="width: 550px;""></textarea>                    
+                </p>	 			    
+			  <p>
+			    <button type=button name="btnConvert"
+            onclick="Convert()">
+            转换
+          </button>
+			  </p>       
+        
+			</form>
+  </section>
+  <footer class="page-footer">
+    <p class="copyright">@鸽子笼 2020-2026</p>
+  </footer>
+</main>
+</body>
+</html>

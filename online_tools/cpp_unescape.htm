@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>C++ 字符串 → 文本反转义工具</title>
+  <link rel="stylesheet" href="./css/tool.css">
+
+</head>
+<body>
+<div id="bg"></div>
+<main class="container">
+  <nav class="top-nav">
+    <a href="./index.html">← 工具列表</a>
+  </nav>
+  <header class="tool-header">
+    <h1>C++ 字符串 → 文本反转义工具</h1>
+    <p class="tool-desc">将 C/C++ 字符串字面量中的转义序列还原为原始文本</p>
+  </header>
+  <section class="tool-body">
+<script type="text/javascript">
+//<!--
+    function showErrorInfo(text, pos) {
+      alert("错误：\r\n" + text + "\r\n位置（源码偏移）：" + pos);
+    }
+
+    function cstr_decode(input) {
+        var output = "";
+        var states = {
+            OPENING: 0,
+            STRING: 1,
+            ESCAPING: 2
+        };
+        var state = states.OPENING;
+
+        for (i = 0; i < input.length; i++) {
+        
+            switch (state) {
+              
+              case states.OPENING:
+                switch (input[i]) {
+                  case ' ':
+                  case '\f':
+                  case '\n':
+                  case '\r':
+                  case '\t':
+                  case '\v':
+                    break;;
+                  case '\"':
+                    state = states.STRING;
+                    break;
+                  default:
+                    if (i != input.length - 1) {
+                      showErrorInfo("Unexpected character (" + input[i] + "), expecting quotation mark", i);
+                      return output;
+                    } else {
+                      showErrorInfo("Unexpected character (" + input[i] + "), conversion interrupted", i);                       
+                      break;
+                    }
+                }
+                break;
+              
+              case states.STRING:
+                switch (input[i]) {
+                  case '\f':
+                  case '\n':
+                  case '\r':
+                  case '\t':
+                    break;
+                  case '\"':
+                    state = states.OPENING;
+                    break;
+                  case '\\':
+                    state = states.ESCAPING;
+                    break;
+                  default:
+                    output += input[i];
+                    break;
+                }              
+                break;
+                
+              case states.ESCAPING:
+                switch (input[i]) {
+                  case 'f':
+                    output += '\f';
+                    break;
+                  case 'n':
+                    output += '\n';
+                    break;
+                  case 'r':
+                    output += '\r';
+                    break;
+                  case 't':
+                    output += '\t';
+                    break;
+                  case '"':
+                    output += '\"';
+                    break;
+                  case '\\':
+                    output += '\\';
+                    break;
+
+                  default:
+                    showErrorInfo("Unexpected character (" + input[i] + "), expecting one of the escaped character (f, n, r, t, \, or quotation)", i);
+                    return output;
+                }
+                state = states.STRING;              
+                break;
+            }
+                             
+        }
+
+        if (state != states.OPENING) {
+          showErrorInfo("Source string not terminated correctly", i);          
+        }
+        return output;
+    } 
+    
+    function Convert() {
+        var output = cstr_decode(document.frmConvert.ed_input.value);
+        document.frmConvert.ed_output.value = output;
+    } 
+
+//-->
+</script>
+<p>将 C 风格字符串字面量还原为原始文本（反转义）。</p>
+      <form name="frmConvert" action="">
+				<p>C/C++ 字符串字面量：</p>
+			    <p><textarea name="ed_input" rows="10" cols="67" style="width: 550px;"></textarea></p>		  
+			  <p>
+			    <button type=button name="btnConvert"
+            onclick="Convert()">
+            转换
+          </button>
+			  </p>
+				<p>反转义文本：</p>
+			    <p>
+            <textarea name="ed_output" rows="10" cols="67" style="width: 550px;"></textarea>          
+          </p> 
+			</form>
+  </section>
+  <footer class="page-footer">
+    <p class="copyright">@鸽子笼 2020-2026</p>
+  </footer>
+</main>
+</body>
+</html>

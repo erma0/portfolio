@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RC4 加密/解密工具</title>
+  <link rel="stylesheet" href="./css/tool.css">
+
+</head>
+<body>
+<div id="bg"></div>
+<main class="container">
+  <nav class="top-nav">
+    <a href="./index.html">← 工具列表</a>
+  </nav>
+  <header class="tool-header">
+    <h1>RC4 加密/解密工具</h1>
+    <p class="tool-desc">在线 RC4 流密码加密与解密</p>
+  </header>
+  <section class="tool-body">
+
+<p>客户端 RC4 加密/解密（JavaScript，数据不会上传服务器）。注意：大文件可能导致资源消耗过高，浏览器崩溃，大文件建议使用离线工具。</p>
+    <p>RC4 是一种对称流密码，加密和解密使用同一操作——将输入数据与由密码/初始向量生成的长密钥流（256 字节状态）进行 XOR 运算。
+    由于 XOR 的特性：(X ^ Y) ^ Y = X，第一次运行加密（X ^ Y），第二次以相同密钥流运行即可解密。</p>
+    <p>安全建议（*）：</p>
+    <ul>
+      <li>不要重复使用初始向量</li>
+      <li>使用强初始向量，例如密码和唯一计数器的哈希，或某种随机盐；MD5 即可，目的是雪崩效应而非抗碰撞</li>
+      <li>丢弃密钥流开头的若干字节（RC-dropN）以降低偏差</li>
+    </ul>
+    <p>（*）不保证绝对安全；若丢失初始向量或 dropN 参数，加密数据将无法恢复</p>
+    <form name="frmConvert" action="">
+      <p>源文件：
+      <input type="file" name="fileinput" onchange="openFile(event)" /></p>
+      <p>初始向量（十六进制，任意长度，最多 256 字节）：<br>
+      <input type="text" name="initial_bytes" value="0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88" style="width: 550px;">
+      <br>
+      丢弃密钥流前 <input type="text" name="dropN" value="256" style="width: 50px;"> 个字节。
+      </p>
+        <p>选项：</p>
+          <p><input type="checkbox" name="chbSeparator" value="sep" checked="checked">移除初始向量中的 "0x" 前缀及非十六进制字符</p>
+        <p>清理后的初始向量（已移除非十六进制字符）：</p>
+        <p><input type="text" name="cleaned_hex" readonly="readonly" value="" style="width: 550px;"></p>				      
+        
+        <p>创建文件名：</p>
+        <p>
+        <input type="text" name="filename" value="file.rc4" style="width: 550px;">
+        </p>      
+      <p>
+        <button type="button" name="btnConvert" onclick="Convert()">加密/解密</button>
+      </p>
+    </form>
+    <!-- <h2>Offline tool</h2>
+    <p>
+    Simple win32 application with similar functionality. Password / initial vector can be entered as text
+    or in hexadecimal form. There is also option to skip (copy directly) initial bytes (e.g. header) from processed file.
+    Turbo C++: <a href="../bin/RC4/FileEncryptDecrypt.zip">File加密解密.zip</a><br>
+    <img src="../bin/RC4/FileEncryptDecrypt.png" alt="RC4 file encrypt and decrypt">     
+    </p> -->
+  </section>
+  <footer class="page-footer">
+    <p class="copyright">@鸽子笼 2020-2026</p>
+  </footer>
+</main>
+</body>
+</html>

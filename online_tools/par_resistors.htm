@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>并联电阻搜索工具</title>
+  <link rel="stylesheet" href="./css/tool.css">
+
+</head>
+<body>
+<div id="bg"></div>
+<main class="container">
+  <nav class="top-nav">
+    <a href="./index.html">← 工具列表</a>
+  </nav>
+  <header class="tool-header">
+    <h1>并联电阻搜索工具</h1>
+    <p class="tool-desc">搜索两个并联电阻组合以匹配目标等效阻值</p>
+  </header>
+  <section class="tool-body">
+<script type="text/javascript">
+//<!--
+
+var E24_set = [1.0, 1.1, 1.2, 1.3, 1.5, 1.6, 1.8, 2.0, 2.2, 2.4, 2.7, 3.0, 3.3, 3.6, 3.9, 4.3, 4.7, 5.1, 5.6, 6.2, 6.8, 7.5, 8.2, 9.1]; 
+
+function getNextResistor(resistance) {
+  var order = 0;
+  var mantissa = resistance * 1.000001;
+  if (resistance >= 1) {
+    while (mantissa >= 10) {
+      mantissa /= 10;
+      order++;
+    } 
+  } else {
+    while (mantissa < 1) {
+      mantissa *= 10;
+      order--;
+    }
+  }
+  var higherMantissa = E24_set[0];
+  var higherMantissaFound = false; 
+  for(i=0; i<E24_set.length; i++) {
+    higherMantissa = E24_set[i];
+    if (higherMantissa > mantissa) {
+      higherMantissaFound = true;
+      break;
+    }    
+  }
+  if (higherMantissaFound == false) {
+    // roll-over to 1.0
+    order++;
+    higherMantissa = E24_set[0];
+  }
+  return (higherMantissa * Math.pow(10, order));  
+}
+
+function Execute() {
+  // get requested resistance in Ohms
+  var resistance = parseFloat(document.frmConvert.equivalentResistance.value);
+  if (isNaN(resistance)) {
+    alert("阻值无效！");
+    return;
+  }
+  if (resistance <= 0) {
+    alert("阻值必须大于零！");
+    return;
+  }
+  
+  var resArray = [];
+  var R2, rEquivalent;
+
+  var rangeMin = parseFloat(document.getElementById('selectRangeMin').value);
+  var rangeMax = parseFloat(document.getElementById('selectRangeMax').value);
+
+  // range of interest for R1: from first resistance larger than requested to 2x requested
+  var R1 = getNextResistor(resistance);
+  while (R1 <= 2*resistance) {
+    R2 = R1;
+    while (R2 < 30*resistance) {
+      rEquivalent = (R1*R2)/(R1+R2);
+      if (rEquivalent >= rangeMin * resistance && rEquivalent <= rangeMax * resistance) {
+        resArray.push({"R1": R1, "R2": R2, "rEquivalent": rEquivalent});
+      }
+      // next R2
+      R2 = getNextResistor(R2);
+    }
+    // next R1
+    R1 = getNextResistor(R1);
+  }
+
+  var htmlVal = "<strong>推荐电阻组合：</strong>";
+  htmlVal += "<table>"
+  htmlVal += "<tr><th>R1 (Ω)</th><th>R2 (Ω)</th><th>等效阻值 (Ω)</th><th>误差</th></tr>";
+  resArray.forEach(function(res) {
+    htmlVal += "<tr><td>" + parseFloat(res.R1.toPrecision(6)) + "</td><td>" + parseFloat(res.R2.toPrecision(6)) + "</td><td>" + res.rEquivalent.toPrecision(6) + "</td><td>" + (100*(res.rEquivalent - resistance)/resistance).toFixed(2) + "%</td></tr>"
+  });
+  htmlVal += "</table>";
+
+  var target = document.getElementById('divOutput'); 
+  target.innerHTML = htmlVal; 
+}
+
+//-->
+</script>
+<p>
+此工具在 E24（5% 精度）电阻系列中搜索两个并联后等效阻值最接近目标值的电阻组合，适合用于替代手头缺少的阻值。精确匹配将被排除——本工具专用于搜索替代方案。
+</p>
+<form name="frmConvert" action="">
+	<p>
+    目标等效阻值（欧姆）：
+    <input type="text" name="equivalentResistance" value="2300" style="width: 150px;">    
+  </p>			    
+  <p>
+    搜索范围：从
+    <select id="selectRangeMin">
+      <option value="0.9">0.9</option>
+      <option value="0.95">0.95</option>
+      <option value="0.97">0.97</option>
+      <option value="0.98" selected>0.98</option>
+      <option value="0.99">0.99</option>
+      <option value="1.00">1.00</option>
+    </select>
+    到
+    <select id="selectRangeMax">
+      <option value="1.00">1.00</option>
+      <option value="1.01">1.01</option>
+      <option value="1.02" selected>1.02</option>
+      <option value="1.03">1.03</option>
+      <option value="1.05">1.05</option>
+      <option value="1.1">1.1</option>
+    </select>
+    倍目标阻值。
+  </p>			    
+  <p>
+    <button type=button name="btnFind"  onclick="Execute()">搜索电阻组合</button>
+	</p>
+  <p>
+    <div id="divOutput">
+    </div>    
+  </p>
+</form>
+  </section>
+  <footer class="page-footer">
+    <p class="copyright">@鸽子笼 2020-2026</p>
+  </footer>
+</main>
+</body>
+</html>

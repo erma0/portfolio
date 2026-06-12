@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>文件 → 十六进制转换器</title>
+  <link rel="stylesheet" href="./css/tool.css">
+
+</head>
+<body>
+<div id="bg"></div>
+<main class="container">
+  <nav class="top-nav">
+    <a href="./index.html">← 工具列表</a>
+  </nav>
+  <header class="tool-header">
+    <h1>文件 → 十六进制转换器</h1>
+    <p class="tool-desc">将本地文件内容转换为十六进制字符串（纯客户端）</p>
+  </header>
+  <section class="tool-body">
+
+<p>客户端处理（JavaScript，数据不会上传服务器）。将本地文件转换为十六进制字符串。
+		注意：文件大于 1MB 时可能导致资源消耗过高（如 Chromium 46 加载数 MB 的文本到 textarea 时有明显问题），大文件建议使用离线工具。
+	  </p>
+	  <form name="frmConvert" action="">
+        <p>选项：</p>
+          <p>
+		  <input type="checkbox" name="chbSeparator" value="sep" checked="yes">使用 0x 前缀及逗号分隔符（C 风格）
+		  <br>
+			<input type="checkbox" name="chbNewline" value="newline" checked="yes">每 16 字节插入换行
+		  </p>
+		<p>
+		选择文件：
+		<input type="file" name="fileinput" onchange='openFile(event)' /> 或
+        <span id="drop_zone" ondrop="drop_handler(event);" ondragover="dragover_handler(event);" ondragend="dragend_handler(event);">
+          <strong>拖放文件至此</strong>
+        </span>       
+		</p>        
+
+			  </p>		  
+				<p>输出：</p>
+			    <p>
+				<textarea name="ed_output" rows="10" cols="87" style="width: 700px;"></textarea>				
+                <br>
+                <br>
+                <button type="button" name="btnCopyOutputToClipboard" onclick="copyOutputToClipboard()">复制到剪贴板</button>
+				</p>			    
+			</form>
+      <p>
+      另见：<br>
+      <a href="http://erma0.cn/bin/bin2hex/bin2hex.exe">bin2hex.exe（Windows）</a>
+      / <a href="http://erma0.cn/bin/bin2hex/bin2hex">bin2hex（Linux）</a>
+      （<a href="http://erma0.cn/bin/bin2hex/bin2hex.c">源码 bin2hex.c</a>）<br>
+      支持纯十六进制输出和自定义换行长度的版本：<a href="http://erma0.cn/bin/bin2hex/20190615/bin2hex.exe">bin2hex.exe</a>（<a href="http://erma0.cn/bin/bin2hex/20190615/bin2hex.c">bin2hex.c</a>）
+      </p>
+  </section>
+  <footer class="page-footer">
+    <p class="copyright">@鸽子笼 2020-2026</p>
+  </footer>
+</main>
+</body>
+</html>

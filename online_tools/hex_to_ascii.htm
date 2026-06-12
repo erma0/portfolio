@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>十六进制 → ASCII 转换器</title>
+  <link rel="stylesheet" href="./css/tool.css">
+
+</head>
+<body>
+<div id="bg"></div>
+<main class="container">
+  <nav class="top-nav">
+    <a href="./index.html">← 工具列表</a>
+  </nav>
+  <header class="tool-header">
+    <h1>十六进制 → ASCII 转换器</h1>
+    <p class="tool-desc">将十六进制字符串解码为 ASCII 文本</p>
+  </header>
+  <section class="tool-body">
+<script type="text/javascript">
+//<!--
+    function clean_hex(input, remove_0x) {
+        input = input.toUpperCase();
+        
+        if (remove_0x) {
+          input = input.replace(/0x/gi, "");        
+        }
+        
+        var orig_input = input;
+        input = input.replace(/[^A-Fa-f0-9]/g, "");
+        if (orig_input != input)
+            alert ("警告：输入中的非十六进制字符已被忽略。");
+        return input;    
+    }
+    
+    function ShowDecodedAsText(val)
+    {
+        var target = document.getElementById('divDecodedText'); 
+        target.innerHTML = val;    
+    }       
+    
+    function Convert() {
+      var cleaned_hex = clean_hex(document.frmConvert.hex.value, document.frmConvert.chbSeparator.checked);
+      document.frmConvert.cleaned_hex.value = cleaned_hex;
+      if (cleaned_hex.length % 2) {
+        alert ("错误：清理后的十六进制字符串长度为奇数。");     
+        return;
+      }
+
+      var binary = new Array();
+      for (var i=0; i<cleaned_hex.length/2; i++) {
+        var h = cleaned_hex.substr(i*2, 2);
+        binary[i] = parseInt(h,16);        
+      }
+
+      var output = binary;
+
+      var htmlStr = "<p style=\"font-family: courier new, monospace\"><b>";
+      for (i=0; i<output.length; i++) {
+        if (output[i] >= 32 && output[i] <= 126) {
+          switch(String.fromCharCode(output[i])) {
+          case '&': htmlStr += "&amp;";
+            break;
+          case '<': htmlStr += "&lt;";
+            break;
+          case '>': htmlStr += "&gt;";
+            break;
+          case '"': htmlStr += "&quot;";
+            break;
+          case '\'': htmlStr += "&#039;";
+            break;
+          default: htmlStr += String.fromCharCode(output[i]);
+          }
+        }
+        else {
+          htmlStr += "<i>[" + output[i] + "]<" + "/i>";
+        }
+      }
+      htmlStr += "<" + "/b><" + "/p>";  // stupid W3C validator...
+      //document.frmConvert.hex.value = hexText;
+              
+      ShowDecodedAsText(htmlStr);   
+
+    } 
+
+//-->
+</script>
+<h3>十六进制 → ASCII 字符串解码器</h3>
+      <form name="frmConvert" action="">
+				<p>十六进制字符串：</p>
+			    <p><input type="text" name="hex" value="" style="width: 550px;"></p>
+        <p>Note: all characters outside hex set will be ignored, thus "12AB34" = "12 AB 34" = "12, AB, 34", etc.
+        输入 is case-insensitive.</p>
+        <p>选项：</p>
+          <p><input type="checkbox" name="chbSeparator" value="sep" checked="checked">remove "0x" groups from input</p>
+				<p>Cleaned input:</p>
+			    <p><input type="text" name="cleaned_hex" readonly="readonly" value="" style="width: 550px;"></p>				
+        <p>解码数据（ASCII 文本），32~126 范围外的字节以斜体显示为 <i>[byte value]</i>:<br>        
+        <div id="divDecodedText">
+        <p><i>（解码后的文本将显示在此处）</i></p>
+        </div>        
+			  <p>
+			    <button type=button name="btnConvert"
+            onclick="Convert()">
+            转换
+          </button>
+			  </p>
+			</form>
+  </section>
+  <footer class="page-footer">
+    <p class="copyright">@鸽子笼 2020-2026</p>
+  </footer>
+</main>
+</body>
+</html>

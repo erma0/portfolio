@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ASCII → 十六进制数组转换器</title>
+  <link rel="stylesheet" href="./css/tool.css">
+
+</head>
+<body>
+<div id="bg"></div>
+<main class="container">
+  <nav class="top-nav">
+    <a href="./index.html">← 工具列表</a>
+  </nav>
+  <header class="tool-header">
+    <h1>ASCII → 十六进制数组转换器</h1>
+    <p class="tool-desc">将 ASCII 文本转换为 C 风格的十六进制数组</p>
+  </header>
+  <section class="tool-body">
+<script type="text/javascript">
+//<!--
+    var hD='0123456789ABCDEF';
+    function dec2hex(d) {
+        var h = hD.substr(d&15,1);
+        while (d>15) {
+            d>>=4;
+            h=hD.substr(d&15,1)+h;
+        }
+        return h;
+    }    
+    
+    function Convert() {
+        var input = document.frmConvert.ed_input.value;
+        var separator1 = "", separator2 = "";
+        if (document.frmConvert.chbSeparator.checked)
+        {
+          separator1 = "0x";
+          separator2 = ", "
+        }
+        var hexText = "";
+        for (i=0; i<input.length; i++) {
+          var charVal = input.charCodeAt(i);
+          hexText = hexText + separator1 + (charVal<16?"0":"") + dec2hex(charVal) + separator2;       
+        }
+        document.frmConvert.hex.value = hexText;
+    } 
+
+//-->
+</script>
+<form name="frmConvert" action="">
+				<p>输入文本：</p>
+			    <p>
+            <textarea name="ed_input" rows="10" cols="67" style="width: 550px;"></textarea>
+          </p>
+        <p>选项：</p>
+          <p><input type="checkbox" name="chbSeparator" value="sep" checked="yes">输出添加 0x 前缀及逗号分隔符</p>
+				<p>输出十六进制数组</p>
+			    <p><input type="text" name="hex" value="" style="width: 550px;"></p>			    
+			  <p>
+			    <button type=button name="btnConvert"
+            onclick="Convert()">
+            转换
+          </button>
+			  </p>
+			</form>
+      <p>
+      另见： <a href="http://erma0.cn/bin/bin2hex/bin2hex.exe">bin2hex.exe（Windows）</a>
+      / <a href="http://erma0.cn/bin/bin2hex/bin2hex">bin2hex（Linux）</a>
+      (<a href="http://erma0.cn/bin/bin2hex/bin2hex.c">源代码</a>).
+      </p>
+  </section>
+  <footer class="page-footer">
+    <p class="copyright">@鸽子笼 2020-2026</p>
+  </footer>
+</main>
+</body>
+</html>

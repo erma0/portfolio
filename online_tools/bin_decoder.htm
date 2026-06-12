@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>二进制解码器</title>
+  <link rel="stylesheet" href="./css/tool.css">
+
+</head>
+<body>
+<div id="bg"></div>
+<main class="container">
+  <nav class="top-nav">
+    <a href="./index.html">← 工具列表</a>
+  </nav>
+  <header class="tool-header">
+    <h1>二进制解码器</h1>
+    <p class="tool-desc">解析和分析二进制数据结构</p>
+  </header>
+  <section class="tool-body">
+<script type="text/javascript">
+//<!--
+    function clean_bin(input, remove_0b) {
+        input = input.toUpperCase();
+        
+        if (remove_0b) {
+          input = input.replace(/0B/gi, "");        
+        }
+        
+        var orig_input = input;
+        input = input.replace(/[^01]/g, "");
+        if (orig_input != input)
+            alert ("警告：输入中的非二进制字符已被忽略。");
+        return input;    
+    }
+    
+    function clean_hex(input) {
+        input = input.toUpperCase();
+        input = input.replace(/0x/gi, "");        
+        input = input.replace(/[^A-Fa-f0-9]/g, "");
+        return input;    
+    }    
+    
+    var hD='0123456789ABCDEF';
+    function dec2hex(d) {
+        var h = hD.substr(d&15,1);
+        while (d>15) {
+            d>>=4;
+            h=hD.substr(d&15,1)+h;
+        }
+        //if (document.frmConvert.chbLowercaseOutput.checked) {
+        //    h = h.toLowerCase();
+        //}
+        return h;
+    }    
+    
+    function ShowDecodedAsText(val)
+    {
+        var target = document.getElementById('divDecodedText'); 
+        target.innerHTML = val;    
+    }       
+    
+    function Convert() {
+      var cleaned_bin = clean_bin(document.frmConvert.ed_input.value, document.frmConvert.chbSeparator.checked);
+      document.frmConvert.cleaned_bin.value = cleaned_bin;
+      if (cleaned_bin.length % 8) {
+        alert ("错误：清理后的二进制字符串长度不是 8 的整数倍。");     
+        return;
+      }
+
+      var separator = "";
+      if (document.frmConvert.chbHexSeparator.checked)
+        separator = ", 0x";
+      var hexText = "";
+      if (document.frmConvert.chbHexSeparator.checked)
+        hexText = "0x";
+
+      var binary = new Array();
+      for (var i=0; i<cleaned_bin.length/8; i++) {
+        var h = cleaned_bin.substr(i*8, 8);
+        binary[i] = parseInt(h,2);
+        hexText = hexText + ((i!=0)?separator:"") + (binary[i]<16?"0":"") + dec2hex(binary[i]);                
+      }
+
+      var output = binary;
+
+      var htmlStr = "<p style=\"font-family: courier new, monospace\"><b>";
+      for (i=0; i<output.length; i++) {
+        if (output[i] >= 32 && output[i] <= 126) {
+          switch(String.fromCharCode(output[i])) {
+          case '&': htmlStr += "&amp;";
+            break;
+          case '<': htmlStr += "&lt;";
+            break;
+          case '>': htmlStr += "&gt;";
+            break;
+          case '"': htmlStr += "&quot;";
+            break;
+          case '\'': htmlStr += "&#039;";
+            break;
+          default: htmlStr += String.fromCharCode(output[i]);
+          }
+        }
+        else {
+          htmlStr += "<i>[" + output[i] + "]<" + "/i>";
+        }
+      }
+      htmlStr += "<" + "/b><" + "/p>";  // stupid W3C validator...
+      document.frmConvert.hex.value = hexText;
+              
+      ShowDecodedAsText(htmlStr);   
+
+    }
+    
+    function ConvertToFile() {
+      Convert();
+      createFileFromHex(clean_hex(document.frmConvert.hex.value), document.frmConvert.filename.value);
+    }      
+
+//-->
+</script>
+<form name="frmConvert" action="">
+				<p>二进制字符串：
+        <br>
+        <input type="checkbox" name="chbSeparator" value="sep" checked="checked">移除输入中的 "0b" 前缀        
+        </p>
+			    <p><textarea name="ed_input" rows="4" cols="67" style="width: 550px;"></textarea></p>        
+        <p>注意：除 0 和 1 以外的所有字符均被忽略，因此 "100111" = "10 01 11" = "10, 01, 11" 等。
+        </p>
+				<p>清理后的输入：</p>
+			    <p><input type="text" name="cleaned_bin" readonly="readonly" value="" style="width: 550px;"></p>
+        <p>解码数据（十六进制值）：
+        <br>
+        <input type="checkbox" name="chbHexSeparator" value="sep" checked="checked">用 "0x" 分隔字节</p>        
+        </p>
+			  <p><input type="text" name="hex" value="" style="width: 550px;"></p>                			
+        <p>解码数据（ASCII 文本），32~126 范围外的字节以斜体显示为 <i>[字节值]</i>:<br>        
+        <div id="divDecodedText">
+        <p><i>（解码后的文本将显示在此处）</i></p>
+        </div>        
+			  <p>
+			    <button type=button name="btnConvert"
+            onclick="Convert()">
+            转换
+          </button>
+			  </p>
+        <h2>转换为原始二进制文件（客户端）</h2>
+				<p>创建文件名：</p>
+			    <p>
+				<input type="text" name="filename" value="myfile.dat" style="width: 550px;">
+				</p>	        
+			  <p>
+			    <button type=button name="btnConvertToFile"
+            onclick="ConvertToFile()">
+            转换为文件
+          </button>
+			  </p>        
+			</form>
+  </section>
+  <footer class="page-footer">
+    <p class="copyright">@鸽子笼 2020-2026</p>
+  </footer>
+</main>
+</body>
+</html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MD5 哈希计算器</title>
+  <link rel="stylesheet" href="./css/tool.css">
+  <script src="./js/utils.js"></script>
+  <script src="./js/md5.js"></script>
+</head>
+<body>
+<div id="bg"></div>
+<main class="container">
+  <nav class="top-nav">
+    <a href="./index.html">← 工具列表</a>
+  </nav>
+  <header class="tool-header">
+    <h1>MD5 哈希计算器</h1>
+    <p class="tool-desc">在线计算文本或文件的 MD5 哈希值</p>
+  </header>
+  <section class="tool-body">
+
+<p>此计算器用于计算挑战-握手认证（CHAP）等认证方案所需的 MD5 摘要。
+可多次更新 MD5 状态，每次可将输入视为文本或十六进制缓冲区（例如将 salt/nonce 视为二进制，将密码视为文本）。</p>
+
+<script>
+let initialized = false;
+
+function md5Init() {
+    md5_init();
+    document.frmCalc.output.value = '';
+    initialized = true;
+}
+
+function md5UpdateText() {
+    if (!initialized) md5Init();
+    const input = document.frmCalc.input.value;
+    for (let i = 0; i < input.length; i++) {
+        md5_update(input.charCodeAt(i));
+    }
+}
+
+function md5UpdateHex() {
+    if (!initialized) md5Init();
+    const input = document.frmCalc.input.value.toUpperCase();
+
+    // 验证十六进制格式
+    if (!isValidHex(input)) {
+        alert('错误：不是有效的十六进制字符串，包含非十六进制字符。');
+        return;
+    }
+    if (!isEvenHexLength(input)) {
+        alert('错误：不是有效的十六进制字符串，长度不是 2 字节的整数倍。');
+        return;
+    }
+
+    for (let i = 0; i < input.length; i += 2) {
+        md5_update(hex2dec(input.substr(i, 2)));
+    }
+}
+
+function md5Finish() {
+    initialized = false;
+    md5_finish();
+    let out = '';
+    for (let i = 0; i < digestBits.length; i++) {
+        out += (digestBits[i] < 16 ? '0' : '') + dec2hex(digestBits[i], false);
+    }
+    document.frmCalc.output.value = out;
+}
+</script>
+
+<form name="frmCalc" action="">
+  <p><button type="button" onclick="md5Init()">重新初始化（md5_init）</button></p>
+
+  <p><label for="md5Input">输入：</label></p>
+  <p>
+    <input type="text" name="input" id="md5Input" value="">
+    <br>
+    <button type="button" onclick="md5UpdateText()">以文本方式更新（md5_update）</button>
+    <button type="button" onclick="md5UpdateHex()">以十六进制方式更新（md5_update）</button>
+  </p>
+
+  <p><button type="button" onclick="md5Finish()">完成计算 / 获取结果（md5_finish）</button></p>
+
+  <p><label for="md5Output">输出 MD5：</label></p>
+  <p><input type="text" name="output" id="md5Output" value="" readonly></p>
+</form>
+  </section>
+  <footer class="page-footer">
+    <p class="copyright">@鸽子笼 2020-2026</p>
+  </footer>
+</main>
+</body>
+</html>

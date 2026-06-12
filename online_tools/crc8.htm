@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CRC8 校验计算器</title>
+  <link rel="stylesheet" href="./css/tool.css">
+
+</head>
+<body>
+<div id="bg"></div>
+<main class="container">
+  <nav class="top-nav">
+    <a href="./index.html">← 工具列表</a>
+  </nav>
+  <header class="tool-header">
+    <h1>CRC8 校验计算器</h1>
+    <p class="tool-desc">在线计算数据的 CRC8 校验值</p>
+  </header>
+  <section class="tool-body">
+<script type="text/javascript">
+//<!--
+    function clean_hex(input, remove_0x) {
+        input = input.toUpperCase();
+        
+        if (remove_0x) {
+          input = input.replace(/0x/gi, "");        
+        }
+        
+        var orig_input = input;
+        input = input.replace(/[^A-Fa-f0-9]/g, "");
+        if (orig_input != input)
+            alert ("警告：输入中的非十六进制字符已被忽略。");
+        return input;    
+    }
+    
+    function ShowDecodedAsText(val)
+    {
+        var target = document.getElementById('divDecodedText'); 
+        target.innerHTML = val;    
+    }       
+    
+	var crc8table = 
+	[
+	0, 94, 188, 226, 97, 63, 221, 131, 194, 156, 126, 32, 163, 253, 31, 65,
+	157, 195, 33, 127, 252, 162, 64, 30, 95, 1, 227, 189, 62, 96, 130, 220,
+	35, 125, 159, 193, 66, 28, 254, 160, 225, 191, 93, 3, 128, 222, 60, 98,
+	190, 224, 2, 92, 223, 129, 99, 61, 124, 34, 192, 158, 29, 67, 161, 255,
+	70, 24, 250, 164, 39, 121, 155, 197, 132, 218, 56, 102, 229, 187, 89, 7,
+	219, 133, 103, 57, 186, 228, 6, 88, 25, 71, 165, 251, 120, 38, 196, 154,
+	101, 59, 217, 135, 4, 90, 184, 230, 167, 249, 27, 69, 198, 152, 122, 36,
+	248, 166, 68, 26, 153, 199, 37, 123, 58, 100, 134, 216, 91, 5, 231, 185,
+	140, 210, 48, 110, 237, 179, 81, 15, 78, 16, 242, 172, 47, 113, 147, 205,
+	17, 79, 173, 243, 112, 46, 204, 146, 211, 141, 111, 49, 178, 236, 14, 80,
+	175, 241, 19, 77, 206, 144, 114, 44, 109, 51, 209, 143, 12, 82, 176, 238,
+	50, 108, 142, 208, 83, 13, 239, 177, 240, 174, 76, 18, 145, 207, 45, 115,
+	202, 148, 118, 40, 171, 245, 23, 73, 8, 86, 180, 234, 105, 55, 213, 139,
+	87, 9, 235, 181, 54, 104, 138, 212, 149, 203, 41, 119, 244, 170, 72, 22,
+	233, 183, 85, 11, 136, 214, 52, 106, 43, 117, 151, 201, 74, 20, 246, 168,
+	116, 42, 200, 150, 21, 75, 169, 247, 182, 232, 10, 84, 215, 137, 107, 53
+	];
+	
+    var hD='0123456789ABCDEF';
+    function dec2hex(d) {
+        var h = hD.substr(d&15,1);
+        while (d>15) {
+            d>>=4;
+            h=hD.substr(d&15,1)+h;
+        }
+        return h;
+    }	
+	
+    function Convert() {
+      var cleaned_hex = clean_hex(document.frmConvert.hex.value, document.frmConvert.chbSeparator.checked);
+      document.frmConvert.cleaned_hex.value = cleaned_hex;
+      if (cleaned_hex.length % 2) {
+        alert ("错误：清理后的十六进制字符串长度为奇数。");     
+        return;
+      }
+
+      var binary = new Array();
+      for (var i=0; i<cleaned_hex.length/2; i++) {
+        var h = cleaned_hex.substr(i*2, 2);
+        binary[i] = parseInt(h,16);        
+      }
+
+	  var cleaned_init = clean_hex(document.frmConvert.init.value, true);
+      if (cleaned_init.length != 2) {
+        alert ("错误：初始值不像是 1 个字节（应为 2 位十六进制）。");     
+        return;
+      }
+
+		var result = parseInt(cleaned_init, 16);
+		for (var i=0; i<binary.length; i++) {
+			result = crc8table[result ^ binary[i]];
+		}
+		document.frmConvert.output.value = "0x" + (result<16?"0":"") + dec2hex(result);
+
+    } 
+
+//-->
+</script>
+<p>CRC8 计算器，以十六进制数组为输入，按照
+	<a href="https://www.maximintegrated.com/en/app-notes/index.mvp/id/27">Dallas/Maxim 应用笔记 27</a>
+	（多项式 X^8+X^5+X^4+X^0）计算，即 1-Wire 协议使用的 CRC8 规范。
+      <form name="frmConvert" action="">
+		<p>CRC8 初始值: <input type="text" name="init" value="0x00" style="width: 50px;">
+		</p>
+				<p>十六进制字符串：</p>
+			    <p><input type="text" name="hex" value="" style="width: 550px;"></p>
+        <p>注意：十六进制集合以外的字符将被忽略，因此 "12AB34" = "12 AB 34" = "12, AB, 34" 等价，输入不区分大小写。</p>
+        <p>选项：</p>
+          <p><input type="checkbox" name="chbSeparator" value="sep" checked="checked">移除输入中的 "0x" 前缀</p>
+				<p>清理后的输入：</p>
+			    <p><input type="text" name="cleaned_hex" readonly="readonly" value="" style="width: 550px;"></p>				
+
+		<p>
+		<br>
+		结果（十六进制校验和）: <input type="text" name="output" readonly="readonly" value="" style="width: 50px;">
+		</p>
+		
+			  <p>
+			    <button type=button name="btnConvert"
+            onclick="Convert()">
+            计算 CRC8
+          </button>
+			  </p>
+			</form>
+  </section>
+  <footer class="page-footer">
+    <p class="copyright">@鸽子笼 2020-2026</p>
+  </footer>
+</main>
+</body>
+</html>
