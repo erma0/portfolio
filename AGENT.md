@@ -37,7 +37,6 @@ portfolio/
 ├── works.js                # ★ 作品数据配置（独立文件）
 ├── styles.css              # 全局样式（米白纸主题、卡片、动效）
 ├── main.js                 # 动效 + 卡片渲染 + 图标映射 + action 路由
-├── vercel.json             # Vercel rewrite 配置
 ├── AGENT.md                # 本文件
 ├── .workbuddy/memory/      # 项目记忆（不提交 Git）
 ├── works/                  # ★ 各作品详情页
@@ -286,8 +285,7 @@ newIcon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-widt
 在 `main.js` 的 `ICONS` 对象中添加一项，key 与 `works.js` 中的 `icon` 字段对应。
 
 ### 部署
-- 推送 Git → Vercel 自动部署
-- `vercel.json` 配置 rewrite 支持 SPA
+- 推送 Git → Vercel 自动部署（默认即可服务多页面静态文件，无需 rewrite）
 - 子域名 works.erma0.cn 在 Vercel 项目设置中绑定
 
 ---
