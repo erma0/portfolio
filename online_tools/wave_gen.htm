@@ -4,94 +4,92 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>WAV 音频文件生成器</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="../styles.css" />
-  <link rel="stylesheet" href="./css/tool.css">
   <script src="./js/utils.js"></script>
+  <script src="./js/tool-page.js"></script>
 </head>
 <body>
-<div class="grain" aria-hidden="true"></div>
-<main class="container">
-  <nav class="top-nav">
-    <a href="../index.html" class="back-link">← 作品集</a>
-    <a href="./index.html">← 工具列表</a>
-  </nav>
-  <header class="tool-header">
-    <h1>WAV 音频文件生成器</h1>
-    <p class="tool-desc">在线生成指定频率和时长的 WAV 格式音频文件</p>
-  </header>
-  <section class="tool-body">
-    <p>客户端 JavaScript WAV 音频文件生成器。Audacity 虽有测试信号生成功能，但缺少某些特性——尤其是无法方便地生成 DC 偏置信号。本生成器旨在简化这类操作，替代之前需要生成 16 位采样二进制文件再导入 Audacity 的繁琐流程。</p>
-    <p>波形由采样频率、每采样位深以及采样值的 JavaScript 公式来描述。</p>
-
-    <div class="form-card">
-      <div class="field">
-        <label class="field-label" for="samplingFrequency">采样频率（Hz）</label>
-        <input type="text" id="samplingFrequency" value="48000">
-      </div>
-      <div class="field">
-        <label class="field-label" for="bitsPerSample">采样位深</label>
-        <select id="bitsPerSample">
-          <option value="16">16 位</option>
-          <option value="24">24 位</option>
-        </select>
-      </div>
-      <div class="field">
-        <label class="field-label" for="numberOfSamples">总采样点数</label>
-        <input type="text" id="numberOfSamples" value="192000">
-      </div>
-    </div>
-
-    <div class="form-card">
-      <div class="field">
-        <label class="field-label" for="formula">波形公式</label>
-        <textarea id="formula" rows="4">10000 * Math.sin(2 * Math.PI * 1000/samplingFrequency * n)</textarea>
-        <span class="field-hint">直接执行的 JavaScript 表达式</span>
-      </div>
-      <div class="field">
-        <span class="field-label">可用符号</span>
-        <dl>
-          <dt><strong>n</strong></dt>
-          <dd>采样点索引</dd>
-          <dt><strong>samplingFrequency</strong></dt>
-          <dd>采样频率（即上方填写的值）</dd>
-        </dl>
-      </div>
-      <div class="field">
-        <span class="field-label">示例</span>
-        <dl>
-          <dt><strong>3</strong></dt>
-          <dd>所有采样点均为常量 3（DC 偏置）</dd>
-          <dt><strong>n % 10000</strong></dt>
-          <dd>锯齿波，值从 0 升至 9999 后循环</dd>
-          <dt><strong>((n/(samplingFrequency/(2*50))) &amp; 0x01) ? 8000 : -4000</strong></dt>
-          <dd>非对称（+8000/-4000）50Hz 方波</dd>
-          <dt><strong>10000 * Math.sin(2 * Math.PI * 1000/samplingFrequency * n)</strong></dt>
-          <dd>正弦波，1000 Hz，振幅 = 10000</dd>
-        </dl>
-        <span class="field-hint">不同波形可以自由组合（相加）。采样值计算后会根据所选位深进行饱和限幅。</span>
-      </div>
-    </div>
-
-    <div class="form-card">
-      <div class="field">
-        <label class="field-label" for="filename">文件名</label>
-        <input type="text" id="filename" value="myfile.wav">
-      </div>
-    </div>
-
-    <div class="btn-group">
-      <button type="button" onclick="CreateFile()">生成文件</button>
-    </div>
-  </section>
-  <footer class="page-footer">
-    <p class="copyright">@鸽子笼 2020-2026</p>
-  </footer>
-</main>
-
+<noscript><p style="text-align:center;padding:4rem">此工具需要 JavaScript 支持。</p></noscript>
 <script>
+ToolPage.render({
+  title: 'WAV 音频文件生成器',
+  desc: '在线生成指定频率和时长的 WAV 格式音频文件',
+  body: function(body) {
+    var p1 = ToolPage.el('p');
+    p1.textContent = '客户端 JavaScript WAV 音频文件生成器。Audacity 虽有测试信号生成功能，但缺少某些特性——尤其是无法方便地生成 DC 偏置信号。本生成器旨在简化这类操作，替代之前需要生成 16 位采样二进制文件再导入 Audacity 的繁琐流程。';
+    body.appendChild(p1);
+    var p2 = ToolPage.el('p');
+    p2.textContent = '波形由采样频率、每采样位深以及采样值的 JavaScript 公式来描述。';
+    body.appendChild(p2);
+
+    // Card 1: sampling parameters
+    var card1 = ToolPage.formCard();
+    var sfInput = document.createElement('input');
+    sfInput.type = 'text';
+    sfInput.id = 'samplingFrequency';
+    sfInput.value = '48000';
+    card1.appendChild(ToolPage.field('采样频率（Hz）', null, sfInput));
+
+    card1.appendChild(ToolPage.field('采样位深', null, ToolPage.select('bitsPerSample', [{value:'16', label:'16 位'}, {value:'24', label:'24 位'}], '16')));
+
+    var nsInput = document.createElement('input');
+    nsInput.type = 'text';
+    nsInput.id = 'numberOfSamples';
+    nsInput.value = '192000';
+    card1.appendChild(ToolPage.field('总采样点数', null, nsInput));
+    body.appendChild(card1);
+
+    // Card 2: formula + symbols + examples
+    var card2 = ToolPage.formCard();
+    var formulaTa = document.createElement('textarea');
+    formulaTa.id = 'formula';
+    formulaTa.rows = 4;
+    formulaTa.value = '10000 * Math.sin(2 * Math.PI * 1000/samplingFrequency * n)';
+    card2.appendChild(ToolPage.field('波形公式', '直接执行的 JavaScript 表达式', formulaTa));
+
+    // Symbols
+    var symbolsField = ToolPage.field('可用符号');
+    var dl1 = ToolPage.el('dl');
+    var dt1 = ToolPage.el('dt'); dt1.innerHTML = '<strong>n</strong>';
+    var dd1 = ToolPage.el('dd'); dd1.textContent = '采样点索引';
+    dl1.appendChild(dt1); dl1.appendChild(dd1);
+    var dt2 = ToolPage.el('dt'); dt2.innerHTML = '<strong>samplingFrequency</strong>';
+    var dd2 = ToolPage.el('dd'); dd2.textContent = '采样频率（即上方填写的值）';
+    dl1.appendChild(dt2); dl1.appendChild(dd2);
+    symbolsField.appendChild(dl1);
+    card2.appendChild(symbolsField);
+
+    // Examples
+    var examplesField = ToolPage.field('示例', '不同波形可以自由组合（相加）。采样值计算后会根据所选位深进行饱和限幅。');
+    var dl2 = ToolPage.el('dl');
+    var dt3 = ToolPage.el('dt'); dt3.innerHTML = '<strong>3</strong>';
+    var dd3 = ToolPage.el('dd'); dd3.textContent = '所有采样点均为常量 3（DC 偏置）';
+    dl2.appendChild(dt3); dl2.appendChild(dd3);
+    var dt4 = ToolPage.el('dt'); dt4.innerHTML = '<strong>n % 10000</strong>';
+    var dd4 = ToolPage.el('dd'); dd4.textContent = '锯齿波，值从 0 升至 9999 后循环';
+    dl2.appendChild(dt4); dl2.appendChild(dd4);
+    var dt5 = ToolPage.el('dt'); dt5.innerHTML = '<strong>((n/(samplingFrequency/(2*50))) &amp; 0x01) ? 8000 : -4000</strong>';
+    var dd5 = ToolPage.el('dd'); dd5.textContent = '非对称（+8000/-4000）50Hz 方波';
+    dl2.appendChild(dt5); dl2.appendChild(dd5);
+    var dt6 = ToolPage.el('dt'); dt6.innerHTML = '<strong>10000 * Math.sin(2 * Math.PI * 1000/samplingFrequency * n)</strong>';
+    var dd6 = ToolPage.el('dd'); dd6.textContent = '正弦波，1000 Hz，振幅 = 10000';
+    dl2.appendChild(dt6); dl2.appendChild(dd6);
+    examplesField.appendChild(dl2);
+    card2.appendChild(examplesField);
+    body.appendChild(card2);
+
+    // Card 3: filename
+    var card3 = ToolPage.formCard();
+    var fnInput = document.createElement('input');
+    fnInput.type = 'text';
+    fnInput.id = 'filename';
+    fnInput.value = 'myfile.wav';
+    card3.appendChild(ToolPage.field('文件名', null, fnInput));
+    body.appendChild(card3);
+
+    body.appendChild(ToolPage.btnGroup([{ text: '生成文件', onclick: CreateFile }]));
+  }
+});
+
 function CreateFile() {
   var filename = document.getElementById('filename').value;
   var numberOfSamples = parseInt(document.getElementById('numberOfSamples').value);

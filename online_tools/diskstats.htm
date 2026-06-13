@@ -4,88 +4,80 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>/proc/diskstats 格式化工具</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="../styles.css" />
-  <link rel="stylesheet" href="./css/tool.css">
   <script src="./js/utils.js"></script>
+  <script src="./js/tool-page.js"></script>
 </head>
 <body>
-<div class="grain" aria-hidden="true"></div>
-<main class="container">
-  <nav class="top-nav">
-    <a href="../index.html" class="back-link">← 作品集</a>
-    <a href="./index.html">← 工具列表</a>
-  </nav>
-  <header class="tool-header">
-    <h1>/proc/diskstats 格式化工具</h1>
-    <p class="tool-desc">将 Linux /proc/diskstats 内容格式化为可读表格</p>
-  </header>
-  <section class="tool-body">
-    <p>将 Linux /proc/diskstats 内容转换为可读格式。参见 <a href="https://www.kernel.org/doc/Documentation/ABI/testing/procfs-diskstats" target="_blank">kernel.org 文档</a> 了解文件格式说明。</p>
-
-    <div class="form-card">
-      <div class="field">
-        <label class="field-label" for="edInput">/proc/diskstats 内容</label>
-        <textarea id="edInput" rows="10" placeholder="粘贴 /proc/diskstats 的内容"></textarea>
-      </div>
-      <div class="field">
-        <label><input type="checkbox" id="chbSkipEmpty" checked> 跳过无读写操作的设备行</label>
-      </div>
-    </div>
-
-    <div class="btn-group">
-      <button type="button" onclick="Convert()">格式化</button>
-    </div>
-
-    <div class="result-card">
-      <span class="field-label">格式化结果</span>
-      <div style="overflow-x: auto;">
-        <table id="diskstatsTable">
-          <thead>
-            <tr>
-              <th>设备编号</th>
-              <th>设备名</th>
-              <th>成功完成的读操作次数</th>
-              <th>合并的读操作次数</th>
-              <th>读取的扇区数</th>
-              <th>读操作耗时 [ms]</th>
-              <th>完成的写操作次数</th>
-              <th>合并的写操作次数</th>
-              <th>写入的扇区数</th>
-              <th>写操作耗时 [ms]</th>
-              <th>进行中的 I/O 数</th>
-              <th>I/O 操作总耗时 [ms]</th>
-              <th>I/O 加权耗时</th>
-              <th>丢弃操作次数</th>
-              <th>合并的丢弃次数</th>
-              <th>丢弃的扇区数</th>
-              <th>丢弃操作耗时</th>
-              <th>完成的刷新请求次数</th>
-              <th>刷新操作耗时</th>
-            </tr>
-          </thead>
-          <tbody>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <div class="form-card">
-      <span class="field-label">辅助命令</span>
-      <p>若要获取最近修改过的文件列表（内容或权限变更），可使用以下命令：</p>
-      <pre>cd /
-find . -xdev -ctime -0.2</pre>
-      <span class="field-hint">其中 -0.2 表示"不超过 0.2 天前"，-xdev 表示不递归进入挂载点目录</span>
-    </div>
-  </section>
-  <footer class="page-footer">
-    <p class="copyright">@鸽子笼 2020-2026</p>
-  </footer>
-</main>
-
+<noscript><p style="text-align:center;padding:4rem">此工具需要 JavaScript 支持。</p></noscript>
 <script>
+ToolPage.render({
+  title: '/proc/diskstats 格式化工具',
+  desc: '将 Linux /proc/diskstats 内容格式化为可读表格',
+  body: function(body) {
+    var p = ToolPage.el('p');
+    p.appendChild(document.createTextNode('将 Linux /proc/diskstats 内容转换为可读格式。参见 '));
+    var a = ToolPage.el('a');
+    a.href = 'https://www.kernel.org/doc/Documentation/ABI/testing/procfs-diskstats';
+    a.target = '_blank';
+    a.textContent = 'kernel.org 文档';
+    p.appendChild(a);
+    p.appendChild(document.createTextNode(' 了解文件格式说明。'));
+    body.appendChild(p);
+
+    var card1 = ToolPage.formCard();
+    var ta = document.createElement('textarea');
+    ta.id = 'edInput';
+    ta.rows = 10;
+    ta.placeholder = '粘贴 /proc/diskstats 的内容';
+    card1.appendChild(ToolPage.field('/proc/diskstats 内容', null, ta));
+    var cbField = ToolPage.el('div', 'field');
+    cbField.appendChild(ToolPage.checkbox('chbSkipEmpty', '跳过无读写操作的设备行', true));
+    card1.appendChild(cbField);
+    body.appendChild(card1);
+
+    body.appendChild(ToolPage.btnGroup([{ text: '格式化', onclick: Convert }]));
+
+    // Result card with table
+    var rc = ToolPage.el('div', 'result-card');
+    var rcLabel = ToolPage.el('span', 'field-label');
+    rcLabel.textContent = '格式化结果';
+    rc.appendChild(rcLabel);
+    var scrollDiv = ToolPage.el('div');
+    scrollDiv.style.overflowX = 'auto';
+    var table = ToolPage.el('table');
+    table.id = 'diskstatsTable';
+    var thead = ToolPage.el('thead');
+    var headerRow = ToolPage.el('tr');
+    var headers = ['设备编号', '设备名', '成功完成的读操作次数', '合并的读操作次数', '读取的扇区数', '读操作耗时 [ms]', '完成的写操作次数', '合并的写操作次数', '写入的扇区数', '写操作耗时 [ms]', '进行中的 I/O 数', 'I/O 操作总耗时 [ms]', 'I/O 加权耗时', '丢弃操作次数', '合并的丢弃次数', '丢弃的扇区数', '丢弃操作耗时', '完成的刷新请求次数', '刷新操作耗时'];
+    headers.forEach(function(h) {
+      var th = ToolPage.el('th');
+      th.textContent = h;
+      headerRow.appendChild(th);
+    });
+    thead.appendChild(headerRow);
+    table.appendChild(thead);
+    var tbody = ToolPage.el('tbody');
+    table.appendChild(tbody);
+    scrollDiv.appendChild(table);
+    rc.appendChild(scrollDiv);
+    body.appendChild(rc);
+
+    // Command reference card
+    var cmdCard = ToolPage.formCard();
+    cmdCard.appendChild(ToolPage.field('辅助命令'));
+    var cmdP = ToolPage.el('p');
+    cmdP.textContent = '若要获取最近修改过的文件列表（内容或权限变更），可使用以下命令：';
+    cmdCard.appendChild(cmdP);
+    var pre = ToolPage.el('pre');
+    pre.textContent = 'cd /\nfind . -xdev -ctime -0.2';
+    cmdCard.appendChild(pre);
+    var cmdHint = ToolPage.el('span', 'field-hint');
+    cmdHint.textContent = '其中 -0.2 表示"不超过 0.2 天前"，-xdev 表示不递归进入挂载点目录';
+    cmdCard.appendChild(cmdHint);
+    body.appendChild(cmdCard);
+  }
+});
+
 function Convert() {
   var input = document.getElementById('edInput').value;
   var skipEmpty = document.getElementById('chbSkipEmpty').checked;

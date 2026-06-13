@@ -4,72 +4,51 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>并联电阻搜索工具</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="../styles.css" />
-  <link rel="stylesheet" href="./css/tool.css">
   <script src="./js/utils.js"></script>
+  <script src="./js/tool-page.js"></script>
 </head>
 <body>
-<div class="grain" aria-hidden="true"></div>
-<main class="container">
-  <nav class="top-nav">
-    <a href="../index.html" class="back-link">← 作品集</a>
-    <a href="./index.html">← 工具列表</a>
-  </nav>
-  <header class="tool-header">
-    <h1>并联电阻搜索工具</h1>
-    <p class="tool-desc">搜索两个并联电阻组合以匹配目标等效阻值</p>
-  </header>
-  <section class="tool-body">
-    <p>此工具在 E24（5% 精度）电阻系列中搜索两个并联后等效阻值最接近目标值的电阻组合，适合用于替代手头缺少的阻值。精确匹配将被排除——本工具专用于搜索替代方案。</p>
-
-    <div class="form-card">
-      <div class="field">
-        <label class="field-label" for="equivalentResistance">目标等效阻值（Ω）</label>
-        <input type="text" id="equivalentResistance" value="2300">
-      </div>
-      <div class="field">
-        <label class="field-label">搜索范围</label>
-        <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
-          <span>从</span>
-          <select id="selectRangeMin">
-            <option value="0.9">0.9</option>
-            <option value="0.95">0.95</option>
-            <option value="0.97">0.97</option>
-            <option value="0.98" selected>0.98</option>
-            <option value="0.99">0.99</option>
-            <option value="1.00">1.00</option>
-          </select>
-          <span>到</span>
-          <select id="selectRangeMax">
-            <option value="1.00">1.00</option>
-            <option value="1.01">1.01</option>
-            <option value="1.02" selected>1.02</option>
-            <option value="1.03">1.03</option>
-            <option value="1.05">1.05</option>
-            <option value="1.1">1.1</option>
-          </select>
-          <span>倍目标阻值</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="btn-group">
-      <button type="button" onclick="Execute()">搜索电阻组合</button>
-    </div>
-
-    <div class="result-card" id="divOutput">
-      <span class="result-value" style="color: var(--ink-mute);">点击"搜索电阻组合"查看结果</span>
-    </div>
-  </section>
-  <footer class="page-footer">
-    <p class="copyright">@鸽子笼 2020-2026</p>
-  </footer>
-</main>
-
+<noscript><p style="text-align:center;padding:4rem">此工具需要 JavaScript 支持。</p></noscript>
 <script>
+ToolPage.render({
+  title: '并联电阻搜索工具',
+  desc: '搜索两个并联电阻组合以匹配目标等效阻值',
+  body: function(body) {
+    var p = ToolPage.el('p');
+    p.textContent = '此工具在 E24（5% 精度）电阻系列中搜索两个并联后等效阻值最接近目标值的电阻组合，适合用于替代手头缺少的阻值。精确匹配将被排除——本工具专用于搜索替代方案。';
+    body.appendChild(p);
+
+    var card1 = ToolPage.formCard();
+    var rInput = document.createElement('input');
+    rInput.type = 'text';
+    rInput.id = 'equivalentResistance';
+    rInput.value = '2300';
+    card1.appendChild(ToolPage.field('目标等效阻值（Ω）', null, rInput));
+
+    var rangeField = ToolPage.field('搜索范围');
+    var rangeDiv = ToolPage.el('div');
+    rangeDiv.style.cssText = 'display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;';
+    rangeDiv.appendChild(document.createTextNode('从'));
+    rangeDiv.appendChild(ToolPage.select('selectRangeMin', ['0.9', '0.95', '0.97', '0.98', '0.99', '1.00'], '0.98'));
+    rangeDiv.appendChild(document.createTextNode('到'));
+    rangeDiv.appendChild(ToolPage.select('selectRangeMax', ['1.00', '1.01', '1.02', '1.03', '1.05', '1.1'], '1.02'));
+    rangeDiv.appendChild(document.createTextNode('倍目标阻值'));
+    rangeField.appendChild(rangeDiv);
+    card1.appendChild(rangeField);
+    body.appendChild(card1);
+
+    body.appendChild(ToolPage.btnGroup([{ text: '搜索电阻组合', onclick: Execute }]));
+
+    var rc = ToolPage.el('div', 'result-card');
+    rc.id = 'divOutput';
+    var defaultMsg = ToolPage.el('span', 'result-value');
+    defaultMsg.style.color = 'var(--ink-mute)';
+    defaultMsg.textContent = '点击"搜索电阻组合"查看结果';
+    rc.appendChild(defaultMsg);
+    body.appendChild(rc);
+  }
+});
+
 var E24_set = [1.0, 1.1, 1.2, 1.3, 1.5, 1.6, 1.8, 2.0, 2.2, 2.4, 2.7, 3.0, 3.3, 3.6, 3.9, 4.3, 4.7, 5.1, 5.6, 6.2, 6.8, 7.5, 8.2, 9.1];
 
 function getNextResistor(resistance) {

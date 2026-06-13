@@ -15,7 +15,7 @@
 | 部署 | Vercel，纯静态，零构建 |
 | 技术栈 | HTML + CSS + Vanilla JS（data/renderer/animations 三文件分工），无框架，零依赖 |
 | 字体 | Noto Serif SC（标题衬线）、Inter（正文无衬线）、JetBrains Mono（等宽/标签） |
-| 主题 | 米白纸质感 + 暗色工具区，双主题共存 |
+| 主题 | 米白纸质感，统一主题 |
 
 ### 站点关系
 
@@ -49,9 +49,9 @@ portfolio/
 └── online_tools/           # 在线工具子模块（❄️ 冻结，不再新增）
     ├── index.html          # 工具集首页 — 分类导航
     ├── css/                # tools-index.css / tool.css
-    ├── js/                 # utils.js / md5.js / rusha.js
+    ├── js/                 # utils.js / tool-page.js / tools-registry.js / md5.js / rusha.js
     ├── images/             # 图标
-    └── *.htm               # 各工具页（~25 个，冻结）
+    └── *.htm               # 各工具页（~25 个，使用 ToolPage.render() 框架）
 ```
 
 ---
@@ -260,16 +260,70 @@ portfolio/
 - **主推**：改 `featured: true`（记得把前一个的 `featured` 关掉）
 
 ### 新增在线工具页
-1. 在 `online_tools/` 下创建 `tool_name.htm`
-2. 复用 `online_tools/css/tool.css` 和 `online_tools/js/utils.js`
-3. 保持米白纸主题风格（复用主页 `../styles.css` 变量）
-4. 在 `online_tools/index.html` 对应分类下添加链接
+1. 在 `online_tools/js/tools-registry.js` 的 `window.__TOOLS` 对应分类中添加条目
+2. 在 `online_tools/` 下创建 `tool_name.htm`，使用 `ToolPage.render()` 框架
+3. 框架自动注入字体/CSS/页面外壳，工具页只需定义 `body` 函数
+
+### 工具页框架（tool-page.js）
+
+所有工具页使用统一框架，消除了页面外壳、字体加载、复制按钮等重复代码：
+
+```html
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>工具标题</title>
+  <script src="./js/utils.js"></script>
+  <script src="./js/tool-page.js"></script>
+</head>
+<body>
+<noscript><p>此工具需要 JavaScript 支持。</p></noscript>
+<script>
+ToolPage.render({
+  title: '工具标题',
+  desc: '工具描述',
+  body: function(body) {
+    // 使用 ToolPage 工厂函数构建 UI
+    var card = ToolPage.formCard();
+    card.appendChild(ToolPage.field('标签', '提示', ToolPage.inputRow('myInput')));
+    body.appendChild(card);
+  }
+});
+</script>
+</body>
+</html>
+```
+
+**ToolPage 工厂函数：**
+
+| 函数 | 用途 |
+|---|---|
+| `render(config)` | 渲染页面外壳 + 调用 `config.body()` |
+| `formCard()` | `.form-card` 容器 |
+| `field(label, hint, content)` | `.field` 组（标签 + 内容 + 提示） |
+| `inputRow(id, opts)` | 输入框 + 复制按钮（自动布线） |
+| `textareaRow(id, opts)` | 文本区 + 复制按钮 |
+| `resultCard(id, label)` | 结果展示卡片 |
+| `checkbox(id, label, checked)` | 复选框 |
+| `btnGroup(buttons)` | 按钮组 |
+| `fileField(id, label)` | 文件选择 |
+| `dropZone(id, text)` | 拖拽区域 |
+| `select(id, options, selected)` | 下拉选择 |
+
+**工具元数据注册表（tools-registry.js）：**
+- `window.__TOOLS` 数组，按分类组织所有工具的 id/title/desc/file
+- `index.html` 从注册表动态渲染工具网格
+- 新增工具只需在注册表中添加一条记录
 
 ### 修改样式 / JS
 - 全局样式 → `styles.css`（CSS 变量在 `:root` 统一管理）
 - 详情页样式 → `works/detail.css`
 - 工具首页样式 → `online_tools/css/tools-index.css`
 - 单工具页公用 → `online_tools/css/tool.css`
+- 工具页框架 → `online_tools/js/tool-page.js`（页面外壳 + 组件工厂）
+- 工具元数据 → `online_tools/js/tools-registry.js`（`window.__TOOLS`）
 - 数据与图标 → `data.js`（`window.__WORKS`）
 - 卡片渲染 → `renderer.js`（数据驱动 DOM 生成）
 - 动效系统 → `animations.js`（IO/tilt/glow/split）
@@ -323,3 +377,4 @@ portfolio/
 | 2026-06-13 | 全面优化：①`std_scanner` 死链接改为指向 GitHub 仓库；②`invoice.html` 下载按钮指向 GitHub Releases；③删除死文件 `createFile.js`/`style.css`（暗色）/`hex_to_file_new.htm`；④字符拆分入场添加逐字 40ms 延迟；⑤`online_tools/index.html` 去除内联重复脚本，复用 `animations.js`；⑥添加 `og:image` meta 标签；⑦`grid-board.html` 修复 `theme-color`、提取内联 base64 Logo 为独立 PNG 文件；⑧`AGENT.md` 与实际代码同步更新 |
 | 2026-06-13 | online_tools 深度清理：①删除 6 个无引用重定向页（`PEM_to_base64`/`base64_to_PEM`/`hex_to_ascii`/`hex_to_base64`/`hex_to_base32`/`hex_to_base32hex`）；②8 个工具页移除内联 `showToast` 函数（统一由 `utils.js` 提供）；③31 个工具页移除暗色主题遗留 `<div id="bg">`；④`tool.css` 删除 `#bg { display: none }` 兼容规则 |
 | 2026-06-13 | online_tools UI 现代化：①`tool.css` 新增 `.form-card`/`.field`/`.field-label`/`.field-hint`/`.input-row`/`.btn-copy`/`.result-card`/`.btn-group`/`.btn-outline`/`.drop-zone` 等组件类；②`utils.js` 新增 `openFile()` 通用文件读取函数和 `ICON_COPY` SVG 图标常量；③全部 25 个工具页重写——移除 `<form name="...">` 改用 id-based DOM、`alert()` 全部替换为 `showToast()`、使用现代化卡片式布局、复制按钮统一使用 SVG 图标 |
+| 2026-06-13 | online_tools 架构重构：①新增 `tool-page.js` 公共框架——自动渲染页面外壳（grain/nav/header/footer）、注入字体和 CSS、提供 11 个组件工厂函数（formCard/field/inputRow/textareaRow/resultCard/checkbox/btnGroup/fileField/dropZone/select/divider）；②新增 `tools-registry.js` 集中元数据注册表——`window.__TOOLS` 按分类组织所有工具的 id/title/desc/file；③`index.html` 从注册表动态渲染工具网格；④全部 25 个工具页改用 `ToolPage.render()` 框架，每个页面从 ~120 行缩减到 ~40 行 |

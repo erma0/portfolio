@@ -58,18 +58,20 @@ window.__WORKS = [
   },
   {
     id: 'scanner',
-    title: 'std_scanner 标准抓取工具',
-    desc: '面向标准文档的结构化抓取与导出工具。',
+    title: '标准速递 · 标准扫描工具',
+    desc: '基于全国标准信息公共服务平台的安全标准批量扫描与下载工具，覆盖国标/行标/地标三类，支持验证码识别与预览转 PDF。',
     icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M16 16l4 4"/><path d="M9 11h4M11 9v4"/></svg>',
     pinned: false,
-    action: 'link',
-    detail: '',
-    link: 'https://github.com/erma0/std_scanner',
-    stack: 'Python · FastAPI · pywebview',
-    repo: 'erma0/std_scanner',
-    status: 'wip',
+    action: 'detail',
+    detail: 'works/scanner.html',
+    link: 'https://github.com/erma0/std-scanner',
+    stack: 'Python · FastAPI · pywebview · Playwright',
+    repo: 'erma0/std-scanner',
+    status: 'active',
     tags: [
-      { text: '工具', color: 'mute' }
+      { text: '安全', color: 'accent' },
+      { text: '桌面', color: 'mute' },
+      { text: 'v3.9.1', color: 'mute' }
     ]
   },
   {

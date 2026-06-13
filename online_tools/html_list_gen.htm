@@ -4,72 +4,61 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>文本 → HTML 列表生成器</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="../styles.css" />
-  <link rel="stylesheet" href="./css/tool.css">
   <script src="./js/utils.js"></script>
+  <script src="./js/tool-page.js"></script>
 </head>
 <body>
-<div class="grain" aria-hidden="true"></div>
-<main class="container">
-  <nav class="top-nav">
-    <a href="../index.html" class="back-link">← 作品集</a>
-    <a href="./index.html">← 工具列表</a>
-  </nav>
-  <header class="tool-header">
-    <h1>文本 → HTML 列表生成器</h1>
-    <p class="tool-desc">将纯文本行转换为 HTML &lt;ul&gt;/&lt;ol&gt; 列表</p>
-  </header>
-  <section class="tool-body">
-    <p>将文本列表转换为嵌套的 HTML 无序列表。源文本各项以换行分隔，行首 Tab 数量决定嵌套层级。字符 &amp;quot;、&amp;amp;、&amp;lt;、&amp;gt; 会被替换为对应的 HTML 实体。</p>
-    <p>可将 Tab 分隔的应用程序更新日志转换为嵌套 HTML 列表。</p>
-
-    <div class="btn-group" style="margin-bottom: 0.75rem;">
-      <button type="button" class="btn-outline" onclick="loadExample()">加载示例</button>
-    </div>
-
-    <div class="form-card">
-      <div class="field">
-        <label class="field-label" for="ed_input">源文本</label>
-        <textarea id="ed_input" rows="10" placeholder="每行一个条目，行首 Tab 表示嵌套层级"></textarea>
-        <span class="field-hint">支持 Tab 键输入；行首 Tab 数量决定嵌套深度</span>
-      </div>
-    </div>
-
-    <div class="form-card">
-      <div class="field">
-        <label class="field-label">选项</label>
-        <label><input type="checkbox" id="chbRemovePrefix"> 若行首存在前缀则移除该前缀并左对齐</label>
-        <div style="margin-top: 0.4rem;">
-          <label class="field-label" for="linePrefix">行首前缀</label>
-          <input type="text" id="linePrefix" value="-" style="max-width: 8rem;">
-        </div>
-      </div>
-    </div>
-
-    <div class="btn-group">
-      <button type="button" onclick="Convert()">转换</button>
-    </div>
-
-    <div class="result-card">
-      <div class="field">
-        <label class="field-label" for="ed_output">HTML 输出</label>
-        <div class="input-row">
-          <textarea id="ed_output" rows="12" readonly></textarea>
-          <button type="button" class="btn-copy" onclick="copyToClipboard(document.getElementById('ed_output').value)"></button>
-        </div>
-      </div>
-    </div>
-  </section>
-  <footer class="page-footer">
-    <p class="copyright">@鸽子笼 2020-2026</p>
-  </footer>
-</main>
-
+<noscript><p style="text-align:center;padding:4rem">此工具需要 JavaScript 支持。</p></noscript>
 <script>
-document.querySelectorAll('.btn-copy').forEach(function(btn){ btn.innerHTML = ICON_COPY; });
+ToolPage.render({
+  title: '文本 → HTML 列表生成器',
+  desc: '将纯文本行转换为 HTML <ul>/<ol> 列表',
+  body: function(body) {
+    var p1 = ToolPage.el('p');
+    p1.textContent = '将文本列表转换为嵌套的 HTML 无序列表。源文本各项以换行分隔，行首 Tab 数量决定嵌套层级。字符 &quot;、&amp;、&lt;、&gt; 会被替换为对应的 HTML 实体。';
+    body.appendChild(p1);
+    var p2 = ToolPage.el('p');
+    p2.textContent = '可将 Tab 分隔的应用程序更新日志转换为嵌套 HTML 列表。';
+    body.appendChild(p2);
+
+    var exampleGroup = ToolPage.btnGroup([{ text: '加载示例', className: 'btn-outline', onclick: loadExample }]);
+    exampleGroup.style.marginBottom = '0.75rem';
+    body.appendChild(exampleGroup);
+
+    var card1 = ToolPage.formCard();
+    var ta = document.createElement('textarea');
+    ta.id = 'ed_input';
+    ta.rows = 10;
+    ta.placeholder = '每行一个条目，行首 Tab 表示嵌套层级';
+    ta.addEventListener('keydown', function(e) { return interceptTabs(e, this); });
+    card1.appendChild(ToolPage.field('源文本', '支持 Tab 键输入；行首 Tab 数量决定嵌套深度', ta));
+    body.appendChild(card1);
+
+    var card2 = ToolPage.formCard();
+    var optField = ToolPage.field('选项');
+    optField.appendChild(ToolPage.checkbox('chbRemovePrefix', '若行首存在前缀则移除该前缀并左对齐'));
+    var prefixDiv = ToolPage.el('div');
+    prefixDiv.style.marginTop = '0.4rem';
+    var prefixLabel = ToolPage.el('span', 'field-label');
+    prefixLabel.textContent = '行首前缀';
+    prefixDiv.appendChild(prefixLabel);
+    var prefixInput = document.createElement('input');
+    prefixInput.type = 'text';
+    prefixInput.id = 'linePrefix';
+    prefixInput.value = '-';
+    prefixInput.style.maxWidth = '8rem';
+    prefixDiv.appendChild(prefixInput);
+    optField.appendChild(prefixDiv);
+    card2.appendChild(optField);
+    body.appendChild(card2);
+
+    body.appendChild(ToolPage.btnGroup([{ text: '转换', onclick: Convert }]));
+
+    var rc = ToolPage.el('div', 'result-card');
+    rc.appendChild(ToolPage.field('HTML 输出', null, ToolPage.textareaRow('ed_output', { rows: 12, readonly: true })));
+    body.appendChild(rc);
+  }
+});
 
 function insertAtCursor(myField, myValue) {
   if (document.selection) {
@@ -97,10 +86,6 @@ function interceptTabs(evt, control) {
   }
   return key;
 }
-
-document.getElementById('ed_input').addEventListener('keydown', function(e) {
-  return interceptTabs(e, this);
-});
 
 function createHtmlList(input) {
   var output = "";
