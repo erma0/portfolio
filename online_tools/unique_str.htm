@@ -4,112 +4,87 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>去重 / 排序工具</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="../styles.css" />
-  <link rel="stylesheet" href="./css/tool.css">
   <script src="./js/utils.js"></script>
+  <script src="./js/tool-page.js"></script>
 </head>
 <body>
-<div class="grain" aria-hidden="true"></div>
-<main class="container">
-  <nav class="top-nav">
-    <a href="../index.html" class="back-link">← 作品集</a>
-    <a href="./index.html">← 工具列表</a>
-  </nav>
-  <header class="tool-header">
-    <h1>去重 / 排序工具</h1>
-    <p class="tool-desc">对文本行进行去重、排序或统计操作</p>
-  </header>
-  <section class="tool-body">
-
-    <div class="form-card">
-      <div class="field">
-        <label class="field-label" for="ed_input">源字符串</label>
-        <textarea id="ed_input" rows="12"></textarea>
-        <span class="field-hint">每行一个字符串</span>
-      </div>
-    </div>
-
-    <div class="form-card">
-      <div class="field">
-        <label class="field-label">选项</label>
-        <label><input type="checkbox" id="chbTrimStrings" checked> 自动去除源字符串首尾空白</label>
-        <br>
-        <label><input type="checkbox" id="chbSkipEmptyStrings" checked> 跳过空字符串</label>
-        <br>
-        <label><input type="checkbox" id="chbRemoveDuplicatedStrings" checked> 去除重复字符串</label>
-        <br>
-        <label><input type="checkbox" id="chbSortStrings" checked> 对字符串排序</label>
-      </div>
-    </div>
-
-    <div class="btn-group">
-      <button type="button" id="btnConvert">转换</button>
-    </div>
-
-    <div class="result-card">
-      <label class="field-label">输出字符串</label>
-      <div class="input-row">
-        <textarea id="ed_output" rows="12" readonly></textarea>
-        <button type="button" class="btn-copy" id="btnCopyOutput"></button>
-      </div>
-    </div>
-
-  </section>
-  <footer class="page-footer">
-    <p class="copyright">@鸽子笼 2020-2026</p>
-  </footer>
-</main>
-
+<noscript><p style="text-align:center;padding:4rem">此工具需要 JavaScript 支持。</p></noscript>
 <script>
-document.getElementById('btnCopyOutput').innerHTML = ICON_COPY;
-document.getElementById('btnCopyOutput').addEventListener('click', function() {
-  copyToClipboard(document.getElementById('ed_output').value);
-});
+ToolPage.render({
+  title: '去重 / 排序工具',
+  desc: '对文本行进行去重、排序或统计操作',
+  body: function(body) {
+    // 源字符串输入
+    var card1 = ToolPage.formCard();
+    card1.appendChild(ToolPage.field('源字符串', '每行一个字符串', ToolPage.textareaRow('ed_input', { rows: 12 })));
+    body.appendChild(card1);
 
-document.getElementById('btnConvert').addEventListener('click', function() {
-  var input = document.getElementById('ed_input').value;
-  var trimStrings = document.getElementById('chbTrimStrings').checked;
-  var skipEmptyStrings = document.getElementById('chbSkipEmptyStrings').checked;
-  var removeDuplicatedStrings = document.getElementById('chbRemoveDuplicatedStrings').checked;
-  var sortStrings = document.getElementById('chbSortStrings').checked;
+    // 选项
+    var card2 = ToolPage.formCard();
+    card2.appendChild(ToolPage.field('选项', null, function() {
+      var wrap = ToolPage.el('div');
+      wrap.appendChild(ToolPage.checkbox('chbTrimStrings', '自动去除源字符串首尾空白', true));
+      wrap.appendChild(ToolPage.el('br'));
+      wrap.appendChild(ToolPage.checkbox('chbSkipEmptyStrings', '跳过空字符串', true));
+      wrap.appendChild(ToolPage.el('br'));
+      wrap.appendChild(ToolPage.checkbox('chbRemoveDuplicatedStrings', '去除重复字符串', true));
+      wrap.appendChild(ToolPage.el('br'));
+      wrap.appendChild(ToolPage.checkbox('chbSortStrings', '对字符串排序', true));
+      return wrap;
+    }()));
+    body.appendChild(card2);
 
-  var lines = input.split('\n');
-  var filteredLines = [];
-  for (var i = 0; i < lines.length; i++) {
-    var line;
-    if (trimStrings) {
-      line = lines[i].trim();
-    } else {
-      line = lines[i];
-    }
-    if (skipEmptyStrings) {
-      if (line === '') {
-        continue;
+    // 按钮
+    body.appendChild(ToolPage.btnGroup([{ text: '转换', onclick: doConvert }]));
+
+    // 输出
+    var card3 = ToolPage.el('div', 'result-card');
+    card3.appendChild(ToolPage.field('输出字符串', null, ToolPage.textareaRow('ed_output', { rows: 12, readonly: true })));
+    body.appendChild(card3);
+
+    function doConvert() {
+      var input = document.getElementById('ed_input').value;
+      var trimStrings = document.getElementById('chbTrimStrings').checked;
+      var skipEmptyStrings = document.getElementById('chbSkipEmptyStrings').checked;
+      var removeDuplicatedStrings = document.getElementById('chbRemoveDuplicatedStrings').checked;
+      var sortStrings = document.getElementById('chbSortStrings').checked;
+
+      var lines = input.split('\n');
+      var filteredLines = [];
+      for (var i = 0; i < lines.length; i++) {
+        var line;
+        if (trimStrings) {
+          line = lines[i].trim();
+        } else {
+          line = lines[i];
+        }
+        if (skipEmptyStrings) {
+          if (line === '') {
+            continue;
+          }
+        }
+        if (removeDuplicatedStrings) {
+          if (filteredLines.indexOf(line) < 0) {
+            filteredLines.push(line);
+          }
+        } else {
+          filteredLines.push(line);
+        }
       }
-    }
-    if (removeDuplicatedStrings) {
-      if (filteredLines.indexOf(line) < 0) {
-        filteredLines.push(line);
+      if (sortStrings) {
+        filteredLines.sort();
       }
-    } else {
-      filteredLines.push(line);
+      var output = '';
+      if (filteredLines.length) {
+        output = filteredLines[0];
+      }
+      for (var j = 1; j < filteredLines.length; j++) {
+        output += '\r\n' + filteredLines[j];
+      }
+
+      document.getElementById('ed_output').value = output;
     }
   }
-  if (sortStrings) {
-    filteredLines.sort();
-  }
-  var output = '';
-  if (filteredLines.length) {
-    output = filteredLines[0];
-  }
-  for (var j = 1; j < filteredLines.length; j++) {
-    output += '\r\n' + filteredLines[j];
-  }
-
-  document.getElementById('ed_output').value = output;
 });
 </script>
 </body>

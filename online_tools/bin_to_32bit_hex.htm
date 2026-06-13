@@ -4,127 +4,102 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>BIN ↔ 32位十六进制转换器</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="../styles.css" />
-  <link rel="stylesheet" href="./css/tool.css">
   <script src="./js/utils.js"></script>
+  <script src="./js/tool-page.js"></script>
 </head>
 <body>
-<div class="grain" aria-hidden="true"></div>
-<main class="container">
-  <nav class="top-nav">
-    <a href="../index.html" class="back-link">← 作品集</a>
-    <a href="./index.html">← 工具列表</a>
-  </nav>
-  <header class="tool-header">
-    <h1>BIN ↔ 32位十六进制转换器</h1>
-    <p class="tool-desc">二进制整数与 32 位十六进制数之间的双向转换</p>
-  </header>
-  <section class="tool-body">
-    <p>将 32 位二进制数转换为 32 位十六进制数，支持反向转换。此工具适用于编辑 DTS 文件场景。C/C++ 支持用位运算（预定义值左移到预定义位置的和）来清晰表达数值，但 DTS 语言不支持这种语法。在进行寄存器掩码操作（尤其是跨越多个十六进制位边界的多位操作，如第 22 位的偏移量）时，该工具可减少出错风险。</p>
-
-    <div class="form-card">
-      <div class="field">
-        <span class="field-label">二进制位（高位 31 → 16）</span>
-        <table id="bitTableHigh">
-          <tr>
-            <th>位</th>
-            <td>31</td><td>30</td><td>29</td><td>28</td><td>27</td><td>26</td><td>25</td><td>24</td><td>23</td><td>22</td><td>21</td><td>20</td><td>19</td><td>18</td><td>17</td><td>16</td>
-          </tr>
-          <tr>
-            <th>值</th>
-            <td><input type="checkbox" id="bit31" onchange="binChange()"></td>
-            <td><input type="checkbox" id="bit30" onchange="binChange()"></td>
-            <td><input type="checkbox" id="bit29" onchange="binChange()"></td>
-            <td><input type="checkbox" id="bit28" onchange="binChange()"></td>
-            <td><input type="checkbox" id="bit27" onchange="binChange()"></td>
-            <td><input type="checkbox" id="bit26" onchange="binChange()"></td>
-            <td><input type="checkbox" id="bit25" onchange="binChange()"></td>
-            <td><input type="checkbox" id="bit24" onchange="binChange()"></td>
-            <td><input type="checkbox" id="bit23" onchange="binChange()"></td>
-            <td><input type="checkbox" id="bit22" onchange="binChange()"></td>
-            <td><input type="checkbox" id="bit21" onchange="binChange()"></td>
-            <td><input type="checkbox" id="bit20" onchange="binChange()"></td>
-            <td><input type="checkbox" id="bit19" onchange="binChange()"></td>
-            <td><input type="checkbox" id="bit18" onchange="binChange()"></td>
-            <td><input type="checkbox" id="bit17" onchange="binChange()"></td>
-            <td><input type="checkbox" id="bit16" onchange="binChange()"></td>
-          </tr>
-        </table>
-      </div>
-
-      <div class="field">
-        <span class="field-label">二进制位（低位 15 → 0）</span>
-        <table id="bitTableLow">
-          <tr>
-            <th>位</th>
-            <td>15</td><td>14</td><td>13</td><td>12</td><td>11</td><td>10</td><td>9</td><td>8</td><td>7</td><td>6</td><td>5</td><td>4</td><td>3</td><td>2</td><td>1</td><td>0</td>
-          </tr>
-          <tr>
-            <th>值</th>
-            <td><input type="checkbox" id="bit15" onchange="binChange()"></td>
-            <td><input type="checkbox" id="bit14" onchange="binChange()"></td>
-            <td><input type="checkbox" id="bit13" onchange="binChange()"></td>
-            <td><input type="checkbox" id="bit12" onchange="binChange()"></td>
-            <td><input type="checkbox" id="bit11" onchange="binChange()"></td>
-            <td><input type="checkbox" id="bit10" onchange="binChange()"></td>
-            <td><input type="checkbox" id="bit9" onchange="binChange()"></td>
-            <td><input type="checkbox" id="bit8" onchange="binChange()"></td>
-            <td><input type="checkbox" id="bit7" onchange="binChange()"></td>
-            <td><input type="checkbox" id="bit6" onchange="binChange()"></td>
-            <td><input type="checkbox" id="bit5" onchange="binChange()"></td>
-            <td><input type="checkbox" id="bit4" onchange="binChange()"></td>
-            <td><input type="checkbox" id="bit3" onchange="binChange()"></td>
-            <td><input type="checkbox" id="bit2" onchange="binChange()"></td>
-            <td><input type="checkbox" id="bit1" onchange="binChange()"></td>
-            <td><input type="checkbox" id="bit0" onchange="binChange()"></td>
-          </tr>
-        </table>
-      </div>
-    </div>
-
-    <div class="result-card">
-      <span class="field-label">十六进制值</span>
-      <div class="input-row">
-        <input type="text" id="hexInput" value="0x00000000" oninput="hexChange()" onkeyup="hexChange()">
-        <button type="button" class="btn-copy" onclick="copyToClipboard(document.getElementById('hexInput').value)"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="5" width="9" height="9" rx="1.5"/><path d="M3 11V3a1.5 1.5 0 011.5-1.5H11"/></svg>复制</button>
-      </div>
-      <span class="field-hint">输入十六进制值（如 0x12345678）可反向更新二进制位</span>
-    </div>
-  </section>
-  <footer class="page-footer">
-    <p class="copyright">@鸽子笼 2020-2026</p>
-  </footer>
-</main>
-
+<noscript><p style="text-align:center;padding:4rem">此工具需要 JavaScript 支持。</p></noscript>
 <script>
-function pad(num, size) {
-  var s = '0000000' + num;
-  return s.substr(s.length - size);
-}
+ToolPage.render({
+  title: 'BIN ↔ 32位十六进制转换器',
+  desc: '二进制整数与 32 位十六进制数之间的双向转换',
+  body: function(body) {
+    var p = ToolPage.el('p');
+    p.textContent = '将 32 位二进制数转换为 32 位十六进制数，支持反向转换。此工具适用于编辑 DTS 文件场景。C/C++ 支持用位运算（预定义值左移到预定义位置的和）来清晰表达数值，但 DTS 语言不支持这种语法。在进行寄存器掩码操作（尤其是跨越多个十六进制位边界的多位操作，如第 22 位的偏移量）时，该工具可减少出错风险。';
+    body.appendChild(p);
 
-function binChange() {
-  var val = 0;
-  for (var i = 31; i >= 0; i--) {
-    var cb = document.getElementById('bit' + i);
-    if (cb && cb.checked) val += (1 << i) >>> 0;
-  }
-  document.getElementById('hexInput').value = '0x' + pad(val.toString(16), 8);
-}
+    // 构建位表格
+    function buildBitTable(label, bits) {
+      var fieldDiv = ToolPage.field(label);
+      var table = ToolPage.el('table');
+      table.id = 'bitTable' + (bits[0] >= 16 ? 'High' : 'Low');
+      var tr1 = ToolPage.el('tr');
+      var th1 = ToolPage.el('th'); th1.textContent = '位'; tr1.appendChild(th1);
+      var tr2 = ToolPage.el('tr');
+      var th2 = ToolPage.el('th'); th2.textContent = '值'; tr2.appendChild(th2);
+      for (var k = 0; k < bits.length; k++) {
+        var td1 = ToolPage.el('td'); td1.textContent = bits[k]; tr1.appendChild(td1);
+        var td2 = ToolPage.el('td');
+        var cb = document.createElement('input');
+        cb.type = 'checkbox';
+        cb.id = 'bit' + bits[k];
+        cb.addEventListener('change', binChange);
+        td2.appendChild(cb);
+        tr2.appendChild(td2);
+      }
+      table.appendChild(tr1);
+      table.appendChild(tr2);
+      fieldDiv.appendChild(table);
+      return fieldDiv;
+    }
 
-function hexChange() {
-  var num = parseInt(document.getElementById('hexInput').value, 16);
-  if (isNaN(num)) return;
-  if (num < 0 || num > 0xFFFFFFFF) {
-    showToast('数值超出无符号 32 位范围');
+    var highBits = [31,30,29,28,27,26,25,24,23,22,21,20,19,18,17,16];
+    var lowBits  = [15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0];
+
+    var card = ToolPage.formCard();
+    card.appendChild(buildBitTable('二进制位（高位 31 → 16）', highBits));
+    card.appendChild(buildBitTable('二进制位（低位 15 → 0）', lowBits));
+    body.appendChild(card);
+
+    // 十六进制结果卡片
+    var rCard = ToolPage.resultCard(null, '十六进制值');
+    var row = ToolPage.el('div', 'input-row');
+    var hexInput = document.createElement('input');
+    hexInput.type = 'text';
+    hexInput.id = 'hexInput';
+    hexInput.value = '0x00000000';
+    hexInput.addEventListener('input', hexChange);
+    hexInput.addEventListener('keyup', hexChange);
+    row.appendChild(hexInput);
+    var copyBtn = ToolPage.el('button', 'btn-copy');
+    copyBtn.type = 'button';
+    copyBtn.innerHTML = ICON_COPY;
+    copyBtn.addEventListener('click', function() { copyToClipboard(hexInput.value); });
+    row.appendChild(copyBtn);
+    rCard.appendChild(row);
+    var hint = ToolPage.el('span', 'field-hint');
+    hint.textContent = '输入十六进制值（如 0x12345678）可反向更新二进制位';
+    rCard.appendChild(hint);
+    body.appendChild(rCard);
+
+    // 逻辑
+    function pad(num, size) {
+      var s = '0000000' + num;
+      return s.substr(s.length - size);
+    }
+
+    function binChange() {
+      var val = 0;
+      for (var i = 31; i >= 0; i--) {
+        var cb = document.getElementById('bit' + i);
+        if (cb && cb.checked) val += (1 << i) >>> 0;
+      }
+      hexInput.value = '0x' + pad(val.toString(16), 8);
+    }
+
+    function hexChange() {
+      var num = parseInt(hexInput.value, 16);
+      if (isNaN(num)) return;
+      if (num < 0 || num > 0xFFFFFFFF) {
+        showToast('数值超出无符号 32 位范围');
+      }
+      for (var i = 31; i >= 0; i--) {
+        var cb = document.getElementById('bit' + i);
+        if (cb) cb.checked = !!(num & (1 << i));
+      }
+    }
   }
-  for (var i = 31; i >= 0; i--) {
-    var cb = document.getElementById('bit' + i);
-    if (cb) cb.checked = !!(num & (1 << i));
-  }
-}
+});
 </script>
 </body>
 </html>

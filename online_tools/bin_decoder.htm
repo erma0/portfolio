@@ -4,137 +4,109 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>二进制解码器</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="../styles.css" />
-  <link rel="stylesheet" href="./css/tool.css">
   <script src="./js/utils.js"></script>
+  <script src="./js/tool-page.js"></script>
 </head>
 <body>
-<div class="grain" aria-hidden="true"></div>
-<main class="container">
-  <nav class="top-nav">
-    <a href="../index.html" class="back-link">← 作品集</a>
-    <a href="./index.html">← 工具列表</a>
-  </nav>
-  <header class="tool-header">
-    <h1>二进制解码器</h1>
-    <p class="tool-desc">解析和分析二进制数据结构</p>
-  </header>
-  <section class="tool-body">
-
-    <div class="form-card">
-      <div class="field">
-        <label class="field-label" for="edInput">二进制字符串</label>
-        <textarea id="edInput" rows="4"></textarea>
-        <span class="field-hint">除 0 和 1 以外的所有字符均被忽略，因此 "100111" = "10 01 11" = "10, 01, 11" 等。</span>
-      </div>
-      <div class="field">
-        <label><input type="checkbox" id="chbSeparator" checked> 移除输入中的 "0b" 前缀</label>
-      </div>
-      <div class="field">
-        <label><input type="checkbox" id="chbHexSeparator" checked> 用 "0x" 分隔字节</label>
-      </div>
-      <div class="btn-group">
-        <button type="button" onclick="Convert()">转换</button>
-      </div>
-    </div>
-
-    <div class="result-card">
-      <span class="field-label">清理后的输入</span>
-      <div class="input-row">
-        <input type="text" id="cleanedBin" readonly="readonly" value="">
-        <button type="button" class="btn-copy" onclick="copyToClipboard(document.getElementById('cleanedBin').value)"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="5" width="9" height="9" rx="1.5"/><path d="M3 11V3a1.5 1.5 0 011.5-1.5H11"/></svg>复制</button>
-      </div>
-    </div>
-
-    <div class="result-card">
-      <span class="field-label">解码数据（十六进制值）</span>
-      <div class="input-row">
-        <input type="text" id="hexOutput" readonly="readonly" value="">
-        <button type="button" class="btn-copy" onclick="copyToClipboard(document.getElementById('hexOutput').value)"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="5" width="9" height="9" rx="1.5"/><path d="M3 11V3a1.5 1.5 0 011.5-1.5H11"/></svg>复制</button>
-      </div>
-    </div>
-
-    <div class="result-card">
-      <span class="field-label">解码数据（ASCII 文本）</span>
-      <div class="result-value" id="decodedText"><i>（解码后的文本将显示在此处）</i></div>
-      <span class="field-hint">32~126 范围外的字节以斜体显示为 [字节值]</span>
-    </div>
-
-    <div class="form-card">
-      <div class="field">
-        <label class="field-label" for="filename">输出文件名</label>
-        <input type="text" id="filename" value="myfile.dat">
-      </div>
-      <div class="btn-group">
-        <button type="button" onclick="ConvertToFile()">转换为文件</button>
-      </div>
-    </div>
-
-  </section>
-  <footer class="page-footer">
-    <p class="copyright">@鸽子笼 2020-2026</p>
-  </footer>
-</main>
-
+<noscript><p style="text-align:center;padding:4rem">此工具需要 JavaScript 支持。</p></noscript>
 <script>
-function clean_bin(input, remove_0b) {
-  input = input.toUpperCase();
-  if (remove_0b) {
-    input = input.replace(/0B/gi, '');
-  }
-  var orig_input = input;
-  input = input.replace(/[^01]/g, '');
-  if (orig_input != input)
-    showToast('警告：输入中的非二进制字符已被忽略。');
-  return input;
-}
+ToolPage.render({
+  title: '二进制解码器',
+  desc: '解析和分析二进制数据结构',
+  body: function(body) {
+    // 输入卡片
+    var card1 = ToolPage.formCard();
+    card1.appendChild(ToolPage.field('二进制字符串', '除 0 和 1 以外的所有字符均被忽略，因此 "100111" = "10 01 11" = "10, 01, 11" 等。', ToolPage.textareaRow('edInput', { rows: 4 })));
+    card1.appendChild(ToolPage.field(null, null, ToolPage.checkbox('chbSeparator', '移除输入中的 "0b" 前缀', true)));
+    card1.appendChild(ToolPage.field(null, null, ToolPage.checkbox('chbHexSeparator', '用 "0x" 分隔字节', true)));
+    card1.appendChild(ToolPage.btnGroup([
+      { text: '转换', onclick: Convert }
+    ]));
+    body.appendChild(card1);
 
-function Convert() {
-  var cleaned_bin = clean_bin(document.getElementById('edInput').value, document.getElementById('chbSeparator').checked);
-  document.getElementById('cleanedBin').value = cleaned_bin;
-  if (cleaned_bin.length % 8) {
-    showToast('错误：清理后的二进制字符串长度不是 8 的整数倍。');
-    return;
-  }
+    // 清理后的输入
+    var rc1 = ToolPage.resultCard(null, '清理后的输入');
+    rc1.appendChild(ToolPage.inputRow('cleanedBin', { readonly: true }));
+    body.appendChild(rc1);
 
-  var useSeparator = document.getElementById('chbHexSeparator').checked;
-  var separator = useSeparator ? ', 0x' : '';
-  var hexText = useSeparator ? '0x' : '';
+    // 十六进制输出
+    var rc2 = ToolPage.resultCard(null, '解码数据（十六进制值）');
+    rc2.appendChild(ToolPage.inputRow('hexOutput', { readonly: true }));
+    body.appendChild(rc2);
 
-  var binary = [];
-  for (var i = 0; i < cleaned_bin.length / 8; i++) {
-    var h = cleaned_bin.substr(i * 8, 8);
-    binary[i] = parseInt(h, 2);
-    hexText += (i !== 0 ? separator : '') + (binary[i] < 16 ? '0' : '') + dec2hex(binary[i]);
-  }
+    // ASCII 文本
+    var rc3 = ToolPage.resultCard('decodedText', '解码数据（ASCII 文本）');
+    var hint = ToolPage.el('span', 'field-hint');
+    hint.textContent = '32~126 范围外的字节以斜体显示为 [字节值]';
+    rc3.appendChild(hint);
+    body.appendChild(rc3);
 
-  document.getElementById('hexOutput').value = hexText;
+    // 输出文件卡片
+    var card2 = ToolPage.formCard();
+    card2.appendChild(ToolPage.field('输出文件名', null, ToolPage.inputRow('filename', { value: 'myfile.dat' })));
+    card2.appendChild(ToolPage.btnGroup([
+      { text: '转换为文件', onclick: ConvertToFile }
+    ]));
+    body.appendChild(card2);
 
-  var htmlStr = '';
-  for (i = 0; i < binary.length; i++) {
-    if (binary[i] >= 32 && binary[i] <= 126) {
-      switch (String.fromCharCode(binary[i])) {
-        case '&': htmlStr += '&amp;'; break;
-        case '<': htmlStr += '&lt;'; break;
-        case '>': htmlStr += '&gt;'; break;
-        case '"': htmlStr += '&quot;'; break;
-        case "'": htmlStr += '&#039;'; break;
-        default: htmlStr += String.fromCharCode(binary[i]);
+    // 逻辑
+    function clean_bin(input, remove_0b) {
+      input = input.toUpperCase();
+      if (remove_0b) {
+        input = input.replace(/0B/gi, '');
       }
-    } else {
-      htmlStr += '<i>[' + binary[i] + ']</i>';
+      var orig_input = input;
+      input = input.replace(/[^01]/g, '');
+      if (orig_input != input)
+        showToast('警告：输入中的非二进制字符已被忽略。');
+      return input;
+    }
+
+    function Convert() {
+      var cleaned_bin = clean_bin(document.getElementById('edInput').value, document.getElementById('chbSeparator').checked);
+      document.getElementById('cleanedBin').value = cleaned_bin;
+      if (cleaned_bin.length % 8) {
+        showToast('错误：清理后的二进制字符串长度不是 8 的整数倍。');
+        return;
+      }
+
+      var useSeparator = document.getElementById('chbHexSeparator').checked;
+      var separator = useSeparator ? ', 0x' : '';
+      var hexText = useSeparator ? '0x' : '';
+
+      var binary = [];
+      for (var i = 0; i < cleaned_bin.length / 8; i++) {
+        var h = cleaned_bin.substr(i * 8, 8);
+        binary[i] = parseInt(h, 2);
+        hexText += (i !== 0 ? separator : '') + (binary[i] < 16 ? '0' : '') + dec2hex(binary[i]);
+      }
+
+      document.getElementById('hexOutput').value = hexText;
+
+      var htmlStr = '';
+      for (i = 0; i < binary.length; i++) {
+        if (binary[i] >= 32 && binary[i] <= 126) {
+          switch (String.fromCharCode(binary[i])) {
+            case '&': htmlStr += '&amp;'; break;
+            case '<': htmlStr += '&lt;'; break;
+            case '>': htmlStr += '&gt;'; break;
+            case '"': htmlStr += '&quot;'; break;
+            case "'": htmlStr += '&#039;'; break;
+            default: htmlStr += String.fromCharCode(binary[i]);
+          }
+        } else {
+          htmlStr += '<i>[' + binary[i] + ']</i>';
+        }
+      }
+      document.getElementById('decodedText').innerHTML = htmlStr;
+    }
+
+    function ConvertToFile() {
+      Convert();
+      createFileFromHex(cleanHex(document.getElementById('hexOutput').value), document.getElementById('filename').value);
     }
   }
-  document.getElementById('decodedText').innerHTML = htmlStr;
-}
-
-function ConvertToFile() {
-  Convert();
-  createFileFromHex(cleanHex(document.getElementById('hexOutput').value), document.getElementById('filename').value);
-}
+});
 </script>
 </body>
 </html>

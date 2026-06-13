@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>抖音采集工具 · 鸽子笼</title>
+  <meta name="description" content="DouyinCrawler — 抖音公开数据采集工具，Python+React 全栈项目（已归档）。" />
+  <meta name="theme-color" content="#f6f3ec" />
+  <link rel="canonical" href="https://works.erma0.cn/works/douyin.html" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🕊</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+  <link rel="stylesheet" href="detail.css" />
+  <style>
+    .archived-banner {
+      padding: 16px 20px;
+      background: rgba(184, 69, 31, 0.06);
+      border: 1px solid rgba(184, 69, 31, 0.2);
+      border-radius: var(--radius);
+      font-size: 14px;
+      color: var(--accent);
+      margin-bottom: 24px;
+    }
+    .archived-banner strong { font-weight: 600; }
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+      margin: 12px 0 24px;
+    }
+    .feature-cell {
+      padding: 12px 14px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      background: var(--bg);
+      font-size: 13px;
+      color: var(--ink-soft);
+    }
+    .feature-cell strong {
+      display: block;
+      color: var(--ink);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      margin-bottom: 4px;
+      letter-spacing: 0.04em;
+    }
+  </style>
+</head>
+<body>
+  <div class="grain" aria-hidden="true"></div>
+
+  <article class="detail">
+    <a href="../" class="detail-back">← 作品集</a>
+
+    <header class="detail-head">
+      <h1>抖音采集工具</h1>
+      <div class="detail-meta">
+        <span class="detail-type desktop" style="background:rgba(184,69,31,.12);">已归档</span>
+        <span>Python · FastAPI · React · Vite · Aria2 · Playwright</span>
+      </div>
+    </header>
+
+    <div class="detail-body">
+      <div class="archived-banner">
+        <strong>⚠ 本项目已于 2026 年 6 月归档。</strong><br>
+        出于对法律法规的尊重，仓库原有代码已移除。以下内容为项目历史记录。
+      </div>
+
+      <p>
+        DouyinCrawler 是一个抖音公开数据采集工具，提供 <strong>GUI（pywebview）/ Web（React + Vite）/ CLI</strong> 三种运行模式。
+        以 Python 爬虫与 Aria2 WebUI 学习实践为初衷，功能覆盖抖音账号主页、喜欢、收藏、音乐原声、话题、搜索、合集、作品、关注、粉丝等公开数据的采集与批量下载。
+      </p>
+
+      <h2>采集范围</h2>
+      <div class="feature-grid">
+        <div class="feature-cell"><strong>账号主页</strong>作品列表、置顶、基本信息</div>
+        <div class="feature-cell"><strong>喜欢列表</strong>用户点赞的所有作品</div>
+        <div class="feature-cell"><strong>收藏列表</strong>用户收藏的所有作品</div>
+        <div class="feature-cell"><strong>音乐原声</strong>BGM 关联作品采集</div>
+        <div class="feature-cell"><strong>话题/挑战赛</strong>话题下全部作品</div>
+        <div class="feature-cell"><strong>搜索关键词</strong>搜索结果页内容</div>
+        <div class="feature-cell"><strong>作品合集</strong>合集内作品批量</div>
+        <div class="feature-cell"><strong>关注/粉丝</strong>社交关系数据</div>
+        <div class="feature-cell"><strong>GUI 桌面</strong>pywebview 可视化界面</div>
+        <div class="feature-cell"><strong>Web 控制台</strong>React + Vite 前端面板</div>
+        <div class="feature-cell"><strong>CLI 模式</strong>命令行全功能</div>
+        <div class="feature-cell"><strong>Aria2 下载</strong>集成批量下载引擎</div>
+      </div>
+
+      <h2>技术栈</h2>
+      <table class="detail-table">
+        <thead>
+          <tr><th>模块</th><th>技术</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>运行模式</td><td>GUI (pywebview) / Web (React + Vite) / CLI</td></tr>
+          <tr><td>后端框架</td><td>Python + FastAPI</td></tr>
+          <tr><td>前端</td><td>React + Vite + Tailwind CSS</td></tr>
+          <tr><td>下载引擎</td><td>Aria2 WebUI 集成</td></tr>
+          <tr><td>浏览器驱动</td><td>Playwright</td></tr>
+          <tr><td>部署</td><td>Python 独立运行</td></tr>
+        </tbody>
+      </table>
+
+      <h2>备注</h2>
+      <p>
+        本项目仓库初衷为 Python 爬虫与 Web 技术的学习实践，源代码仅用于个人研究，从未用于商业用途。
+        项目原获 <strong>560+ Star</strong>，感谢曾经关注过的每一位。
+      </p>
+
+      <p class="detail-repo-wrap">
+        <a class="detail-repo" href="https://github.com/erma0/douyin" target="_blank" rel="noopener noreferrer">
+          <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          erma0/douyin
+        </a>
+        <span style="color:var(--ink-mute);font-size:13px;">已归档 · 代码已移除</span>
+      </p>
+    </div>
+  </article>
+
+  <footer class="site-footer">
+    <p class="site-footer__row">
+      <a href="https://erma0.cn">主页</a>
+      <span class="sep" aria-hidden="true">·</span>
+      <a href="../">作品集</a>
+      <span class="sep" aria-hidden="true">·</span>
+      <a href="https://github.com/erma0" target="_blank" rel="noopener noreferrer">GitHub</a>
+    </p>
+    <p class="site-footer__small">&copy; 2026 鸽子笼</p>
+  </footer>
+</body>
+</html>

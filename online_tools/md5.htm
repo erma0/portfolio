@@ -4,62 +4,46 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MD5 计算器</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="../styles.css" />
-  <link rel="stylesheet" href="./css/tool.css">
   <script src="./js/utils.js"></script>
+  <script src="./js/tool-page.js"></script>
   <script src="./js/md5.js"></script>
 </head>
 <body>
-<div class="grain" aria-hidden="true"></div>
-<main class="container">
-  <nav class="top-nav">
-    <a href="../index.html" class="back-link">← 作品集</a>
-    <a href="./index.html">← 工具列表</a>
-  </nav>
-  <header class="tool-header">
-    <h1>MD5 计算器</h1>
-    <p class="tool-desc">在线计算文本或文件的 MD5 哈希值</p>
-  </header>
-  <section class="tool-body">
-
-    <p>此计算器用于计算挑战-握手认证（CHAP）等认证方案所需的 MD5 摘要。可多次更新 MD5 状态，每次可将输入视为文本或十六进制缓冲区。</p>
-
-    <!-- 文本输入卡片 -->
-    <div class="form-card">
-      <div class="field">
-        <label class="field-label" for="md5Input">输入</label>
-        <input type="text" id="md5Input" value="" placeholder="输入文本或十六进制数据">
-        <span class="field-hint">输入文本或十六进制字符串，然后选择更新方式</span>
-      </div>
-      <div class="btn-group">
-        <button type="button" onclick="md5UpdateText()">以文本方式更新</button>
-        <button type="button" class="btn-outline" onclick="md5UpdateHex()">以十六进制方式更新</button>
-      </div>
-    </div>
-
-    <!-- 操作卡片 -->
-    <div class="form-card">
-      <div class="btn-group">
-        <button type="button" onclick="md5Init()">重新初始化</button>
-        <button type="button" onclick="md5Finish()">完成计算</button>
-      </div>
-      <span class="field-hint">初始化后可多次更新状态，完成后获取最终哈希值</span>
-    </div>
-
-    <!-- 结果卡片 -->
-    <div class="result-card">
-      <span class="field-label">MD5 输出</span>
-      <div class="input-row">
-        <input type="text" id="md5Output" value="" readonly>
-        <button type="button" class="btn-copy" onclick="copyToClipboard(document.getElementById('md5Output').value)" aria-label="复制 MD5 值">ICON_COPY</button>
-      </div>
-    </div>
-
+<noscript><p style="text-align:center;padding:4rem">此工具需要 JavaScript 支持。</p></noscript>
 <script>
-let initialized = false;
+ToolPage.render({
+  title: 'MD5 计算器',
+  desc: '在线计算文本或文件的 MD5 哈希值',
+  body: function(body) {
+    var desc = ToolPage.el('p');
+    desc.textContent = '此计算器用于计算挑战-握手认证（CHAP）等认证方案所需的 MD5 摘要。可多次更新 MD5 状态，每次可将输入视为文本或十六进制缓冲区。';
+    body.appendChild(desc);
+
+    var card1 = ToolPage.formCard();
+    card1.appendChild(ToolPage.field('输入', '输入文本或十六进制字符串，然后选择更新方式', ToolPage.inputRow('md5Input', {placeholder: '输入文本或十六进制数据'})));
+    card1.appendChild(ToolPage.btnGroup([
+      {text: '以文本方式更新', onclick: md5UpdateText},
+      {text: '以十六进制方式更新', className: 'btn-outline', onclick: md5UpdateHex}
+    ]));
+    body.appendChild(card1);
+
+    var card2 = ToolPage.formCard();
+    card2.appendChild(ToolPage.btnGroup([
+      {text: '重新初始化', onclick: md5Init},
+      {text: '完成计算', onclick: md5Finish}
+    ]));
+    var hint = ToolPage.el('span', 'field-hint');
+    hint.textContent = '初始化后可多次更新状态，完成后获取最终哈希值';
+    card2.appendChild(hint);
+    body.appendChild(card2);
+
+    var result = ToolPage.resultCard('resultArea', 'MD5 输出');
+    result.appendChild(ToolPage.inputRow('md5Output', {readonly: true}));
+    body.appendChild(result);
+  }
+});
+
+var initialized = false;
 
 function md5Init() {
     md5_init();
@@ -70,8 +54,8 @@ function md5Init() {
 
 function md5UpdateText() {
     if (!initialized) md5Init();
-    const input = document.getElementById('md5Input').value;
-    for (let i = 0; i < input.length; i++) {
+    var input = document.getElementById('md5Input').value;
+    for (var i = 0; i < input.length; i++) {
         md5_update(input.charCodeAt(i));
     }
     showToast('已以文本方式更新');
@@ -79,7 +63,7 @@ function md5UpdateText() {
 
 function md5UpdateHex() {
     if (!initialized) md5Init();
-    const input = document.getElementById('md5Input').value.toUpperCase();
+    var input = document.getElementById('md5Input').value.toUpperCase();
 
     if (!isValidHex(input)) {
         showToast('错误：包含非十六进制字符');
@@ -90,7 +74,7 @@ function md5UpdateHex() {
         return;
     }
 
-    for (let i = 0; i < input.length; i += 2) {
+    for (var i = 0; i < input.length; i += 2) {
         md5_update(hex2dec(input.substr(i, 2)));
     }
     showToast('已以十六进制方式更新');
@@ -99,20 +83,12 @@ function md5UpdateHex() {
 function md5Finish() {
     initialized = false;
     md5_finish();
-    let out = '';
-    for (let i = 0; i < digestBits.length; i++) {
+    var out = '';
+    for (var i = 0; i < digestBits.length; i++) {
         out += (digestBits[i] < 16 ? '0' : '') + dec2hex(digestBits[i], false);
     }
     document.getElementById('md5Output').value = out;
 }
-
-// 替换 ICON_COPY 占位符为实际 SVG
-document.querySelector('.btn-copy').innerHTML = ICON_COPY;
 </script>
-  </section>
-  <footer class="page-footer">
-    <p class="copyright">@鸽子笼 2020-2026</p>
-  </footer>
-</main>
 </body>
 </html>

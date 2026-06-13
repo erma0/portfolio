@@ -4,75 +4,72 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ASCII → u16/u32/u64 十六进制转换器</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="../styles.css" />
-  <link rel="stylesheet" href="./css/tool.css">
   <script src="./js/utils.js"></script>
+  <script src="./js/tool-page.js"></script>
 </head>
 <body>
-<div class="grain" aria-hidden="true"></div>
-<main class="container">
-  <nav class="top-nav">
-    <a href="../index.html" class="back-link">← 作品集</a>
-    <a href="./index.html">← 工具列表</a>
-  </nav>
-  <header class="tool-header">
-    <h1>ASCII → u16/u32/u64 十六进制转换器</h1>
-    <p class="tool-desc">将 ASCII 文本转换为 Unicode 宽字符十六进制数组</p>
-  </header>
-  <section class="tool-body">
-    <div class="form-card">
-      <div class="field">
-        <label class="field-label" for="inputText">输入文本</label>
-        <textarea id="inputText" rows="6" oninput="onInputChange()" placeholder="在此输入要转换的文本…"></textarea>
-      </div>
-      <div class="field">
-        <label class="field-label">选项</label>
-        <label style="display:block;margin-bottom:0.4rem;"><input type="checkbox" id="chbSeparator" checked="checked"> 输出添加 0x 前缀及逗号分隔符</label>
-        <label style="display:block;margin-bottom:0.4rem;"><input type="checkbox" id="chbBigEndian"> 大端序输出</label>
-        <label style="display:block;margin-bottom:0.4rem;"><input type="checkbox" id="chbConvertOnChange"> 输入变化时立即转换</label>
-        <label style="display:block;margin-bottom:0.4rem;">32 位值的后缀（例如 UL） <input type="text" id="suffix4B" value="" style="width:4rem;display:inline;"></label>
-        <label style="display:block;">64 位值的后缀（例如 ULL） <input type="text" id="suffix8B" value="ULL" style="width:4rem;display:inline;"></label>
-      </div>
-    </div>
-    <div class="btn-group">
-      <button type="button" onclick="convert()">转换</button>
-    </div>
-    <div class="result-card">
-      <div class="field">
-        <label class="field-label">输出：16 位整数</label>
-        <div class="input-row">
-          <input type="text" id="hex2B" readonly="readonly" placeholder="16 位十六进制输出">
-          <button type="button" class="btn-copy" onclick="copyToClipboard(document.getElementById('hex2B').value)"><script>document.write(ICON_COPY)</script></button>
-        </div>
-      </div>
-    </div>
-    <div class="result-card">
-      <div class="field">
-        <label class="field-label">输出：32 位整数</label>
-        <div class="input-row">
-          <input type="text" id="hex4B" readonly="readonly" placeholder="32 位十六进制输出">
-          <button type="button" class="btn-copy" onclick="copyToClipboard(document.getElementById('hex4B').value)"><script>document.write(ICON_COPY)</script></button>
-        </div>
-      </div>
-    </div>
-    <div class="result-card">
-      <div class="field">
-        <label class="field-label">输出：64 位整数</label>
-        <div class="input-row">
-          <input type="text" id="hex8B" readonly="readonly" placeholder="64 位十六进制输出">
-          <button type="button" class="btn-copy" onclick="copyToClipboard(document.getElementById('hex8B').value)"><script>document.write(ICON_COPY)</script></button>
-        </div>
-      </div>
-    </div>
-  </section>
-  <footer class="page-footer">
-    <p class="copyright">@鸽子笼 2020-2026</p>
-  </footer>
-</main>
+<noscript><p style="text-align:center;padding:4rem">此工具需要 JavaScript 支持。</p></noscript>
 <script>
+ToolPage.render({
+  title: 'ASCII → u16/u32/u64 十六进制转换器',
+  desc: '将 ASCII 文本转换为 Unicode 宽字符十六进制数组',
+  body: function(body) {
+    var c1 = ToolPage.formCard();
+
+    // 输入文本
+    var ta = document.createElement('textarea');
+    ta.id = 'inputText'; ta.rows = 6; ta.placeholder = '在此输入要转换的文本…';
+    ta.addEventListener('input', onInputChange);
+    c1.appendChild(ToolPage.field('输入文本', null, ta));
+
+    // 选项
+    var optField = ToolPage.el('div', 'field');
+    var optLabel = ToolPage.el('span', 'field-label');
+    optLabel.textContent = '选项';
+    optField.appendChild(optLabel);
+    optField.appendChild(ToolPage.checkbox('chbSeparator', '输出添加 0x 前缀及逗号分隔符', true));
+    optField.appendChild(ToolPage.checkbox('chbBigEndian', '大端序输出', false));
+    optField.appendChild(ToolPage.checkbox('chbConvertOnChange', '输入变化时立即转换', false));
+
+    var l1 = document.createElement('label');
+    l1.style.cssText = 'display:block;margin-bottom:0.4rem;';
+    l1.appendChild(document.createTextNode('32 位值的后缀（例如 UL） '));
+    var s4 = document.createElement('input');
+    s4.type = 'text'; s4.id = 'suffix4B'; s4.value = '';
+    s4.style.cssText = 'width:4rem;display:inline;';
+    l1.appendChild(s4);
+    optField.appendChild(l1);
+
+    var l2 = document.createElement('label');
+    l2.style.cssText = 'display:block;';
+    l2.appendChild(document.createTextNode('64 位值的后缀（例如 ULL） '));
+    var s8 = document.createElement('input');
+    s8.type = 'text'; s8.id = 'suffix8B'; s8.value = 'ULL';
+    s8.style.cssText = 'width:4rem;display:inline;';
+    l2.appendChild(s8);
+    optField.appendChild(l2);
+
+    c1.appendChild(optField);
+    body.appendChild(c1);
+
+    // 转换按钮
+    body.appendChild(ToolPage.btnGroup([{ text: '转换', onclick: convert }]));
+
+    // 结果
+    var rc1 = ToolPage.el('div', 'result-card');
+    rc1.appendChild(ToolPage.field('输出：16 位整数', null, ToolPage.inputRow('hex2B', { readonly: true, placeholder: '16 位十六进制输出' })));
+    body.appendChild(rc1);
+
+    var rc2 = ToolPage.el('div', 'result-card');
+    rc2.appendChild(ToolPage.field('输出：32 位整数', null, ToolPage.inputRow('hex4B', { readonly: true, placeholder: '32 位十六进制输出' })));
+    body.appendChild(rc2);
+
+    var rc3 = ToolPage.el('div', 'result-card');
+    rc3.appendChild(ToolPage.field('输出：64 位整数', null, ToolPage.inputRow('hex8B', { readonly: true, placeholder: '64 位十六进制输出' })));
+    body.appendChild(rc3);
+  }
+});
+
 function convert() {
   var input = document.getElementById('inputText').value;
   var useSep = document.getElementById('chbSeparator').checked;

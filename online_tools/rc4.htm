@@ -4,167 +4,127 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>RC4 加密/解密工具</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="../styles.css" />
-  <link rel="stylesheet" href="./css/tool.css">
   <script src="./js/utils.js"></script>
+  <script src="./js/tool-page.js"></script>
 </head>
 <body>
-<div class="grain" aria-hidden="true"></div>
-<main class="container">
-  <nav class="top-nav">
-    <a href="../index.html" class="back-link">← 作品集</a>
-    <a href="./index.html">← 工具列表</a>
-  </nav>
-  <header class="tool-header">
-    <h1>RC4 加密/解密工具</h1>
-    <p class="tool-desc">在线 RC4 流密码加密与解密</p>
-  </header>
-  <section class="tool-body">
-
-    <p>客户端 RC4 加密/解密（JavaScript，数据不会上传服务器）。注意：大文件可能导致资源消耗过高，浏览器崩溃，大文件建议使用离线工具。</p>
-    <p>RC4 是一种对称流密码，加密和解密使用同一操作——将输入数据与由密码/初始向量生成的长密钥流（256 字节状态）进行 XOR 运算。
-    由于 XOR 的特性：(X ^ Y) ^ Y = X，第一次运行加密（X ^ Y），第二次以相同密钥流运行即可解密。</p>
-    <p>安全建议（*）：</p>
-    <ul>
-      <li>不要重复使用初始向量</li>
-      <li>使用强初始向量，例如密码和唯一计数器的哈希，或某种随机盐；MD5 即可，目的是雪崩效应而非抗碰撞</li>
-      <li>丢弃密钥流开头的若干字节（RC-dropN）以降低偏差</li>
-    </ul>
-    <p>（*）不保证绝对安全；若丢失初始向量或 dropN 参数，加密数据将无法恢复</p>
-
-    <div class="form-card">
-      <div class="field">
-        <label class="field-label" for="fileinput">源文件</label>
-        <input type="file" id="fileinput" onchange="handleFile(event)">
-      </div>
-
-      <div class="field">
-        <label class="field-label" for="initial_bytes">初始向量</label>
-        <input type="text" id="initial_bytes" value="0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88">
-        <span class="field-hint">十六进制，任意长度，最多 256 字节</span>
-      </div>
-
-      <div class="field">
-        <label class="field-label" for="dropN">丢弃密钥流字节数 (dropN)</label>
-        <input type="text" id="dropN" value="256">
-      </div>
-
-      <div class="field">
-        <label class="field-label">选项</label>
-        <label><input type="checkbox" id="chbSeparator" checked> 移除初始向量中的 "0x" 前缀及非十六进制字符</label>
-      </div>
-
-      <div class="field">
-        <label class="field-label">清理后的初始向量</label>
-        <div class="input-row">
-          <input type="text" id="cleaned_hex" readonly="readonly" value="">
-          <button type="button" class="btn-copy" onclick="copyToClipboard(document.getElementById('cleaned_hex').value)" aria-label="复制"></button>
-        </div>
-      </div>
-
-      <div class="field">
-        <label class="field-label" for="filename">创建文件名</label>
-        <input type="text" id="filename" value="file.rc4">
-      </div>
-    </div>
-
-    <div class="btn-group">
-      <button type="button" id="btnConvert" onclick="Convert()">加密/解密</button>
-    </div>
-
-    <div class="result-card">
-      <div class="field">
-        <span class="field-label">处理结果</span>
-        <div class="input-row">
-          <input type="text" id="result_hex" readonly="readonly" value="" placeholder="点击加密/解密后显示结果">
-          <button type="button" class="btn-copy" onclick="copyToClipboard(document.getElementById('result_hex').value)" aria-label="复制"></button>
-        </div>
-      </div>
-    </div>
-
-  </section>
-  <footer class="page-footer">
-    <p class="copyright">@鸽子笼 2020-2026</p>
-  </footer>
-</main>
-
+<noscript><p style="text-align:center;padding:4rem">此工具需要 JavaScript 支持。</p></noscript>
 <script>
-// Inject copy icons into btn-copy buttons
-document.querySelectorAll('.btn-copy').forEach(function (btn) {
-  btn.innerHTML = ICON_COPY;
-});
+ToolPage.render({
+  title: 'RC4 加密/解密工具',
+  desc: '在线 RC4 流密码加密与解密',
+  body: function(body) {
+    var p1 = ToolPage.el('p');
+    p1.textContent = '客户端 RC4 加密/解密（JavaScript，数据不会上传服务器）。注意：大文件可能导致资源消耗过高，浏览器崩溃，大文件建议使用离线工具。';
+    body.appendChild(p1);
 
-(function () {
-  var fileData = null;
-  var fileName = '';
+    var p2 = ToolPage.el('p');
+    p2.textContent = 'RC4 是一种对称流密码，加密和解密使用同一操作——将输入数据与由密码/初始向量生成的长密钥流（256 字节状态）进行 XOR 运算。由于 XOR 的特性：(X ^ Y) ^ Y = X，第一次运行加密（X ^ Y），第二次以相同密钥流运行即可解密。';
+    body.appendChild(p2);
 
-  window.handleFile = function (event) {
-    openFile(event, function (result) {
-      fileData = result.data;
-      fileName = result.name;
-      document.getElementById('filename').value = fileName + '.rc4';
+    var p3 = ToolPage.el('p');
+    p3.textContent = '安全建议（*）：';
+    body.appendChild(p3);
+
+    var ul = ToolPage.el('ul');
+    var li1 = ToolPage.el('li'); li1.textContent = '不要重复使用初始向量'; ul.appendChild(li1);
+    var li2 = ToolPage.el('li'); li2.textContent = '使用强初始向量，例如密码和唯一计数器的哈希，或某种随机盐；MD5 即可，目的是雪崩效应而非抗碰撞'; ul.appendChild(li2);
+    var li3 = ToolPage.el('li'); li3.textContent = '丢弃密钥流开头的若干字节（RC-dropN）以降低偏差'; ul.appendChild(li3);
+    body.appendChild(ul);
+
+    var p4 = ToolPage.el('p');
+    p4.textContent = '（*）不保证绝对安全；若丢失初始向量或 dropN 参数，加密数据将无法恢复';
+    body.appendChild(p4);
+
+    // 表单卡片
+    var card = ToolPage.formCard();
+    card.appendChild(ToolPage.fileField('fileinput', '源文件'));
+    card.appendChild(ToolPage.field('初始向量', '十六进制，任意长度，最多 256 字节', ToolPage.inputRow('initial_bytes', { value: '0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88' })));
+    card.appendChild(ToolPage.field('丢弃密钥流字节数 (dropN)', null, ToolPage.inputRow('dropN', { value: '256' })));
+    card.appendChild(ToolPage.field('选项', null, ToolPage.checkbox('chbSeparator', '移除初始向量中的 "0x" 前缀及非十六进制字符', true)));
+    card.appendChild(ToolPage.field('清理后的初始向量', null, ToolPage.inputRow('cleaned_hex', { readonly: true })));
+    card.appendChild(ToolPage.field('创建文件名', null, ToolPage.inputRow('filename', { value: 'file.rc4' })));
+    body.appendChild(card);
+
+    // 按钮
+    body.appendChild(ToolPage.btnGroup([
+      { text: '加密/解密', onclick: Convert }
+    ]));
+
+    // 结果卡片
+    var rCard = ToolPage.resultCard(null, '处理结果');
+    rCard.appendChild(ToolPage.inputRow('result_hex', { readonly: true, placeholder: '点击加密/解密后显示结果' }));
+    body.appendChild(rCard);
+
+    // 逻辑
+    var fileData = null;
+    var fileName = '';
+
+    document.getElementById('fileinput').addEventListener('change', function(event) {
+      openFile(event, function(result) {
+        fileData = result.data;
+        fileName = result.name;
+        document.getElementById('filename').value = fileName + '.rc4';
+      });
     });
-  };
 
-  window.Convert = function () {
-    if (!fileData) {
-      showToast('请先选择源文件');
-      return;
+    function Convert() {
+      if (!fileData) {
+        showToast('请先选择源文件');
+        return;
+      }
+
+      var remove0x = document.getElementById('chbSeparator').checked;
+      var cleanedHex = cleanHex(document.getElementById('initial_bytes').value, remove0x);
+      document.getElementById('cleaned_hex').value = cleanedHex;
+
+      if (cleanedHex.length % 2) {
+        showToast('错误：初始向量十六进制长度为奇数');
+        return;
+      }
+
+      var ivBytes = [];
+      for (var i = 0; i < cleanedHex.length / 2; i++) {
+        ivBytes.push(parseInt(cleanedHex.substr(i * 2, 2), 16));
+      }
+
+      var dropN = parseInt(document.getElementById('dropN').value, 10);
+      if (isNaN(dropN) || dropN < 0) dropN = 0;
+
+      // RC4 KSA
+      var S = [];
+      for (var i = 0; i < 256; i++) S[i] = i;
+      var j = 0;
+      for (var i = 0; i < 256; i++) {
+        j = (j + S[i] + ivBytes[i % ivBytes.length]) & 255;
+        var tmp = S[i]; S[i] = S[j]; S[j] = tmp;
+      }
+
+      // RC4 PRGA with dropN
+      var ii = 0, jj = 0;
+      for (var d = 0; d < dropN; d++) {
+        ii = (ii + 1) & 255;
+        jj = (jj + S[ii]) & 255;
+        var tmp = S[ii]; S[ii] = S[jj]; S[jj] = tmp;
+      }
+
+      // Encrypt/decrypt
+      var out = new Uint8Array(fileData.length);
+      for (var k = 0; k < fileData.length; k++) {
+        ii = (ii + 1) & 255;
+        jj = (jj + S[ii]) & 255;
+        var tmp = S[ii]; S[ii] = S[jj]; S[jj] = tmp;
+        out[k] = fileData[k] ^ S[(S[ii] + S[jj]) & 255];
+      }
+
+      var hexResult = bytes2hex(out);
+      document.getElementById('result_hex').value = hexResult;
+
+      var outFilename = document.getElementById('filename').value || 'file.rc4';
+      createFileFromHex(hexResult, outFilename);
     }
-
-    var remove0x = document.getElementById('chbSeparator').checked;
-    var cleanedHex = cleanHex(document.getElementById('initial_bytes').value, remove0x);
-    document.getElementById('cleaned_hex').value = cleanedHex;
-
-    if (cleanedHex.length % 2) {
-      showToast('错误：初始向量十六进制长度为奇数');
-      return;
-    }
-
-    var ivBytes = [];
-    for (var i = 0; i < cleanedHex.length / 2; i++) {
-      ivBytes.push(parseInt(cleanedHex.substr(i * 2, 2), 16));
-    }
-
-    var dropN = parseInt(document.getElementById('dropN').value, 10);
-    if (isNaN(dropN) || dropN < 0) dropN = 0;
-
-    // RC4 KSA
-    var S = [];
-    for (var i = 0; i < 256; i++) S[i] = i;
-    var j = 0;
-    for (var i = 0; i < 256; i++) {
-      j = (j + S[i] + ivBytes[i % ivBytes.length]) & 255;
-      var tmp = S[i]; S[i] = S[j]; S[j] = tmp;
-    }
-
-    // RC4 PRGA with dropN
-    var ii = 0, jj = 0;
-    for (var d = 0; d < dropN; d++) {
-      ii = (ii + 1) & 255;
-      jj = (jj + S[ii]) & 255;
-      var tmp = S[ii]; S[ii] = S[jj]; S[jj] = tmp;
-    }
-
-    // Encrypt/decrypt
-    var out = new Uint8Array(fileData.length);
-    for (var k = 0; k < fileData.length; k++) {
-      ii = (ii + 1) & 255;
-      jj = (jj + S[ii]) & 255;
-      var tmp = S[ii]; S[ii] = S[jj]; S[jj] = tmp;
-      out[k] = fileData[k] ^ S[(S[ii] + S[jj]) & 255];
-    }
-
-    var hexResult = bytes2hex(out);
-    document.getElementById('result_hex').value = hexResult;
-
-    var outFilename = document.getElementById('filename').value || 'file.rc4';
-    createFileFromHex(hexResult, outFilename);
-  };
-})();
+  }
+});
 </script>
 </body>
 </html>

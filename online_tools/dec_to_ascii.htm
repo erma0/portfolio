@@ -4,73 +4,60 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>十进制 → ASCII 转换器</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="../styles.css" />
-  <link rel="stylesheet" href="./css/tool.css">
   <script src="./js/utils.js"></script>
+  <script src="./js/tool-page.js"></script>
 </head>
 <body>
-<div class="grain" aria-hidden="true"></div>
-<main class="container">
-  <nav class="top-nav">
-    <a href="../index.html" class="back-link">← 作品集</a>
-    <a href="./index.html">← 工具列表</a>
-  </nav>
-  <header class="tool-header">
-    <h1>十进制 → ASCII 转换器</h1>
-    <p class="tool-desc">将十进制字节值转换为 ASCII 字符串</p>
-  </header>
-  <section class="tool-body">
-    <div class="form-card">
-      <div class="field">
-        <label class="field-label" for="inputDec">十进制数值序列</label>
-        <input type="text" id="inputDec" placeholder="例如 72 101 108 108 111">
-        <span class="field-hint">十进制数值可以用任意非数字字符分隔。</span>
-      </div>
-    </div>
-    <div class="btn-group">
-      <button type="button" onclick="convert()">转换</button>
-    </div>
-    <div class="form-card">
-      <div class="field">
-        <label class="field-label">规范化输入</label>
-        <div class="input-row">
-          <input type="text" id="cleanedDec" readonly="readonly" placeholder="逗号分隔的数值">
-          <button type="button" class="btn-copy" onclick="copyToClipboard(document.getElementById('cleanedDec').value)"><script>document.write(ICON_COPY)</script></button>
-        </div>
-      </div>
-    </div>
-    <div class="result-card">
-      <div class="field">
-        <label class="field-label">ASCII 解码结果</label>
-        <span class="field-hint">32~126 范围外字节以斜体显示为 <em>[字节值]</em></span>
-        <div id="decodedText" class="result-value" style="min-height:2rem;"><em>（解码后的文本将显示在此处）</em></div>
-      </div>
-    </div>
-  </section>
-  <footer class="page-footer">
-    <p class="copyright">@鸽子笼 2020-2026</p>
-  </footer>
-</main>
+<noscript><p style="text-align:center;padding:4rem">此工具需要 JavaScript 支持。</p></noscript>
 <script>
+ToolPage.render({
+  title: '十进制 → ASCII 转换器',
+  desc: '将十进制字节值转换为 ASCII 字符串',
+  body: function(body) {
+    // 输入
+    var c1 = ToolPage.formCard();
+    var inp = document.createElement('input');
+    inp.type = 'text'; inp.id = 'inputDec'; inp.placeholder = '例如 72 101 108 108 111';
+    c1.appendChild(ToolPage.field('十进制数值序列', '十进制数值可以用任意非数字字符分隔。', inp));
+    body.appendChild(c1);
+
+    // 转换按钮
+    body.appendChild(ToolPage.btnGroup([{ text: '转换', onclick: convert }]));
+
+    // 规范化输入
+    var c2 = ToolPage.formCard();
+    c2.appendChild(ToolPage.field('规范化输入', null, ToolPage.inputRow('cleanedDec', { readonly: true, placeholder: '逗号分隔的数值' })));
+    body.appendChild(c2);
+
+    // 解码结果
+    var rc = ToolPage.el('div', 'result-card');
+    var f = ToolPage.el('div', 'field');
+    var lbl = ToolPage.el('span', 'field-label');
+    lbl.textContent = 'ASCII 解码结果';
+    f.appendChild(lbl);
+    var hint = ToolPage.el('span', 'field-hint');
+    hint.textContent = '32~126 范围外字节以斜体显示为 [字节值]';
+    f.appendChild(hint);
+    var rv = ToolPage.el('div', 'result-value');
+    rv.id = 'decodedText'; rv.style.minHeight = '2rem';
+    rv.innerHTML = '<em>（解码后的文本将显示在此处）</em>';
+    f.appendChild(rv);
+    rc.appendChild(f);
+    body.appendChild(rc);
+  }
+});
+
 function convert() {
   var input = document.getElementById('inputDec').value;
   var nums = [];
   var num = '';
   var numFound = false;
   var negative = false;
-
   for (var i = 0; i < input.length; i++) {
     var c = input.charAt(i);
     var eon = false;
     if (c === '-') {
-      if (!numFound) {
-        negative = true;
-      } else {
-        eon = true;
-      }
+      if (!numFound) { negative = true; } else { eon = true; }
     } else if (c < '0' || c > '9') {
       if (numFound) eon = true;
     } else {
@@ -80,16 +67,12 @@ function convert() {
     }
     if (eon) {
       nums.push(num);
-      num = '';
-      numFound = false;
-      negative = false;
+      num = ''; numFound = false; negative = false;
     }
   }
   if (numFound) nums.push(num);
-
   var cleaned = nums.join(', ');
   document.getElementById('cleanedDec').value = cleaned;
-
   var html = '';
   for (var i = 0; i < nums.length; i++) {
     var val = parseInt(nums[i], 10);
@@ -106,7 +89,6 @@ function convert() {
       html += '<em>[' + val + ']</em>';
     }
   }
-
   document.getElementById('decodedText').innerHTML = html || '<em>（无输出）</em>';
 }
 </script>

@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeilCrawler 网页采集器 · 鸽子笼</title>
+  <meta name="description" content="VeilCrawler — 轻量可视化浏览器数据采集插件，Chrome MV3 扩展，DOM+API 双通道抓取。" />
+  <meta name="theme-color" content="#f6f3ec" />
+  <link rel="canonical" href="https://works.erma0.cn/works/veilcrawler.html" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🕊</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+  <link rel="stylesheet" href="detail.css" />
+  <style>
+    .callout {
+      padding: 14px 18px;
+      background: rgba(44, 74, 62, 0.06);
+      border: 1px solid rgba(44, 74, 62, 0.15);
+      border-radius: var(--radius);
+      font-size: 13px;
+      color: var(--accent-2);
+      margin-bottom: 20px;
+      line-height: 1.7;
+    }
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+      margin: 12px 0 24px;
+    }
+    .feature-cell {
+      padding: 12px 14px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      background: var(--bg);
+      font-size: 13px;
+      color: var(--ink-soft);
+      line-height: 1.6;
+    }
+    .feature-cell strong {
+      display: block;
+      color: var(--ink);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      margin-bottom: 4px;
+      letter-spacing: 0.03em;
+    }
+    .install-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+      margin: 12px 0 24px;
+    }
+    .install-card {
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--bg-soft);
+    }
+    .install-card h4 {
+      margin: 0 0 8px;
+      font-family: var(--font-serif);
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--ink);
+    }
+    .install-card p, .install-card code {
+      font-size: 13px;
+      line-height: 1.7;
+      color: var(--ink-soft);
+      margin: 0;
+    }
+    .install-card code {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      background: var(--bg);
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="grain" aria-hidden="true"></div>
+
+  <article class="detail">
+    <a href="../" class="detail-back">← 作品集</a>
+
+    <header class="detail-head">
+      <h1>VeilCrawler · 网页采集器</h1>
+      <div class="detail-meta">
+        <span class="detail-type web">Chrome 扩展</span>
+        <span>Manifest V3 · TypeScript · React · v1.0.1</span>
+      </div>
+    </header>
+
+    <div class="detail-body">
+      <div class="callout">
+        <strong>解决「所见即不可得」的痛点</strong><br>
+        现代网页反爬机制复杂（参数签名、JS 混淆、环境检测），VeilCrawler 直接利用浏览器渲染好的 DOM 和已签名的网络请求，天然绕过反爬，无需逆向工程。
+      </div>
+
+      <h2>项目定位</h2>
+      <p>
+        一款<strong>轻量级可视化浏览器数据采集插件</strong>，基于 Chrome Manifest V3，以侧边栏沉浸式交互提供 DOM 选择 + JSON API 拦截双通道数据提取。
+        目标用户是无需编程基础的普通用户——点击网页元素即可自动生成提取规则。
+      </p>
+
+      <h2>核心功能</h2>
+      <div class="feature-grid">
+        <div class="feature-cell">
+          <strong>可视化元素选择</strong>
+          鼠标点击页面元素自动生成 CSS/XPath 选择器，支持文本/HTML/链接/图片等多属性提取，智能高亮预览
+        </div>
+        <div class="feature-cell">
+          <strong>JSON API 拦截</strong>
+          拦截页面 Ajax 请求，可视化浏览 JSON 响应结构，点击字段自动生成提取规则（适合前后端分离网站）
+        </div>
+        <div class="feature-cell">
+          <strong>智能翻页</strong>
+          滚动翻页（无限滚动页面）+ 点击翻页（可视化选择"下一页"按钮），自定义间隔与最大采集量
+        </div>
+        <div class="feature-cell">
+          <strong>数据清洗去重</strong>
+          默认智能去重，支持指定多字段联合主键，精准控制去重逻辑
+        </div>
+        <div class="feature-cell">
+          <strong>多任务管理</strong>
+          创建/编辑/删除采集任务，配置自动保存到本地存储，支持导入/导出备份便于分享迁移
+        </div>
+        <div class="feature-cell">
+          <strong>多格式导出</strong>
+          JSON / CSV 格式导出，支持一键复制到剪贴板
+        </div>
+      </div>
+
+      <h2>同类对比</h2>
+      <table class="detail-table">
+        <thead>
+          <tr><th>维度</th><th>VeilCrawler</th><th>Web Scraper</th><th>八爪鱼/后羿</th><th>Python 脚本</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>类型</td><td>开源浏览器扩展</td><td>浏览器扩展</td><td>商业桌面软件</td><td>编程脚本</td></tr>
+          <tr><td>上手难度</td><td>⭐ 极低</td><td>⭐⭐ 中等</td><td>⭐ 低</td><td>⭐⭐⭐⭐⭐ 高</td></tr>
+          <tr><td>反爬能力</td><td>⭐⭐⭐ 天然绕过</td><td>⭐⭐⭐</td><td>⭐⭐⭐</td><td>⭐ 需自行处理</td></tr>
+          <tr><td>API 拦截</td><td>✅ 重点特性</td><td>❌ 仅 DOM</td><td>❌ 较弱</td><td>✅ 需逆向</td></tr>
+          <tr><td>侧边栏交互</td><td>✅ 沉浸式</td><td>❌ DevTools 面板</td><td>—</td><td>—</td></tr>
+          <tr><td>费用</td><td>完全免费开源</td><td>基础免费</td><td>订阅昂贵</td><td>免费</td></tr>
+        </tbody>
+      </table>
+
+      <h2>技术栈</h2>
+      <table class="detail-table">
+        <thead>
+          <tr><th>模块</th><th>技术</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>扩展标准</td><td>Chrome Manifest V3</td></tr>
+          <tr><td>前端框架</td><td>React + TypeScript</td></tr>
+          <tr><td>构建工具</td><td>Vite + pnpm</td></tr>
+          <tr><td>浏览器协议</td><td>Chrome DevTools Protocol (CDP)</td></tr>
+          <tr><td>兼容浏览器</td><td>Chrome / Edge / Brave / Arc / Chromium 内核</td></tr>
+          <tr><td>采集引擎参考</td><td>DrissionPage / nodriver（Python 端）</td></tr>
+        </tbody>
+      </table>
+
+      <h2>安装方式</h2>
+      <div class="install-grid">
+        <div class="install-card">
+          <h4>下载 Release 安装包 (推荐)</h4>
+          <p>前往 <a href="https://github.com/erma0/VeilCrawler/releases/latest" target="_blank" rel="noopener noreferrer">Releases 页面</a> 下载最新版。<br>
+          打开 <code>chrome://extensions/</code> → 开启开发者模式 → 拖入 <code>.crx</code> 或加载解压的 <code>.zip</code>。</p>
+        </div>
+        <div class="install-card">
+          <h4>源码编译安装 (开发者)</h4>
+          <p><code>git clone</code> → <code>pnpm install</code> → <code>pnpm build</code><br>
+          加载 <code>dist/</code> 目录到 Chrome 扩展页面。</p>
+        </div>
+        <div class="install-card">
+          <h4>Chrome 网上应用店</h4>
+          <p>正在审核中，上线后可直接一键安装。</p>
+        </div>
+      </div>
+
+      <div class="detail-downloads">
+        <a class="btn-dl" href="https://github.com/erma0/VeilCrawler/releases/latest" target="_blank" rel="noopener noreferrer">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+            <path d="M4 10v2a2 2 0 002 2h4a2 2 0 002-2v-2M8 1v9M5 7l3 3 3-3"/>
+          </svg>
+          下载最新版 v1.0.1 (crx / zip)
+        </a>
+      </div>
+
+      <p style="margin:12px 0 0;font-size:12px;color:var(--ink-mute);">
+        支持的浏览器：Chrome · Edge · Brave · Arc · 其他 Chromium 内核浏览器。Firefox 暂不支持。
+      </p>
+
+      <p class="detail-repo-wrap">
+        <a class="detail-repo" href="https://github.com/erma0/VeilCrawler" target="_blank" rel="noopener noreferrer">
+          <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          erma0/VeilCrawler
+        </a>
+        <span style="color:var(--ink-mute);font-size:13px;">v1.0.1 · MIT 开源</span>
+      </p>
+    </div>
+  </article>
+
+  <footer class="site-footer">
+    <p class="site-footer__row">
+      <a href="https://erma0.cn">主页</a>
+      <span class="sep" aria-hidden="true">·</span>
+      <a href="../">作品集</a>
+      <span class="sep" aria-hidden="true">·</span>
+      <a href="https://github.com/erma0" target="_blank" rel="noopener noreferrer">GitHub</a>
+    </p>
+    <p class="site-footer__small">&copy; 2026 鸽子笼</p>
+  </footer>
+</body>
+</html>

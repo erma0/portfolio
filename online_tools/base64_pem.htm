@@ -4,164 +4,156 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Base64 ↔ PEM</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="../styles.css" />
-  <link rel="stylesheet" href="./css/tool.css">
   <script src="./js/utils.js"></script>
+  <script src="./js/tool-page.js"></script>
 </head>
 <body>
-<div class="grain" aria-hidden="true"></div>
-<main class="container">
-  <nav class="top-nav">
-    <a href="../index.html" class="back-link">← 作品集</a>
-    <a href="./index.html">← 工具列表</a>
-  </nav>
-  <header class="tool-header">
-    <h1>Base64 ↔ PEM</h1>
-    <p class="tool-desc">在线 Base64 与 PEM 格式互转工具，纯客户端运行，数据不会上传服务器</p>
-  </header>
-  <section class="tool-body">
-
-    <h2>Base64 → PEM</h2>
-    <p>将 Base64 字符串转换为 PEM 格式，本质是将 Base64 按每行 64 字符换行，并可选添加 PEM 头尾标识。</p>
-
-    <div class="form-card">
-      <div class="field">
-        <label class="field-label" for="b64Input">输入 Base64</label>
-        <textarea id="b64Input" rows="4" placeholder="粘贴 Base64 字符串（单行或多行）"></textarea>
-        <span class="field-hint">支持单行或多行输入，非 Base64 字符将被自动忽略</span>
-      </div>
-      <div class="field">
-        <label class="field-label" for="b64HeaderType">头/尾标识类型</label>
-        <select id="b64HeaderType">
-          <option value="- none -">- 无 -</option>
-          <option value="CERTIFICATE">CERTIFICATE</option>
-          <option value="PRIVATE KEY">PRIVATE KEY</option>
-          <option value="PUBLIC KEY">PUBLIC KEY</option>
-          <option value="RSA PRIVATE KEY">RSA PRIVATE KEY</option>
-          <option value="RSA PUBLIC KEY">RSA PUBLIC KEY</option>
-          <option value="EC PRIVATE KEY">EC PRIVATE KEY</option>
-        </select>
-      </div>
-      <div class="btn-group">
-        <button type="button" id="btnB64ToPem">转换</button>
-      </div>
-    </div>
-
-    <div class="result-card">
-      <span class="field-label">清理后的 Base64</span>
-      <div class="input-row">
-        <input type="text" id="b64Cleaned" readonly="readonly" placeholder="转换后显示">
-        <button type="button" class="btn-copy" id="btnCopyCleaned"></button>
-      </div>
-    </div>
-
-    <div class="result-card">
-      <span class="field-label">输出 PEM</span>
-      <div style="position:relative;">
-        <textarea id="b64Output" rows="12" readonly="readonly" placeholder="转换后显示"></textarea>
-        <button type="button" class="btn-copy" id="btnCopyPem" style="position:absolute;top:0.4rem;right:0.4rem;"></button>
-      </div>
-    </div>
-
-    <hr>
-
-    <h2>PEM → Base64</h2>
-    <p>将 PEM 格式转换为 Base64，本质是合并多行 Base64，可选移除 PEM 头尾标识。</p>
-
-    <div class="form-card">
-      <div class="field">
-        <label class="field-label" for="pemInput">粘贴 PEM 内容</label>
-        <textarea id="pemInput" rows="10" placeholder="粘贴 PEM 格式内容"></textarea>
-      </div>
-      <div class="field">
-        <input type="checkbox" id="pemRemoveHeader" checked="checked">
-        <label for="pemRemoveHeader">移除 PEM 头尾标识</label>
-      </div>
-      <div class="btn-group">
-        <button type="button" id="btnPemToB64">转换</button>
-      </div>
-    </div>
-
-    <div class="result-card">
-      <span class="field-label">输出 Base64</span>
-      <div style="position:relative;">
-        <textarea id="pemOutput" rows="8" readonly="readonly" placeholder="转换后显示"></textarea>
-        <button type="button" class="btn-copy" id="btnCopyB64" style="position:absolute;top:0.4rem;right:0.4rem;"></button>
-      </div>
-    </div>
-
-  </section>
-  <footer class="page-footer">
-    <p class="copyright">@鸽子笼 2020-2026</p>
-  </footer>
-</main>
-
+<noscript><p style="text-align:center;padding:4rem">此工具需要 JavaScript 支持。</p></noscript>
 <script>
-(function() {
-  function cleanBase64(input) {
-    var output = input.replace(/[^A-Za-z0-9+/=]/g, '');
-    if (output !== input) {
-      showToast('警告：非 Base64 字符已被忽略');
-    }
-    return output;
+ToolPage.render({
+  title: 'Base64 ↔ PEM',
+  desc: '在线 Base64 与 PEM 格式互转工具，纯客户端运行，数据不会上传服务器',
+  body: function(body) {
+
+    /* ====== Base64 → PEM ====== */
+    var h2a = ToolPage.el('h2');
+    h2a.textContent = 'Base64 → PEM';
+    body.appendChild(h2a);
+
+    var descA = ToolPage.el('p');
+    descA.textContent = '将 Base64 字符串转换为 PEM 格式，本质是将 Base64 按每行 64 字符换行，并可选添加 PEM 头尾标识。';
+    body.appendChild(descA);
+
+    var card1 = ToolPage.formCard();
+    card1.appendChild(ToolPage.field('输入 Base64', '支持单行或多行输入，非 Base64 字符将被自动忽略', ToolPage.textareaRow('b64Input', { rows: 4, placeholder: '粘贴 Base64 字符串（单行或多行）' })));
+
+    var headerField = ToolPage.field('头/尾标识类型');
+    headerField.appendChild(ToolPage.select('b64HeaderType', [
+      { value: '- none -', label: '- 无 -' },
+      { value: 'CERTIFICATE', label: 'CERTIFICATE' },
+      { value: 'PRIVATE KEY', label: 'PRIVATE KEY' },
+      { value: 'PUBLIC KEY', label: 'PUBLIC KEY' },
+      { value: 'RSA PRIVATE KEY', label: 'RSA PRIVATE KEY' },
+      { value: 'RSA PUBLIC KEY', label: 'RSA PUBLIC KEY' },
+      { value: 'EC PRIVATE KEY', label: 'EC PRIVATE KEY' }
+    ], '- none -'));
+    card1.appendChild(headerField);
+
+    card1.appendChild(ToolPage.btnGroup([{ text: '转换', onclick: b64ToPemConvert }]));
+    body.appendChild(card1);
+
+    // 清理后的 Base64
+    var rc1 = ToolPage.el('div', 'result-card');
+    rc1.appendChild(ToolPage.field('清理后的 Base64', null, ToolPage.inputRow('b64Cleaned', { readonly: true, placeholder: '转换后显示' })));
+    body.appendChild(rc1);
+
+    // 输出 PEM
+    var rc2 = ToolPage.el('div', 'result-card');
+    var pemField = ToolPage.field('输出 PEM');
+    var pemRow = ToolPage.el('div');
+    pemRow.style.position = 'relative';
+    var pemTa = document.createElement('textarea');
+    pemTa.id = 'b64Output';
+    pemTa.rows = 12;
+    pemTa.readOnly = true;
+    pemTa.placeholder = '转换后显示';
+    pemRow.appendChild(pemTa);
+    var pemCopyBtn = ToolPage.el('button', 'btn-copy');
+    pemCopyBtn.type = 'button';
+    pemCopyBtn.innerHTML = ICON_COPY;
+    pemCopyBtn.style.cssText = 'position:absolute;top:0.4rem;right:0.4rem;';
+    pemCopyBtn.addEventListener('click', function() { copyToClipboard(document.getElementById('b64Output').value); });
+    pemRow.appendChild(pemCopyBtn);
+    pemField.appendChild(pemRow);
+    rc2.appendChild(pemField);
+    body.appendChild(rc2);
+
+    body.appendChild(ToolPage.divider());
+
+    /* ====== PEM → Base64 ====== */
+    var h2b = ToolPage.el('h2');
+    h2b.textContent = 'PEM → Base64';
+    body.appendChild(h2b);
+
+    var descB = ToolPage.el('p');
+    descB.textContent = '将 PEM 格式转换为 Base64，本质是合并多行 Base64，可选移除 PEM 头尾标识。';
+    body.appendChild(descB);
+
+    var card2 = ToolPage.formCard();
+    card2.appendChild(ToolPage.field('粘贴 PEM 内容', null, ToolPage.textareaRow('pemInput', { rows: 10, placeholder: '粘贴 PEM 格式内容' })));
+
+    var cbField = ToolPage.field(null);
+    cbField.appendChild(ToolPage.checkbox('pemRemoveHeader', '移除 PEM 头尾标识', true));
+    card2.appendChild(cbField);
+
+    card2.appendChild(ToolPage.btnGroup([{ text: '转换', onclick: pemToB64Convert }]));
+    body.appendChild(card2);
+
+    // 输出 Base64
+    var rc3 = ToolPage.el('div', 'result-card');
+    var b64Field = ToolPage.field('输出 Base64');
+    var b64Row = ToolPage.el('div');
+    b64Row.style.position = 'relative';
+    var b64Ta = document.createElement('textarea');
+    b64Ta.id = 'pemOutput';
+    b64Ta.rows = 8;
+    b64Ta.readOnly = true;
+    b64Ta.placeholder = '转换后显示';
+    b64Row.appendChild(b64Ta);
+    var b64CopyBtn = ToolPage.el('button', 'btn-copy');
+    b64CopyBtn.type = 'button';
+    b64CopyBtn.innerHTML = ICON_COPY;
+    b64CopyBtn.style.cssText = 'position:absolute;top:0.4rem;right:0.4rem;';
+    b64CopyBtn.addEventListener('click', function() { copyToClipboard(document.getElementById('pemOutput').value); });
+    b64Row.appendChild(b64CopyBtn);
+    b64Field.appendChild(b64Row);
+    rc3.appendChild(b64Field);
+    body.appendChild(rc3);
   }
+});
 
-  function b64ToPemConvert() {
-    var cleanedBase64 = cleanBase64(document.getElementById('b64Input').value);
-    document.getElementById('b64Cleaned').value = cleanedBase64;
-
-    var wrapped = cleanedBase64.replace(/(\S{64}(?!$))/g, '$1\r\n');
-    var header = document.getElementById('b64HeaderType').value;
-    if (header !== '- none -') {
-      wrapped = '-----BEGIN ' + header + '-----\r\n'
-        + wrapped
-        + '\r\n-----END ' + header + '-----\r\n';
-    }
-    document.getElementById('b64Output').value = wrapped;
+/* ---- Base64 → PEM ---- */
+function cleanBase64(input) {
+  var output = input.replace(/[^A-Za-z0-9+/=]/g, '');
+  if (output !== input) {
+    showToast('警告：非 Base64 字符已被忽略');
   }
+  return output;
+}
 
-  function pemToB64Convert() {
-    var input = document.getElementById('pemInput').value;
-    var removeHeaderAndFooter = document.getElementById('pemRemoveHeader').checked;
-    var output = '';
+function b64ToPemConvert() {
+  var cleanedBase64 = cleanBase64(document.getElementById('b64Input').value);
+  document.getElementById('b64Cleaned').value = cleanedBase64;
 
-    if (!removeHeaderAndFooter) {
-      output = input.replace(/\r/g, '').replace(/\n/g, '');
-    } else {
-      var lines = input.split(/\r?\n/);
-      for (var i = 0; i < lines.length; i++) {
-        if (lines[i].indexOf('-----') < 0) {
-          output += lines[i];
-        }
+  var wrapped = cleanedBase64.replace(/(\S{64}(?!$))/g, '$1\r\n');
+  var header = document.getElementById('b64HeaderType').value;
+  if (header !== '- none -') {
+    wrapped = '-----BEGIN ' + header + '-----\r\n'
+      + wrapped
+      + '\r\n-----END ' + header + '-----\r\n';
+  }
+  document.getElementById('b64Output').value = wrapped;
+}
+
+/* ---- PEM → Base64 ---- */
+function pemToB64Convert() {
+  var input = document.getElementById('pemInput').value;
+  var removeHeaderAndFooter = document.getElementById('pemRemoveHeader').checked;
+  var output = '';
+
+  if (!removeHeaderAndFooter) {
+    output = input.replace(/\r/g, '').replace(/\n/g, '');
+  } else {
+    var lines = input.split(/\r?\n/);
+    for (var i = 0; i < lines.length; i++) {
+      if (lines[i].indexOf('-----') < 0) {
+        output += lines[i];
       }
     }
-
-    document.getElementById('pemOutput').value = output;
   }
 
-  // 初始化复制按钮图标
-  document.getElementById('btnCopyCleaned').innerHTML = ICON_COPY;
-  document.getElementById('btnCopyPem').innerHTML = ICON_COPY;
-  document.getElementById('btnCopyB64').innerHTML = ICON_COPY;
-
-  // 绑定复制事件
-  document.getElementById('btnCopyCleaned').addEventListener('click', function() {
-    copyToClipboard(document.getElementById('b64Cleaned').value);
-  });
-  document.getElementById('btnCopyPem').addEventListener('click', function() {
-    copyToClipboard(document.getElementById('b64Output').value);
-  });
-  document.getElementById('btnCopyB64').addEventListener('click', function() {
-    copyToClipboard(document.getElementById('pemOutput').value);
-  });
-
-  // 绑定转换事件
-  document.getElementById('btnB64ToPem').addEventListener('click', b64ToPemConvert);
-  document.getElementById('btnPemToB64').addEventListener('click', pemToB64Convert);
-})();
+  document.getElementById('pemOutput').value = output;
+}
 </script>
 </body>
 </html>

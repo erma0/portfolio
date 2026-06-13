@@ -4,143 +4,105 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SHA1 哈希计算器</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="../styles.css" />
-  <link rel="stylesheet" href="./css/tool.css">
   <script src="./js/utils.js"></script>
+  <script src="./js/tool-page.js"></script>
   <script src="./js/rusha.js"></script>
 </head>
 <body>
-<div class="grain" aria-hidden="true"></div>
-<main class="container">
-  <nav class="top-nav">
-    <a href="../index.html" class="back-link">← 作品集</a>
-    <a href="./index.html">← 工具列表</a>
-  </nav>
-  <header class="tool-header">
-    <h1>SHA1 哈希计算器</h1>
-    <p class="tool-desc">在线计算文本或文件的 SHA1 哈希值，支持混合输入（文本、十六进制或文件，可任意组合添加到哈希）。使用 <a href="https://github.com/srijs/rusha">Rusha</a> 库，纯客户端运行。</p>
-  </header>
-  <section class="tool-body">
-
-    <div class="form-card">
-      <div class="field">
-        <button type="button" id="btnInit" class="btn-outline">重新初始化（清空哈希状态）</button>
-      </div>
-    </div>
-
-    <div class="form-card">
-      <div class="field">
-        <label class="field-label" for="sha1Input">输入数据</label>
-        <input type="text" id="sha1Input" placeholder="输入文本或十六进制字符串">
-        <span class="field-hint">输入文本或十六进制字符串，然后选择更新方式</span>
-      </div>
-      <div class="btn-group">
-        <button type="button" id="btnUpdateText">以文本方式更新</button>
-        <button type="button" id="btnUpdateHex">以十六进制方式更新</button>
-      </div>
-    </div>
-
-    <div class="form-card">
-      <div class="field">
-        <label class="field-label">文件输入</label>
-        <input type="file" id="sha1FileInput">
-        <span class="field-hint">选择文件后立即将文件内容添加到哈希计算</span>
-      </div>
-    </div>
-
-    <div class="btn-group" style="margin-bottom: 1rem;">
-      <button type="button" id="btnFinish">完成计算 / 获取结果</button>
-    </div>
-
-    <div class="result-card">
-      <span class="field-label">SHA1 结果</span>
-      <div class="input-row">
-        <input type="text" id="sha1Output" readonly="readonly" placeholder="点击「完成计算」获取结果">
-        <button type="button" class="btn-copy" id="btnCopyResult"></button>
-      </div>
-    </div>
-
-  </section>
-  <footer class="page-footer">
-    <p class="copyright">@鸽子笼 2020-2026</p>
-  </footer>
-</main>
-
+<noscript><p style="text-align:center;padding:4rem">此工具需要 JavaScript 支持。</p></noscript>
 <script>
-(function() {
-  var rusha = new Rusha();
-  var initialized = false;
+ToolPage.render({
+  title: 'SHA1 哈希计算器',
+  desc: '在线计算文本或文件的 SHA1 哈希值，支持混合输入（文本、十六进制或文件，可任意组合添加到哈希）。使用 Rusha 库，纯客户端运行。',
+  body: function(body) {
+    var card1 = ToolPage.formCard();
+    card1.appendChild(ToolPage.field(null, null, ToolPage.btnGroup([{text: '重新初始化（清空哈希状态）', className: 'btn-outline', onclick: hashInit}])));
+    body.appendChild(card1);
 
-  function hashInit() {
-    rusha.resetState();
-    document.getElementById('sha1Output').value = '';
-    initialized = true;
-    showToast('哈希状态已清空');
+    var card2 = ToolPage.formCard();
+    card2.appendChild(ToolPage.field('输入数据', '输入文本或十六进制字符串，然后选择更新方式', ToolPage.inputRow('sha1Input', {placeholder: '输入文本或十六进制字符串'})));
+    card2.appendChild(ToolPage.btnGroup([
+      {text: '以文本方式更新', onclick: hashUpdateText},
+      {text: '以十六进制方式更新', onclick: hashUpdateHex}
+    ]));
+    body.appendChild(card2);
+
+    var card3 = ToolPage.formCard();
+    card3.appendChild(ToolPage.fileField('sha1FileInput', '文件输入'));
+    var fileHint = ToolPage.el('span', 'field-hint');
+    fileHint.textContent = '选择文件后立即将文件内容添加到哈希计算';
+    card3.appendChild(fileHint);
+    body.appendChild(card3);
+
+    body.appendChild(ToolPage.btnGroup([{text: '完成计算 / 获取结果', onclick: hashFinish}]));
+
+    var result = ToolPage.resultCard('resultArea', 'SHA1 结果');
+    result.appendChild(ToolPage.inputRow('sha1Output', {readonly: true, placeholder: '点击「完成计算」获取结果'}));
+    body.appendChild(result);
   }
+});
 
-  function hashUpdateText() {
-    if (!initialized) hashInit();
-    var inp = document.getElementById('sha1Input').value;
-    rusha.append(inp);
-    showToast('已以文本方式更新');
-  }
+var rusha = new Rusha();
+var initialized = false;
 
-  function hashUpdateHex() {
-    if (!initialized) hashInit();
-    var inp = document.getElementById('sha1Input').value.toUpperCase();
-    var chars = '0123456789ABCDEF';
-    for (var i = 0; i < inp.length; i++) {
-      if (chars.indexOf(inp.charAt(i)) === -1) {
-        showToast('错误：不是有效的十六进制字符串，包含非十六进制字符');
-        return;
-      }
-    }
-    if (inp.length % 2) {
-      showToast('错误：不是有效的十六进制字符串，长度不是 2 字节的整数倍');
+function hashInit() {
+  rusha.resetState();
+  document.getElementById('sha1Output').value = '';
+  initialized = true;
+  showToast('哈希状态已清空');
+}
+
+function hashUpdateText() {
+  if (!initialized) hashInit();
+  var inp = document.getElementById('sha1Input').value;
+  rusha.append(inp);
+  showToast('已以文本方式更新');
+}
+
+function hashUpdateHex() {
+  if (!initialized) hashInit();
+  var inp = document.getElementById('sha1Input').value.toUpperCase();
+  var chars = '0123456789ABCDEF';
+  for (var i = 0; i < inp.length; i++) {
+    if (chars.indexOf(inp.charAt(i)) === -1) {
+      showToast('错误：不是有效的十六进制字符串，包含非十六进制字符');
       return;
     }
-    var arr = [];
-    for (var i = 0; i < inp.length; i += 2) {
-      arr.push(hex2dec(inp.substr(i, 2)));
-    }
-    rusha.append(arr);
-    showToast('已以十六进制方式更新');
   }
-
-  function hashFinish() {
-    initialized = false;
-    var hexHash = rusha.end();
-    document.getElementById('sha1Output').value = hexHash;
+  if (inp.length % 2) {
+    showToast('错误：不是有效的十六进制字符串，长度不是 2 字节的整数倍');
+    return;
   }
-
-  function readFileAsArray(file) {
-    var reader = new FileReader();
-    reader.onload = function() {
-      var uint8View = new Uint8Array(reader.result);
-      if (!initialized) hashInit();
-      rusha.append(uint8View);
-      showToast('已添加文件内容');
-    };
-    reader.readAsArrayBuffer(file);
+  var arr = [];
+  for (var i = 0; i < inp.length; i += 2) {
+    arr.push(hex2dec(inp.substr(i, 2)));
   }
+  rusha.append(arr);
+  showToast('已以十六进制方式更新');
+}
 
-  document.getElementById('btnCopyResult').innerHTML = ICON_COPY;
-  document.getElementById('btnCopyResult').addEventListener('click', function() {
-    copyToClipboard(document.getElementById('sha1Output').value);
-  });
-  document.getElementById('btnInit').addEventListener('click', hashInit);
-  document.getElementById('btnUpdateText').addEventListener('click', hashUpdateText);
-  document.getElementById('btnUpdateHex').addEventListener('click', hashUpdateHex);
-  document.getElementById('btnFinish').addEventListener('click', hashFinish);
-  document.getElementById('sha1FileInput').addEventListener('change', function(e) {
-    if (e.target.files && e.target.files[0]) {
-      readFileAsArray(e.target.files[0]);
-    }
-  });
-})();
+function hashFinish() {
+  initialized = false;
+  var hexHash = rusha.end();
+  document.getElementById('sha1Output').value = hexHash;
+}
+
+function readFileAsArray(file) {
+  var reader = new FileReader();
+  reader.onload = function() {
+    var uint8View = new Uint8Array(reader.result);
+    if (!initialized) hashInit();
+    rusha.append(uint8View);
+    showToast('已添加文件内容');
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+document.getElementById('sha1FileInput').addEventListener('change', function(e) {
+  if (e.target.files && e.target.files[0]) {
+    readFileAsArray(e.target.files[0]);
+  }
+});
 </script>
 </body>
 </html>

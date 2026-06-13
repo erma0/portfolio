@@ -42,18 +42,18 @@ window.__WORKS = [
   {
     id: 'douyin',
     title: '抖音采集工具',
-    desc: '获取抖音平台公开信息的采集工具，支持 GUI / Web / CLI 三种模式，集成 Aria2 批量下载。',
+    desc: '采集抖音账号主页、喜欢、收藏、音乐原声、话题、搜索、合集、作品、关注、粉丝等公开数据。',
     icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="3" width="12" height="18" rx="2"/><polygon points="10,8 16,12 10,16"/></svg>',
     pinned: true,
-    action: 'link',
-    detail: '',
+    action: 'detail',
+    detail: 'works/douyin.html',
     link: 'https://github.com/erma0/douyin',
     stack: 'Python · FastAPI · React · Vite · Aria2',
     repo: 'erma0/douyin',
-    status: 'active',
+    status: 'archived',
     tags: [
-      { text: '热榜', color: 'accent' },
-      { text: '桌面', color: 'mute' }
+      { text: '已归档', color: 'accent' }
+    ]
     ]
   },
   {
@@ -91,17 +91,18 @@ window.__WORKS = [
   {
     id: 'veilcrawler',
     title: 'VeilCrawler 网页采集器',
-    desc: '轻量级可视化 Web 数据采集扩展，所见即所得点击生成规则，支持自动翻页、数据去重与 JSON API 拦截。',
+    desc: '轻量可视化浏览器插件，可视化选择元素生成 CSS/XPath，支持智能翻页/去重/JSON API 拦截/CSV 导出。',
     icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2v20M4.93 4.93l14.14 14.14M19.07 4.93L4.93 19.07"/></svg>',
     pinned: false,
-    action: 'link',
-    detail: '',
+    action: 'detail',
+    detail: 'works/veilcrawler.html',
     link: 'https://github.com/erma0/VeilCrawler',
-    stack: 'TypeScript · React · Chrome MV3',
+    stack: 'Chrome MV3 · TypeScript · React',
     repo: 'erma0/VeilCrawler',
-    status: 'wip',
+    status: 'active',
     tags: [
-      { text: '扩展', color: 'mute' }
+      { text: 'Chrome 扩展', color: 'accent' },
+      { text: 'v1.0.1', color: 'mute' }
     ]
   },
   {

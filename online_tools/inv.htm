@@ -4,83 +4,38 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>位反转工具</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="../styles.css" />
-  <link rel="stylesheet" href="./css/tool.css">
   <script src="./js/utils.js"></script>
+  <script src="./js/tool-page.js"></script>
 </head>
 <body>
-<div class="grain" aria-hidden="true"></div>
-<main class="container">
-  <nav class="top-nav">
-    <a href="../index.html" class="back-link">← 作品集</a>
-    <a href="./index.html">← 工具列表</a>
-  </nav>
-  <header class="tool-header">
-    <h1>位反转工具</h1>
-    <p class="tool-desc">对十六进制数据执行按位取反操作（NOT）</p>
-  </header>
-  <section class="tool-body">
+<noscript><p style="text-align:center;padding:4rem">此工具需要 JavaScript 支持。</p></noscript>
+<script>
+ToolPage.render({
+  title: '位反转工具',
+  desc: '对十六进制数据执行按位取反操作（NOT）',
+  body: function(body) {
+    var card1 = ToolPage.formCard();
+    card1.appendChild(ToolPage.field('十六进制字符串', '十六进制集合以外的字符将被忽略，因此 "12AB34" = "12 AB 34" = "12, AB, 34" 等价，输入不区分大小写。', ToolPage.inputRow('inputHex')));
+    card1.appendChild(ToolPage.field(null, null, ToolPage.checkbox('chkRemove0x', '移除输入中的 "0x" 前缀', true)));
+    card1.appendChild(ToolPage.field(null, null, ToolPage.checkbox('chkOutput0x', '输出使用 "0x" 前缀及逗号分隔', false)));
+    body.appendChild(card1);
 
-    <div class="form-card">
-      <div class="field">
-        <label class="field-label" for="inputHex">十六进制字符串</label>
-        <input type="text" id="inputHex" value="">
-        <span class="field-hint">十六进制集合以外的字符将被忽略，因此 "12AB34" = "12 AB 34" = "12, AB, 34" 等价，输入不区分大小写。</span>
-      </div>
+    body.appendChild(ToolPage.btnGroup([{text: '转换', onclick: Convert}]));
 
-      <div class="field">
-        <label>
-          <input type="checkbox" id="chkRemove0x" checked="checked">
-          移除输入中的 "0x" 前缀
-        </label>
-      </div>
+    var result = ToolPage.resultCard('resultArea', null);
+    result.appendChild(ToolPage.field('清理后的输入', null, ToolPage.inputRow('outputCleaned', {readonly: true})));
+    result.appendChild(ToolPage.field('反转后的字节', null, ToolPage.inputRow('outputHex', {readonly: true})));
 
-      <div class="field">
-        <label>
-          <input type="checkbox" id="chkOutput0x">
-          输出使用 "0x" 前缀及逗号分隔
-        </label>
-      </div>
-    </div>
+    var asciiField = ToolPage.field('ASCII 文本', '32~126 范围外的字节以斜体显示为 [字节值]', null);
+    var asciiDiv = ToolPage.el('div', 'result-value');
+    asciiDiv.id = 'outputAscii';
+    asciiDiv.innerHTML = '<i>（解码后的文本将显示在此处）</i>';
+    asciiField.appendChild(asciiDiv);
+    result.appendChild(asciiField);
+    body.appendChild(result);
+  }
+});
 
-    <div class="btn-group">
-      <button type="button" onclick="Convert()">转换</button>
-    </div>
-
-    <div class="result-card">
-      <div class="field">
-        <span class="field-label">清理后的输入</span>
-        <div class="input-row">
-          <input type="text" id="outputCleaned" readonly="readonly" value="">
-          <button type="button" class="btn-copy" id="btnCopyCleaned" onclick="copyToClipboard(document.getElementById('outputCleaned').value)"></button>
-        </div>
-      </div>
-
-      <div class="field">
-        <span class="field-label">反转后的字节</span>
-        <div class="input-row">
-          <input type="text" id="outputHex" readonly="readonly" value="">
-          <button type="button" class="btn-copy" id="btnCopyHex" onclick="copyToClipboard(document.getElementById('outputHex').value)"></button>
-        </div>
-      </div>
-
-      <div class="field">
-        <span class="field-label">ASCII 文本</span>
-        <span class="field-hint">32~126 范围外的字节以斜体显示为 [字节值]</span>
-        <div class="result-value" id="outputAscii"><i>（解码后的文本将显示在此处）</i></div>
-      </div>
-    </div>
-
-  </section>
-  <footer class="page-footer">
-    <p class="copyright">@鸽子笼 2020-2026</p>
-  </footer>
-</main>
-
-<script type="text/javascript">
 function Convert() {
   var remove0x = document.getElementById('chkRemove0x').checked;
   var cleaned_hex = cleanHex(document.getElementById('inputHex').value, remove0x);
@@ -129,9 +84,6 @@ function Convert() {
   htmlStr += '</b>';
   document.getElementById('outputAscii').innerHTML = htmlStr;
 }
-
-document.getElementById('btnCopyCleaned').innerHTML = ICON_COPY;
-document.getElementById('btnCopyHex').innerHTML = ICON_COPY;
 </script>
 </body>
 </html>

@@ -4,137 +4,94 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ASCII ↔ 十六进制</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="../styles.css" />
-  <link rel="stylesheet" href="./css/tool.css">
   <script src="./js/utils.js"></script>
+  <script src="./js/tool-page.js"></script>
 </head>
 <body>
-<div class="grain" aria-hidden="true"></div>
-<main class="container">
-  <nav class="top-nav">
-    <a href="../index.html" class="back-link">← 作品集</a>
-    <a href="./index.html">← 工具列表</a>
-  </nav>
-  <header class="tool-header">
-    <h1>ASCII ↔ 十六进制</h1>
-    <p class="tool-desc">在线 ASCII 文本与十六进制互转工具</p>
-  </header>
-  <section class="tool-body">
-
-    <!-- ASCII → 十六进制 -->
-    <div class="form-card">
-      <div class="field">
-        <label class="field-label" for="a2h_input">输入文本</label>
-        <textarea id="a2h_input" rows="6"></textarea>
-      </div>
-      <div class="field">
-        <label class="field-label">选项</label>
-        <label><input type="checkbox" id="a2h_chbSep" checked> 输出添加 0x 前缀及逗号分隔符</label>
-      </div>
-      <div class="btn-group">
-        <button type="button" onclick="asciiToHexConvert()">转换</button>
-      </div>
-    </div>
-
-    <div class="result-card" id="a2h_result_card" style="display:none">
-      <label class="field-label">输出十六进制数组</label>
-      <div class="input-row">
-        <input type="text" id="a2h_hex" readonly>
-        <button type="button" class="btn-copy" id="a2h_copy_btn"></button>
-      </div>
-    </div>
-
-    <hr>
-
-    <!-- 十六进制 → ASCII -->
-    <div class="form-card">
-      <div class="field">
-        <label class="field-label" for="h2a_hex">十六进制字符串</label>
-        <input type="text" id="h2a_hex">
-        <span class="field-hint">所有非十六进制字符将被忽略，"12AB34" = "12 AB 34" = "12, AB, 34" 等。输入不区分大小写。</span>
-      </div>
-      <div class="field">
-        <label class="field-label">选项</label>
-        <label><input type="checkbox" id="h2a_chbSep" checked> 移除输入中的 "0x" 前缀</label>
-      </div>
-      <div class="btn-group">
-        <button type="button" onclick="hexToAsciiConvert()">转换</button>
-      </div>
-    </div>
-
-    <div class="result-card" id="h2a_result_card" style="display:none">
-      <label class="field-label">清理后的输入</label>
-      <div class="input-row">
-        <input type="text" id="h2a_cleaned_hex" readonly>
-        <button type="button" class="btn-copy" id="h2a_cleaned_copy_btn"></button>
-      </div>
-      <div style="margin-top:0.75rem">
-        <label class="field-label">解码数据（ASCII 文本）</label>
-        <span class="field-hint">32~126 范围外的字节以斜体显示为 <i>[byte value]</i></span>
-        <div class="result-value" id="h2a_decoded_text" style="margin-top:0.4rem"></div>
-      </div>
-    </div>
-
-  </section>
-  <footer class="page-footer">
-    <p class="copyright">@鸽子笼 2020-2026</p>
-  </footer>
-</main>
-
+<noscript><p style="text-align:center;padding:4rem">此工具需要 JavaScript 支持。</p></noscript>
 <script>
-// 初始化复制按钮图标
-document.getElementById('a2h_copy_btn').innerHTML = ICON_COPY;
-document.getElementById('a2h_copy_btn').onclick = function() { copyToClipboard(document.getElementById('a2h_hex').value); };
-document.getElementById('h2a_cleaned_copy_btn').innerHTML = ICON_COPY;
-document.getElementById('h2a_cleaned_copy_btn').onclick = function() { copyToClipboard(document.getElementById('h2a_cleaned_hex').value); };
+ToolPage.render({
+  title: 'ASCII ↔ 十六进制',
+  desc: '在线 ASCII 文本与十六进制互转工具',
+  body: function(body) {
+    // ASCII → 十六进制
+    var c1 = ToolPage.formCard();
+    var ta = document.createElement('textarea');
+    ta.id = 'a2h_input'; ta.rows = 6;
+    c1.appendChild(ToolPage.field('输入文本', null, ta));
+    c1.appendChild(ToolPage.field('选项', null, ToolPage.checkbox('a2h_chbSep', '输出添加 0x 前缀及逗号分隔符', true)));
+    c1.appendChild(ToolPage.btnGroup([{ text: '转换', onclick: asciiToHexConvert }]));
+    body.appendChild(c1);
+
+    var rc1 = ToolPage.el('div', 'result-card');
+    rc1.id = 'a2h_result_card'; rc1.style.display = 'none';
+    rc1.appendChild(ToolPage.field('输出十六进制数组', null, ToolPage.inputRow('a2h_hex', { readonly: true })));
+    body.appendChild(rc1);
+
+    body.appendChild(ToolPage.divider());
+
+    // 十六进制 → ASCII
+    var c2 = ToolPage.formCard();
+    var inp = document.createElement('input');
+    inp.type = 'text'; inp.id = 'h2a_hex';
+    c2.appendChild(ToolPage.field('十六进制字符串', '所有非十六进制字符将被忽略，"12AB34" = "12 AB 34" = "12, AB, 34" 等。输入不区分大小写。', inp));
+    c2.appendChild(ToolPage.field('选项', null, ToolPage.checkbox('h2a_chbSep', '移除输入中的 "0x" 前缀', true)));
+    c2.appendChild(ToolPage.btnGroup([{ text: '转换', onclick: hexToAsciiConvert }]));
+    body.appendChild(c2);
+
+    var rc2 = ToolPage.el('div', 'result-card');
+    rc2.id = 'h2a_result_card'; rc2.style.display = 'none';
+    rc2.appendChild(ToolPage.field('清理后的输入', null, ToolPage.inputRow('h2a_cleaned_hex', { readonly: true })));
+    var decSec = ToolPage.el('div');
+    decSec.style.marginTop = '0.75rem';
+    var decDiv = ToolPage.el('div', 'result-value');
+    decDiv.id = 'h2a_decoded_text'; decDiv.style.marginTop = '0.4rem';
+    decSec.appendChild(ToolPage.field('解码数据（ASCII 文本）', '32~126 范围外的字节以斜体显示为 [byte value]', decDiv));
+    rc2.appendChild(decSec);
+    body.appendChild(rc2);
+  }
+});
 
 function asciiToHexConvert() {
-  const input = document.getElementById('a2h_input').value;
-  const addSep = document.getElementById('a2h_chbSep').checked;
-  let separator1 = '', separator2 = '';
-  if (addSep) {
-    separator1 = '0x';
-    separator2 = ', ';
-  }
-  let hexText = '';
-  for (let i = 0; i < input.length; i++) {
-    const charVal = input.charCodeAt(i);
-    hexText += separator1 + dec2hex(charVal) + separator2;
+  var input = document.getElementById('a2h_input').value;
+  var addSep = document.getElementById('a2h_chbSep').checked;
+  var s1 = '', s2 = '';
+  if (addSep) { s1 = '0x'; s2 = ', '; }
+  var hexText = '';
+  for (var i = 0; i < input.length; i++) {
+    hexText += s1 + dec2hex(input.charCodeAt(i)) + s2;
   }
   document.getElementById('a2h_hex').value = hexText;
   document.getElementById('a2h_result_card').style.display = '';
 }
 
 function hexToAsciiConvert() {
-  const cleaned_hex = cleanHex(document.getElementById('h2a_hex').value, document.getElementById('h2a_chbSep').checked);
-  document.getElementById('h2a_cleaned_hex').value = cleaned_hex;
-  if (cleaned_hex.length % 2) {
+  var cleaned = cleanHex(document.getElementById('h2a_hex').value, document.getElementById('h2a_chbSep').checked);
+  document.getElementById('h2a_cleaned_hex').value = cleaned;
+  if (cleaned.length % 2) {
     showToast('错误：清理后的十六进制字符串长度为奇数。');
     document.getElementById('h2a_decoded_text').innerHTML = '';
     document.getElementById('h2a_result_card').style.display = '';
     return;
   }
-  const bytes = hex2bytes(cleaned_hex);
-  let htmlStr = '';
-  for (let i = 0; i < bytes.length; i++) {
+  var bytes = hex2bytes(cleaned);
+  var html = '';
+  for (var i = 0; i < bytes.length; i++) {
     if (bytes[i] >= 32 && bytes[i] <= 126) {
-      const ch = String.fromCharCode(bytes[i]);
+      var ch = String.fromCharCode(bytes[i]);
       switch (ch) {
-        case '&': htmlStr += '&amp;'; break;
-        case '<': htmlStr += '&lt;'; break;
-        case '>': htmlStr += '&gt;'; break;
-        case '"': htmlStr += '&quot;'; break;
-        case "'": htmlStr += '&#039;'; break;
-        default: htmlStr += ch;
+        case '&': html += '&amp;'; break;
+        case '<': html += '&lt;'; break;
+        case '>': html += '&gt;'; break;
+        case '"': html += '&quot;'; break;
+        case "'": html += '&#039;'; break;
+        default: html += ch;
       }
     } else {
-      htmlStr += '<i>[' + bytes[i] + ']</i>';
+      html += '<i>[' + bytes[i] + ']</i>';
     }
   }
-  document.getElementById('h2a_decoded_text').innerHTML = htmlStr;
+  document.getElementById('h2a_decoded_text').innerHTML = html;
   document.getElementById('h2a_result_card').style.display = '';
 }
 </script>

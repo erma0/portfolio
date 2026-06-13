@@ -4,75 +4,31 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CRC8 校验计算器</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="../styles.css" />
-  <link rel="stylesheet" href="./css/tool.css">
   <script src="./js/utils.js"></script>
+  <script src="./js/tool-page.js"></script>
 </head>
 <body>
-<div class="grain" aria-hidden="true"></div>
-<main class="container">
-  <nav class="top-nav">
-    <a href="../index.html" class="back-link">← 作品集</a>
-    <a href="./index.html">← 工具列表</a>
-  </nav>
-  <header class="tool-header">
-    <h1>CRC8 校验计算器</h1>
-    <p class="tool-desc">在线计算数据的 CRC8 校验值，基于 <a href="https://www.maximintegrated.com/en/app-notes/index.mvp/id/27">Dallas/Maxim 应用笔记 27</a>（多项式 X^8+X^5+X^4+X^0），即 1-Wire 协议使用的 CRC8 规范。</p>
-  </header>
-  <section class="tool-body">
+<noscript><p style="text-align:center;padding:4rem">此工具需要 JavaScript 支持。</p></noscript>
+<script>
+ToolPage.render({
+  title: 'CRC8 校验计算器',
+  desc: '在线计算数据的 CRC8 校验值，基于 Dallas/Maxim 应用笔记 27（多项式 X^8+X^5+X^4+X^0），即 1-Wire 协议使用的 CRC8 规范。',
+  body: function(body) {
+    var card1 = ToolPage.formCard();
+    card1.appendChild(ToolPage.field('CRC8 初始值', '1 字节十六进制，如 0x00 或 00', ToolPage.inputRow('inputInit', {value: '0x00'})));
+    card1.appendChild(ToolPage.field('十六进制字符串', '十六进制集合以外的字符将被忽略，因此 "12AB34" = "12 AB 34" = "12, AB, 34" 等价，输入不区分大小写。', ToolPage.inputRow('inputHex')));
+    card1.appendChild(ToolPage.field(null, null, ToolPage.checkbox('chkRemove0x', '移除输入中的 "0x" 前缀', true)));
+    body.appendChild(card1);
 
-    <div class="form-card">
-      <div class="field">
-        <label class="field-label" for="inputInit">CRC8 初始值</label>
-        <input type="text" id="inputInit" value="0x00">
-        <span class="field-hint">1 字节十六进制，如 0x00 或 00</span>
-      </div>
+    body.appendChild(ToolPage.btnGroup([{text: '计算 CRC8', onclick: Convert}]));
 
-      <div class="field">
-        <label class="field-label" for="inputHex">十六进制字符串</label>
-        <input type="text" id="inputHex" value="">
-        <span class="field-hint">十六进制集合以外的字符将被忽略，因此 "12AB34" = "12 AB 34" = "12, AB, 34" 等价，输入不区分大小写。</span>
-      </div>
+    var result = ToolPage.resultCard('resultArea', null);
+    result.appendChild(ToolPage.field('清理后的输入', null, ToolPage.inputRow('outputCleaned', {readonly: true})));
+    result.appendChild(ToolPage.field('CRC8 校验结果', null, ToolPage.inputRow('outputResult', {readonly: true})));
+    body.appendChild(result);
+  }
+});
 
-      <div class="field">
-        <label>
-          <input type="checkbox" id="chkRemove0x" checked="checked">
-          移除输入中的 "0x" 前缀
-        </label>
-      </div>
-    </div>
-
-    <div class="btn-group">
-      <button type="button" onclick="Convert()">计算 CRC8</button>
-    </div>
-
-    <div class="result-card">
-      <div class="field">
-        <span class="field-label">清理后的输入</span>
-        <div class="input-row">
-          <input type="text" id="outputCleaned" readonly="readonly" value="">
-          <button type="button" class="btn-copy" id="btnCopyCleaned" onclick="copyToClipboard(document.getElementById('outputCleaned').value)"></button>
-        </div>
-      </div>
-      <div class="field">
-        <span class="field-label">CRC8 校验结果</span>
-        <div class="input-row">
-          <input type="text" id="outputResult" readonly="readonly" value="">
-          <button type="button" class="btn-copy" id="btnCopyResult" onclick="copyToClipboard(document.getElementById('outputResult').value)"></button>
-        </div>
-      </div>
-    </div>
-
-  </section>
-  <footer class="page-footer">
-    <p class="copyright">@鸽子笼 2020-2026</p>
-  </footer>
-</main>
-
-<script type="text/javascript">
 var crc8table =
 [
 0, 94, 188, 226, 97, 63, 221, 131, 194, 156, 126, 32, 163, 253, 31, 65,
@@ -121,9 +77,6 @@ function Convert() {
   }
   document.getElementById('outputResult').value = '0x' + (result < 16 ? '0' : '') + dec2hex(result);
 }
-
-document.getElementById('btnCopyCleaned').innerHTML = ICON_COPY;
-document.getElementById('btnCopyResult').innerHTML = ICON_COPY;
 </script>
 </body>
 </html>

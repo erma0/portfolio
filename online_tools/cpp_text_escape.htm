@@ -4,114 +4,88 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>文本 → C++ 字符串转义工具</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="../styles.css" />
-  <link rel="stylesheet" href="./css/tool.css">
   <script src="./js/utils.js"></script>
+  <script src="./js/tool-page.js"></script>
 </head>
 <body>
-<div class="grain" aria-hidden="true"></div>
-<main class="container">
-  <nav class="top-nav">
-    <a href="../index.html" class="back-link">← 作品集</a>
-    <a href="./index.html">← 工具列表</a>
-  </nav>
-  <header class="tool-header">
-    <h1>文本 → C++ 字符串转义工具</h1>
-    <p class="tool-desc">将文本转换为 C/C++ 字符串字面量（转义特殊字符）</p>
-  </header>
-  <section class="tool-body">
-
-    <div class="form-card">
-      <div class="field">
-        <label class="field-label" for="ed_input">源文本</label>
-        <textarea id="ed_input" rows="10"></textarea>
-        <span class="field-hint">输入需要转义的原始文本</span>
-      </div>
-    </div>
-
-    <div class="form-card">
-      <div class="field">
-        <label class="field-label">选项</label>
-        <label><input type="checkbox" id="chbSplitLines" checked> 将输出拆分为多行</label>
-        <br>
-        <label><input type="checkbox" id="chbEscapePercent"> 转义 % 字符为 %%（用于 printf 格式字符串）</label>
-      </div>
-    </div>
-
-    <div class="btn-group">
-      <button type="button" id="btnConvert">转换</button>
-    </div>
-
-    <div class="result-card">
-      <label class="field-label">C/C++ 字符串</label>
-      <div class="input-row">
-        <textarea id="ed_output" rows="10" readonly></textarea>
-        <button type="button" class="btn-copy" id="btnCopyOutput"></button>
-      </div>
-    </div>
-
-  </section>
-  <footer class="page-footer">
-    <p class="copyright">@鸽子笼 2020-2026</p>
-  </footer>
-</main>
-
+<noscript><p style="text-align:center;padding:4rem">此工具需要 JavaScript 支持。</p></noscript>
 <script>
-function cstr_encode(input) {
-  var output = '"';
-  var splitLines = document.getElementById('chbSplitLines').checked;
-  var escapePercent = document.getElementById('chbEscapePercent').checked;
-  for (var i = 0; i < input.length; i++) {
-    switch (input[i]) {
-    case '\f':
-      output += '\\f';
-      break;
-    case '\n':
-      if (splitLines) {
-        output += '\\n"\n"';
-      } else {
-        output += '\\n';
+ToolPage.render({
+  title: '文本 → C++ 字符串转义工具',
+  desc: '将文本转换为 C/C++ 字符串字面量（转义特殊字符）',
+  body: function(body) {
+    // 源文本输入
+    var card1 = ToolPage.formCard();
+    card1.appendChild(ToolPage.field('源文本', '输入需要转义的原始文本', ToolPage.textareaRow('ed_input', { rows: 10 })));
+    body.appendChild(card1);
+
+    // 选项
+    var card2 = ToolPage.formCard();
+    card2.appendChild(ToolPage.field('选项', null, function() {
+      var wrap = ToolPage.el('div');
+      wrap.appendChild(ToolPage.checkbox('chbSplitLines', '将输出拆分为多行', true));
+      wrap.appendChild(ToolPage.el('br'));
+      wrap.appendChild(ToolPage.checkbox('chbEscapePercent', '转义 % 字符为 %%（用于 printf 格式字符串）', false));
+      return wrap;
+    }()));
+    body.appendChild(card2);
+
+    // 按钮
+    body.appendChild(ToolPage.btnGroup([{ text: '转换', onclick: doConvert }]));
+
+    // 输出
+    var card3 = ToolPage.el('div', 'result-card');
+    card3.appendChild(ToolPage.field('C/C++ 字符串', null, ToolPage.textareaRow('ed_output', { rows: 10, readonly: true })));
+    body.appendChild(card3);
+
+    function cstr_encode(input) {
+      var output = '"';
+      var splitLines = document.getElementById('chbSplitLines').checked;
+      var escapePercent = document.getElementById('chbEscapePercent').checked;
+      for (var i = 0; i < input.length; i++) {
+        switch (input[i]) {
+        case '\f':
+          output += '\\f';
+          break;
+        case '\n':
+          if (splitLines) {
+            output += '\\n"\n"';
+          } else {
+            output += '\\n';
+          }
+          break;
+        case '\r':
+          output += '\\r';
+          break;
+        case '\t':
+          output += '\\t';
+          break;
+        case '"':
+          output += '\\"';
+          break;
+        case '\\':
+          output += '\\\\';
+          break;
+        case '%':
+          if (escapePercent) {
+            output += '%%';
+          } else {
+            output += '%';
+          }
+          break;
+        default:
+          output += input[i];
+          break;
+        }
       }
-      break;
-    case '\r':
-      output += '\\r';
-      break;
-    case '\t':
-      output += '\\t';
-      break;
-    case '"':
-      output += '\\"';
-      break;
-    case '\\':
-      output += '\\\\';
-      break;
-    case '%':
-      if (escapePercent) {
-        output += '%%';
-      } else {
-        output += '%';
-      }
-      break;
-    default:
-      output += input[i];
-      break;
+      output += '"';
+      return output;
+    }
+
+    function doConvert() {
+      document.getElementById('ed_output').value = cstr_encode(document.getElementById('ed_input').value);
     }
   }
-  output += '"';
-  return output;
-}
-
-document.getElementById('btnCopyOutput').innerHTML = ICON_COPY;
-document.getElementById('btnCopyOutput').addEventListener('click', function() {
-  copyToClipboard(document.getElementById('ed_output').value);
-});
-
-document.getElementById('btnConvert').addEventListener('click', function() {
-  var output = cstr_encode(document.getElementById('ed_input').value);
-  document.getElementById('ed_output').value = output;
 });
 </script>
 </body>
