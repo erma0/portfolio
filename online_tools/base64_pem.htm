@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Base64 ↔ PEM</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+  <link rel="stylesheet" href="./css/tool.css">
+  <script src="./js/utils.js"></script>
+</head>
+<body>
+<div class="grain" aria-hidden="true"></div>
+<div id="bg"></div>
+<main class="container">
+  <nav class="top-nav">
+    <a href="../index.html" class="back-link">← 作品集</a>
+    <a href="./index.html">← 工具列表</a>
+  </nav>
+  <header class="tool-header">
+    <h1>Base64 ↔ PEM</h1>
+    <p class="tool-desc">在线 Base64 与 PEM 格式互转工具</p>
+  </header>
+  <section class="tool-body">
+
+<h2>Base64 → PEM</h2>
+<p>客户端处理（JavaScript，数据不会上传服务器）。将 Base64 字符串转换为 PEM（"Privacy-enhanced Electronic Mail"）格式，
+    本质是将 Base64 按每行 64 字符换行，并可选添加 PEM 头尾标识。</p>
+<script>
+function cleanBase64(input) {
+  const output = input.replace(/[^A-Za-z0-9+/=]/g, '');
+  if (output !== input) {
+    showToast('警告：非 Base64 字符已被忽略');
+  }
+  return output;
+}
+
+function b64ToPemConvert() {
+  const cleanedBase64 = cleanBase64(document.frmB64ToPem.edInput.value);
+  document.frmB64ToPem.cleanedBase64.value = cleanedBase64;
+
+  let wrapped = cleanedBase64.replace(/(\S{64}(?!$))/g, '$1\r\n');
+  const header = document.frmB64ToPem.headerType.value;
+  if (header !== '- none -') {
+    wrapped = '-----BEGIN ' + header + '-----\r\n'
+      + wrapped
+      + '\r\n-----END ' + header + '-----\r\n';
+  }
+  document.frmB64ToPem.edOutput.value = wrapped;
+}
+</script>
+<form name="frmB64ToPem" action="">
+  <p>输入 Base64（单行或多行）：</p>
+  <p><textarea name="edInput" rows="4" cols="67"></textarea></p>
+  <p>头/尾标识类型：
+    <select name="headerType">
+      <option value="- none -">- 无 -</option>
+      <option value="CERTIFICATE">CERTIFICATE</option>
+      <option value="PRIVATE KEY">PRIVATE KEY</option>
+      <option value="PUBLIC KEY">PUBLIC KEY</option>
+      <option value="RSA PRIVATE KEY">RSA PRIVATE KEY</option>
+      <option value="RSA PUBLIC KEY">RSA PUBLIC KEY</option>
+      <option value="EC PRIVATE KEY">EC PRIVATE KEY</option>
+    </select>
+  </p>
+  <p><button type="button" onclick="b64ToPemConvert()">转换</button></p>
+  <p>清理后的 Base64：</p>
+  <p><input type="text" name="cleanedBase64" readonly="readonly" value=""><button type="button" onclick="copyToClipboard(this.previousElementSibling.value)">复制</button></p>
+  <p>输出 PEM：</p>
+  <p><textarea name="edOutput" rows="12" cols="67"></textarea><button type="button" onclick="copyToClipboard(this.previousElementSibling.value)">复制</button></p>
+</form>
+
+<hr>
+
+<h2>PEM → Base64</h2>
+<p>客户端处理（JavaScript，数据不会上传服务器）。将 PEM（"Privacy-enhanced Electronic Mail"）格式转换为 Base64，本质是合并多行 Base64，可选移除 PEM 头尾标识。</p>
+<script>
+function pemToB64Convert() {
+  const input = document.frmPemToB64.edInput.value;
+  const removeHeaderAndFooter = document.frmPemToB64.chbRemoveHeaderAndFooter.checked;
+  let output = '';
+
+  if (!removeHeaderAndFooter) {
+    output = input.replace(/\r/g, '').replace(/\n/g, '');
+  } else {
+    const lines = input.split(/\r?\n/);
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      if (line.indexOf('-----') < 0) {
+        output += line;
+      }
+    }
+  }
+
+  document.frmPemToB64.edOutput.value = output;
+}
+</script>
+<form name="frmPemToB64" action="">
+  <p>粘贴 PEM 内容：</p>
+  <p><textarea name="edInput" rows="10" cols="67"></textarea></p>
+  <p>选项：</p>
+  <p><input type="checkbox" name="chbRemoveHeaderAndFooter" id="pem_chbRemove" checked="checked"><label for="pem_chbRemove">移除 PEM 头尾标识</label></p>
+  <p><button type="button" onclick="pemToB64Convert()">转换</button></p>
+  <p>输出：</p>
+  <p><textarea name="edOutput" rows="8" cols="67"></textarea><button type="button" onclick="copyToClipboard(this.previousElementSibling.value)">复制</button></p>
+</form>
+
+  </section>
+  <footer class="page-footer">
+    <p class="copyright">@鸽子笼 2020-2026</p>
+  </footer>
+</main>
+</body>
+</html>

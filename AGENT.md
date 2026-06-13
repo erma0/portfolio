@@ -43,13 +43,15 @@ portfolio/
 │   ├── detail.css          # 详情页共享样式
 │   ├── detail-template.html # 详情页标准模板（复制后替换标记）
 │   ├── invoice.html        # 发票打印工具详情页
+│   ├── grid-board.html     # 安全生产网格员公示牌
+│   ├── images/             # 详情页图片资源
 │   └── ...                 # 后续按需创建
 └── online_tools/           # 在线工具子模块（❄️ 冻结，不再新增）
     ├── index.html          # 工具集首页 — 分类导航
-    ├── css/                # style.css / main.css / tool.css / mobile.css
-    ├── js/                 # 工具用库
-    ├── img/                # 图标
-    └── *.htm               # 各工具页（~37 个，冻结）
+    ├── css/                # tools-index.css / tool.css
+    ├── js/                 # utils.js / md5.js / rusha.js
+    ├── images/             # 图标
+    └── *.htm               # 各工具页（~36 个，冻结）
 ```
 
 ---
@@ -72,13 +74,9 @@ portfolio/
 | `--ease` | `cubic-bezier(.2, .7, .2, 1)` | 通用缓动 |
 | `--ease-out` | `cubic-bezier(.16, 1, .3, 1)` | 出场缓动 |
 
-### 在线工具区 — 暗色主题
+### 在线工具区 — 米白纸主题（已统一）
 
-| 变量 | 值 | 用途 |
-|---|---|---|
-| `--bg-dark` | `#1a1a1a` | 深色底 |
-| `--bg-card` | `rgba(255,255,255,.04)` | 工具分类卡 |
-| `--text-primary` | `#ffffff` | 主文字 |
+工具首页和子页面已统一为米白纸风格，复用主页 `styles.css` 变量。工具首页额外加载 `tools-index.css`，子页面加载 `tool.css`。
 
 ### 动效系统（animations.js）
 
@@ -214,9 +212,9 @@ portfolio/
 
 ### 新增项目的完整流程
 
-1. 在 `works.js` 对应位置插入配置项（设置 `action` + `detail`）
-2. 如需要详情页：复制 `works/invoice.html` 为模板，改内容
-3. 如需要新图标：在 `main.js` 的 `ICONS` 中添加 SVG
+1. 在 `data.js` 的 `window.__WORKS` 数组中插入配置项（设置 `icon`、`action`、`detail`、`tags` 等字段）
+2. 如需要详情页：复制 `works/detail-template.html` 为模板，替换 `<!-- -->` 标记内容
+3. 图标以 SVG 字符串形式内联在 `data.js` 每条项目的 `icon` 字段中
 
 ---
 
@@ -263,14 +261,14 @@ portfolio/
 
 ### 新增在线工具页
 1. 在 `online_tools/` 下创建 `tool_name.htm`
-2. 复用 `online_tools/css/tool.css` 和现有 JS 库
-3. 保持暗色主题风格
+2. 复用 `online_tools/css/tool.css` 和 `online_tools/js/utils.js`
+3. 保持米白纸主题风格（复用主页 `../styles.css` 变量）
 4. 在 `online_tools/index.html` 对应分类下添加链接
 
 ### 修改样式 / JS
 - 全局样式 → `styles.css`（CSS 变量在 `:root` 统一管理）
 - 详情页样式 → `works/detail.css`
-- 工具页样式 → `online_tools/css/style.css`
+- 工具首页样式 → `online_tools/css/tools-index.css`
 - 单工具页公用 → `online_tools/css/tool.css`
 - 数据与图标 → `data.js`（`window.__WORKS`）
 - 卡片渲染 → `renderer.js`（数据驱动 DOM 生成）
@@ -322,3 +320,4 @@ portfolio/
 | 2026-06-12 | `main.js` 拆分为 `icons.js` + `renderer.js` + `animations.js`；`index.html` 脚本全部加 `defer`；新增 `works/detail-template.html`；`online_tools/` 冻结 |
 | 2026-06-12 | `works.js` + `icons.js` 合并为 `data.js`（图标内联到数据）；`renderer.js` 移除 `__ICONS` 依赖；修复 wip/archived 卡片 opacity bug；光标光晕 rAF 空转优化；触控设备禁用光晕/倾斜；CSS 标签样式去重；补充 `more` 图标 |
 | 2026-06-12 | 深度架构复盘：①修复 `base64.htm`/`bin_decoder.htm` 缺失 `createFile.js` 引用导致「转换为文件」功能宕机；②清理 4 个无引用的死文件（`main.css`/`mobile.css`/`tree.js`/`jquery-2.1.3.min.js`）；③`renderer.js` 重构——提取 `resolveLink()`/`actionLabel()` 辅助函数，标签生成改用 `map().join()`，增加 per-card try-catch 错误边界；④`animations.js` 去掉冗余外层 IIFE；⑤CSS `no-js` 渐进增强——内联脚本注入 `.js` class，动画初始态全部加 `.js` 前缀，无 JS 时卡片全可见；加 `<noscript>` 回退；删除死选择器 `.about__body` |
+| 2026-06-13 | 全面优化：①`std_scanner` 死链接改为指向 GitHub 仓库；②`invoice.html` 下载按钮指向 GitHub Releases；③删除死文件 `createFile.js`/`style.css`（暗色）/`hex_to_file_new.htm`；④字符拆分入场添加逐字 40ms 延迟；⑤`online_tools/index.html` 去除内联重复脚本，复用 `animations.js`；⑥添加 `og:image` meta 标签；⑦`grid-board.html` 修复 `theme-color`、提取内联 base64 Logo 为独立 PNG 文件；⑧`AGENT.md` 与实际代码同步更新 |

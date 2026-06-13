@@ -2,17 +2,22 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>批量 Base64 → 十六进制转换器</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
   <link rel="stylesheet" href="./css/tool.css">
+  <script src="./js/utils.js"></script>
 
 </head>
 <body>
+<div class="grain" aria-hidden="true"></div>
 <div id="bg"></div>
 <main class="container">
   <nav class="top-nav">
-    <a href="../" class="back-link">← 作品集</a>
+    <a href="../index.html" class="back-link">← 作品集</a>
     <a href="./index.html">← 工具列表</a>
   </nav>
   <header class="tool-header">
@@ -22,19 +27,6 @@
   <section class="tool-body">
 <script type="text/javascript">
 //<!--
-    var hD='0123456789ABCDEF';
-    function dec2hex(d) {
-        var h = hD.substr(d&15,1);
-        while (d>15) {
-            d>>=4;
-            h=hD.substr(d&15,1)+h;
-        }
-        if (document.frmConvert.chbLowercaseOutput.checked) {
-            h = h.toLowerCase();
-        }
-        return h;
-    }
-
     var keyStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/="
     function base64_decode(input) {
         var output = new Array();
@@ -89,7 +81,7 @@
             var output = outputArr[0];
             var status = outputArr[1];    
             for (var j=0; j<output.length; j++) {
-              hexText = hexText + separator + (output[j]<16?"0":"") + dec2hex(output[j]);
+              hexText = hexText + separator + (output[j]<16?"0":"") + dec2hex(output[j], document.frmConvert.chbLowercaseOutput.checked);
             }
             hexText += ", " + status + "\r\n";                        
         }    
@@ -103,14 +95,14 @@
     </p>
       <form name="frmConvert" action="">
 				<p>Base64 字符串列表（每行一个 = 1 个 CSV 列）：</p>
-			    <p><textarea name="encoded" rows="10" cols="67" style="width: 550px;""></textarea> </p>
+			    <p><textarea name="encoded" rows="10" cols="67"></textarea> </p>
         <p>选项：</p>
           <p><input type="checkbox" name="chbSeparator" value="sep">输出添加 0x 前缀
           <br>
           <input type="checkbox" name="chbLowercaseOutput" value="lowercaseHex">使用小写十六进制字符</p>          
 				<p>解码数据（十六进制）+ 注释，双列 CSV 格式</p>
 			    <p>
-    			    <textarea name="hex" rows="10" cols="67" style="width: 550px;""></textarea>                    
+    			    <textarea name="hex" rows="10" cols="67"></textarea><button type="button" onclick="copyToClipboard(this.previousElementSibling.value)">复制</button>
                 </p>	 			    
 			  <p>
 			    <button type=button name="btnConvert"

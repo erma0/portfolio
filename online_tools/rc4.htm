@@ -2,17 +2,22 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>RC4 加密/解密工具</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
   <link rel="stylesheet" href="./css/tool.css">
+  <script src="./js/utils.js"></script>
 
 </head>
 <body>
+<div class="grain" aria-hidden="true"></div>
 <div id="bg"></div>
 <main class="container">
   <nav class="top-nav">
-    <a href="../" class="back-link">← 作品集</a>
+    <a href="../index.html" class="back-link">← 作品集</a>
     <a href="./index.html">← 工具列表</a>
   </nav>
   <header class="tool-header">
@@ -35,18 +40,18 @@
       <p>源文件：
       <input type="file" name="fileinput" onchange="openFile(event)" /></p>
       <p>初始向量（十六进制，任意长度，最多 256 字节）：<br>
-      <input type="text" name="initial_bytes" value="0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88" style="width: 550px;">
+      <input type="text" name="initial_bytes" value="0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88">
       <br>
-      丢弃密钥流前 <input type="text" name="dropN" value="256" style="width: 50px;"> 个字节。
+      丢弃密钥流前 <input type="text" name="dropN" value="256"> 个字节。
       </p>
         <p>选项：</p>
           <p><input type="checkbox" name="chbSeparator" value="sep" checked="checked">移除初始向量中的 "0x" 前缀及非十六进制字符</p>
         <p>清理后的初始向量（已移除非十六进制字符）：</p>
-        <p><input type="text" name="cleaned_hex" readonly="readonly" value="" style="width: 550px;"></p>				      
+        <p><input type="text" name="cleaned_hex" readonly="readonly" value=""><button type="button" onclick="copyToClipboard(this.previousElementSibling.value)">复制</button></p>				      
         
         <p>创建文件名：</p>
         <p>
-        <input type="text" name="filename" value="file.rc4" style="width: 550px;">
+        <input type="text" name="filename" value="file.rc4">
         </p>      
       <p>
         <button type="button" name="btnConvert" onclick="Convert()">加密/解密</button>

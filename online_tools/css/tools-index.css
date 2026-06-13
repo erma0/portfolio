@@ -1,0 +1,139 @@
+/* ══════════════════════════════════════════
+   在线工具首页 — 米白纸风格
+   复用主页 styles.css 变量与基础样式
+   ══════════════════════════════════════════ */
+
+/* ====== 页面布局 ====== */
+.tools-page {
+  position: relative;
+  z-index: 3;
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 40px;
+}
+
+/* ====== Hero — 紧凑 ====== */
+.tools-hero {
+  padding: 100px 0 28px;
+}
+.tools-hero__eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  color: var(--ink-mute);
+  margin: 0 0 8px;
+}
+.js .tools-hero__eyebrow {
+  opacity: 0;
+  transform: translateY(8px);
+}
+.tools-hero__title {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  font-size: clamp(28px, 4vw, 44px);
+  line-height: 1.2;
+  letter-spacing: 0.05em;
+  margin: 0 0 8px;
+  color: var(--ink);
+}
+.js .tools-hero__title {
+  opacity: 0;
+  transform: translateY(8px);
+}
+.tools-hero__sub {
+  font-size: 14px;
+  color: var(--ink-soft);
+  line-height: 1.7;
+  margin: 0;
+  max-width: 480px;
+}
+.js .tools-hero__sub {
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+/* ====== 工具网格 — 3列紧凑 ====== */
+.tool-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  padding-bottom: 60px;
+}
+
+/* ====== 分类卡片 ====== */
+.tool-category {
+  background: var(--bg-soft);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 20px;
+  transition: transform .5s var(--ease-out), box-shadow .5s var(--ease-out), border-color .4s var(--ease);
+}
+.js .tool-category {
+  opacity: 0;
+  transform: translateY(16px);
+}
+.js .tool-category.is-in {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity .8s var(--ease-out), transform .8s var(--ease-out), box-shadow .5s var(--ease-out), border-color .4s var(--ease);
+}
+.tool-category:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-2);
+  border-color: transparent;
+}
+
+/* 分类标题 */
+.tool-category__title {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin: 0 0 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--line);
+}
+.tool-category__cn {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--ink);
+  letter-spacing: 0.03em;
+}
+.tool-category__en {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--ink-mute);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+/* ====== 工具链接列表 ====== */
+.tool-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.tool-list a {
+  display: block;
+  padding: 5px 8px;
+  font-size: 13px;
+  color: var(--ink-soft);
+  border-radius: var(--radius-sm);
+  transition: background .2s var(--ease), color .2s var(--ease), padding-left .25s var(--ease-out);
+}
+.tool-list a:hover {
+  background: rgba(184, 69, 31, 0.06);
+  color: var(--accent);
+  padding-left: 14px;
+}
+
+/* ====== 响应式 ====== */
+@media (max-width: 900px) {
+  .tool-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 600px) {
+  .tools-page { padding: 0 16px; }
+  .tools-hero { padding: 80px 0 20px; }
+  .tool-grid { grid-template-columns: 1fr; gap: 12px; padding-bottom: 40px; }
+  .tool-category { padding: 16px; }
+}

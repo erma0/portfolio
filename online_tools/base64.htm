@@ -2,104 +2,130 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Base64 → 十六进制解码器</title>
+  <title>Base64 ↔ 十六进制</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
   <link rel="stylesheet" href="./css/tool.css">
   <script src="./js/utils.js"></script>
-  <script src="./js/createFile.js"></script>
 </head>
 <body>
+<div class="grain" aria-hidden="true"></div>
 <div id="bg"></div>
 <main class="container">
   <nav class="top-nav">
-    <a href="../" class="back-link">← 作品集</a>
+    <a href="../index.html" class="back-link">← 作品集</a>
     <a href="./index.html">← 工具列表</a>
   </nav>
   <header class="tool-header">
-    <h1>Base64 → 十六进制解码器</h1>
-    <p class="tool-desc">在线 Base64 转十六进制字符串解码工具，支持导出二进制文件</p>
+    <h1>Base64 ↔ 十六进制</h1>
+    <p class="tool-desc">在线 Base64 与十六进制字符串互转工具，支持导出二进制文件</p>
   </header>
   <section class="tool-body">
 
+<h2>Base64 → 十六进制</h2>
 <script>
-// 将解码结果显示为可读文本（HTML 转义已处理）
-function showDecodedText(val) {
-    const target = document.getElementById('divDecodedText');
-    target.innerHTML = val;
-}
+function b64ToHexConvert() {
+  const input = document.frmB64ToHex.encoded.value;
+  const bytes = base64Decode(input);
 
-function convert() {
-    const input = document.frmConvert.encoded.value;
-    const bytes = base64Decode(input);
+  const useSeparator = document.frmB64ToHex.chbSeparator.checked;
+  const useLowercase = document.frmB64ToHex.chbLowercaseOutput.checked;
+  const separator = useSeparator ? ' 0x' : '';
+  const hexText = bytes2hex(bytes, separator, useLowercase);
+  document.frmB64ToHex.hex.value = hexText;
 
-    // 生成十六进制输出
-    const useSeparator = document.frmConvert.chbSeparator.checked;
-    const useLowercase = document.frmConvert.chbLowercaseOutput.checked;
-    const separator = useSeparator ? ' 0x' : '';
-    const hexText = bytes2hex(bytes, separator, useLowercase);
-    document.frmConvert.hex.value = hexText;
-
-    // 生成 ASCII 可读文本显示
-    let htmlStr = '<p style="font-family: courier new, monospace"><b>';
-    for (let i = 0; i < bytes.length; i++) {
-        const byte = bytes[i];
-        if (byte >= 32 && byte <= 126) {
-            const ch = String.fromCharCode(byte);
-            switch (ch) {
-                case '&': htmlStr += '&amp;'; break;
-                case '<': htmlStr += '&lt;'; break;
-                case '>': htmlStr += '&gt;'; break;
-                case '"': htmlStr += '&quot;'; break;
-                case "'": htmlStr += '&#039;'; break;
-                default: htmlStr += ch;
-            }
-        } else {
-            htmlStr += '<i>[' + byte + ']</i>';
-        }
+  let htmlStr = '<p style="font-family: courier new, monospace"><b>';
+  for (let i = 0; i < bytes.length; i++) {
+    const byte = bytes[i];
+    if (byte >= 32 && byte <= 126) {
+      const ch = String.fromCharCode(byte);
+      switch (ch) {
+        case '&': htmlStr += '&amp;'; break;
+        case '<': htmlStr += '&lt;'; break;
+        case '>': htmlStr += '&gt;'; break;
+        case '"': htmlStr += '&quot;'; break;
+        case "'": htmlStr += '&#039;'; break;
+        default: htmlStr += ch;
+      }
+    } else {
+      htmlStr += '<i>[' + byte + ']</i>';
     }
-    htmlStr += '</b></p>';
-    showDecodedText(htmlStr);
+  }
+  htmlStr += '</b></p>';
+  document.getElementById('divB64DecodedText').innerHTML = htmlStr;
 }
 
-function convertToFile() {
-    convert();
-    const hex = document.frmConvert.hex.value;
-    const fileName = document.frmConvert.filename.value || 'myfile.dat';
-    createFileFromHex(hex, fileName);
+function b64ToHexConvertToFile() {
+  b64ToHexConvert();
+  const hex = document.frmB64ToHex.hex.value;
+  const fileName = document.frmB64ToHex.filename.value || 'myfile.dat';
+  createFileFromHex(hex, fileName);
 }
 </script>
 
-<form name="frmConvert" action="">
-  <p><label for="encoded">Base64 字符串：</label></p>
-  <p><input type="text" name="encoded" id="encoded" value=""></p>
+<form name="frmB64ToHex" action="">
+  <p><label for="b64_encoded">Base64 字符串：</label></p>
+  <p><input type="text" name="encoded" id="b64_encoded" value=""></p>
 
   <p>选项：</p>
   <p>
-    <input type="checkbox" name="chbSeparator" value="sep" id="chbSep">
-    <label for="chbSep">输出添加 0x 前缀</label>
+    <input type="checkbox" name="chbSeparator" value="sep" id="b64_chbSep">
+    <label for="b64_chbSep">输出添加 0x 前缀</label>
     <br>
-    <input type="checkbox" name="chbLowercaseOutput" value="lowercaseHex" id="chbLower">
-    <label for="chbLower">使用小写十六进制字符</label>
+    <input type="checkbox" name="chbLowercaseOutput" value="lowercaseHex" id="b64_chbLower">
+    <label for="b64_chbLower">使用小写十六进制字符</label>
   </p>
 
-  <p><label for="hex">解码数据（十六进制）</label></p>
-  <p><input type="text" name="hex" id="hex" value="" readonly></p>
+  <p><label for="b64_hex">解码数据（十六进制）</label></p>
+  <p><input type="text" name="hex" id="b64_hex" value="" readonly><button type="button" onclick="copyToClipboard(this.previousElementSibling.value)">复制</button></p>
 
   <p>解码数据（ASCII 文本），32~126 范围外的字节以斜体显示为 <i>[byte value]</i>：</p>
-  <div id="divDecodedText">
+  <div id="divB64DecodedText">
     <p><i>（解码后的文本将显示在此处）</i></p>
   </div>
 
-  <p><button type="button" onclick="convert()">转换</button></p>
+  <p><button type="button" onclick="b64ToHexConvert()">转换</button></p>
 
-  <h2>转换为原始二进制文件（客户端）</h2>
-  <p><label for="filename">创建文件名：</label></p>
-  <p><input type="text" name="filename" id="filename" value="myfile.dat"></p>
-  <p><button type="button" onclick="convertToFile()">转换为文件</button></p>
+  <h3>转换为原始二进制文件（客户端）</h3>
+  <p><label for="b64_filename">创建文件名：</label></p>
+  <p><input type="text" name="filename" id="b64_filename" value="myfile.dat"></p>
+  <p><button type="button" onclick="b64ToHexConvertToFile()">转换为文件</button></p>
 </form>
 
-<p>相关工具：<a href="base64_multi.htm">批量 Base64 → 十六进制转换器</a>。</p>
+<hr>
+
+<h2>十六进制 → Base64</h2>
+<script>
+function hexToB64Convert() {
+  const cleaned_hex = cleanHex(document.frmHexToB64.hex.value, document.frmHexToB64.chbSeparator.checked);
+  document.frmHexToB64.cleaned_hex.value = cleaned_hex;
+  if (cleaned_hex.length % 2) {
+    showToast('错误：清理后的十六进制字符串长度为奇数。');
+    document.frmHexToB64.base64.value = '';
+    return;
+  }
+  const bytes = hex2bytes(cleaned_hex);
+  document.frmHexToB64.base64.value = base64Encode(bytes);
+}
+</script>
+
+<form name="frmHexToB64" action="">
+  <p>十六进制字符串：</p>
+  <p><input type="text" name="hex" value=""></p>
+  <p>所有非十六进制字符将被忽略，"12AB34" = "12 AB 34" = "12, AB, 34" 等。输入不区分大小写。</p>
+  <p>选项：</p>
+  <p><input type="checkbox" name="chbSeparator" value="sep" id="h2b_chbSep" checked="checked"><label for="h2b_chbSep">移除输入中的 "0x" 前缀</label></p>
+  <p>清理后的输入：</p>
+  <p><input type="text" name="cleaned_hex" value="" readonly><button type="button" onclick="copyToClipboard(this.previousElementSibling.value)">复制</button></p>
+  <p>输出（Base64）：</p>
+  <p><input type="text" name="base64" value="" readonly><button type="button" onclick="copyToClipboard(this.previousElementSibling.value)">复制</button></p>
+  <p><button type="button" onclick="hexToB64Convert()">转换</button></p>
+</form>
+
+<p>相关工具：<a href="base64_multi.htm">批量 Base64 → 十六进制转换器</a></p>
   </section>
   <footer class="page-footer">
     <p class="copyright">@鸽子笼 2020-2026</p>

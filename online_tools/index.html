@@ -1,106 +1,148 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-
 <head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta name="description" content="在线工具集 — 编码解码 / 哈希计算 / 数据转换 — works.erma0.cn">
-	<title>在线工具 · 鸽子笼</title>
-	<link rel="icon" href="../favicon.ico">
-	<link rel="stylesheet" href="./css/style.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="在线工具集 — 编码解码 / 哈希计算 / 数据转换 — works.erma0.cn" />
+  <meta name="theme-color" content="#f6f3ec" />
+  <meta property="og:image" content="https://works.erma0.cn/og-image.png" />
+  <title>在线工具 · 鸽子笼</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🕊️</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+  <link rel="stylesheet" href="./css/tools-index.css" />
+  <script>document.documentElement.className='js'</script>
 </head>
-
 <body>
-	<div id="bg"></div>
-	<main class="container">
-		<header class="page-header">
-			<a href="../" class="back-link">&larr; 返回作品集</a>
-			<h1>在线工具</h1>
-			<p class="subtitle">编码解码 / 哈希计算 / 数据转换</p>
-		</header>
+  <div class="grain" aria-hidden="true"></div>
 
-		<section class="tool-grid">
-			<!-- 编码/解码 -->
-			<div class="tool-category">
-				<h2>编码 / 解码</h2>
-				<div class="tool-list">
-					<a href="./text_to_base64.htm">文本 &rarr; Base64</a>
-					<a href="./base64.htm">Base64 &rarr; 十六进制</a>
-					<a href="./hex_to_base64.htm">十六进制 &rarr; Base64</a>
-					<a href="./base64_to_PEM.htm">Base64 &rarr; PEM</a>
-					<a href="./PEM_to_base64.htm">PEM &rarr; Base64</a>
-					<a href="./base32.htm">Base32 &rarr; 十六进制</a>
-					<a href="./base32hex.htm">Base32hex &rarr; 十六进制</a>
-					<a href="./hex_to_base32.htm">十六进制 &rarr; Base32</a>
-					<a href="./hex_to_base32hex.htm">十六进制 &rarr; Base32hex</a>
-				</div>
-			</div>
+  <header class="site-header" id="siteHeader">
+    <a class="brand" href="../" aria-label="返回作品集">
+      <span class="brand__mark" aria-hidden="true">🕊</span>
+      <span class="brand__name">erma0</span>
+      <span class="brand__sub">/ tools</span>
+    </a>
+    <nav class="site-nav" aria-label="主导航">
+      <a href="../">作品集</a>
+      <a href="https://blog.erma0.cn" target="_blank" rel="noopener noreferrer">博客 ↗</a>
+      <a class="site-nav__ghost" href="https://erma0.cn">← 主页</a>
+    </nav>
+  </header>
 
-			<!-- 进制/数值 -->
-			<div class="tool-category">
-				<h2>进制 / 数值转换</h2>
-				<div class="tool-list">
-					<a href="./ascii.htm">ASCII &rarr; 十六进制</a>
-					<a href="./hex_to_ascii.htm">十六进制 &rarr; ASCII</a>
-					<a href="./hex_to_dec.htm">十六进制 &rarr; 十进制</a>
-					<a href="./dec_to_ascii.htm">十进制 &rarr; ASCII</a>
-					<a href="./ascii_uN.htm">ASCII &rarr; Unicode HEX</a>
-					<a href="./bin_to_32bit_hex.htm">二进制 &harr; 32位十六进制</a>
-				</div>
-			</div>
+  <main class="tools-page">
+    <section class="tools-hero" data-reveal>
+      <p class="tools-hero__eyebrow">ONLINE TOOLS</p>
+      <h1 class="tools-hero__title">在线工具</h1>
+      <p class="tools-hero__sub">编码解码、哈希计算、数据转换 — 打开即用，无需登录。</p>
+    </section>
 
-			<!-- 哈希/加密 -->
-			<div class="tool-category">
-				<h2>哈希 / 加密</h2>
-				<div class="tool-list">
-					<a href="./md5.htm">MD5 计算器</a>
-					<a href="./sha1.htm">SHA1 计算器</a>
-					<a href="./crc8.htm">CRC8 校验</a>
-					<a href="./rc4.htm">RC4 加密</a>
-					<a href="./xor.htm">XOR 异或运算</a>
-					<a href="./inv.htm">位反转</a>
-				</div>
-			</div>
+    <section class="tool-grid" aria-label="工具分类">
+      <!-- 编码/解码 -->
+      <div class="tool-category" data-reveal>
+        <h2 class="tool-category__title">
+          <span class="tool-category__cn">编码 / 解码</span>
+          <span class="tool-category__en">Codec</span>
+        </h2>
+        <div class="tool-list">
+          <a href="./text_to_base64.htm">文本 → Base64</a>
+          <a href="./base64.htm">Base64 ↔ 十六进制</a>
+          <a href="./base64_pem.htm">Base64 ↔ PEM</a>
+          <a href="./base32.htm">Base32 ↔ 十六进制</a>
+          <a href="./base32hex.htm">Base32hex ↔ 十六进制</a>
+          <a href="./base64_multi.htm">批量 Base64 → 十六进制</a>
+          <a href="./hex_to_base32_multi.htm">批量十六进制 → Base32</a>
+        </div>
+      </div>
 
-			<!-- 文件/数据 -->
-			<div class="tool-category">
-				<h2>文件 / 数据处理</h2>
-				<div class="tool-list">
-					<a href="./file_to_hex.htm">文件 &rarr; 十六进制</a>
-					<a href="./hex_to_file.htm">十六进制 &rarr; 文件</a>
-					<a href="./file_to_base64.htm">文件 &rarr; Base64</a>
-					<a href="./unique_str.htm">去重 / 排序</a>
-					<a href="./bin_decoder.htm">二进制解码器</a>
-				</div>
-			</div>
+      <!-- 进制/数值 -->
+      <div class="tool-category" data-reveal>
+        <h2 class="tool-category__title">
+          <span class="tool-category__cn">进制 / 数值转换</span>
+          <span class="tool-category__en">Radix</span>
+        </h2>
+        <div class="tool-list">
+          <a href="./ascii.htm">ASCII ↔ 十六进制</a>
+          <a href="./hex_to_dec.htm">十六进制 → 十进制</a>
+          <a href="./dec_to_ascii.htm">十进制 → ASCII</a>
+          <a href="./ascii_uN.htm">ASCII → Unicode HEX</a>
+          <a href="./bin_to_32bit_hex.htm">二进制 ↔ 32位十六进制</a>
+        </div>
+      </div>
 
-			<!-- 代码/文本 -->
-			<div class="tool-category">
-				<h2>代码 / 文本</h2>
-				<div class="tool-list">
-					<a href="./cpp_text_escape.htm">文本 &rarr; C++ 转义</a>
-					<a href="./cpp_unescape.htm">C++ 转义 &rarr; 文本</a>
-					<a href="./pascal_escape.htm">文本 &rarr; Pascal 转义</a>
-					<a href="./regexp.htm">正则表达式测试</a>
-					<a href="./html_list_gen.htm">文本 &rarr; HTML 列表</a>
-				</div>
-			</div>
+      <!-- 哈希/加密 -->
+      <div class="tool-category" data-reveal>
+        <h2 class="tool-category__title">
+          <span class="tool-category__cn">哈希 / 加密</span>
+          <span class="tool-category__en">Crypto</span>
+        </h2>
+        <div class="tool-list">
+          <a href="./md5.htm">MD5 计算器</a>
+          <a href="./sha1.htm">SHA1 计算器</a>
+          <a href="./crc8.htm">CRC8 校验</a>
+          <a href="./rc4.htm">RC4 加密</a>
+          <a href="./xor.htm">XOR 异或运算</a>
+          <a href="./inv.htm">位反转</a>
+        </div>
+      </div>
 
-			<!-- 其他 -->
-			<div class="tool-category">
-				<h2>其他工具</h2>
-				<div class="tool-list">
-					<a href="./wave_gen.htm">WAVE 音频生成器</a>
-					<a href="./par_resistors.htm">并联电阻计算器</a>
-					<a href="./diskstats.htm">/proc/diskstats 格式化</a>
-				</div>
-			</div>
-		</section>
+      <!-- 文件/数据 -->
+      <div class="tool-category" data-reveal>
+        <h2 class="tool-category__title">
+          <span class="tool-category__cn">文件 / 数据处理</span>
+          <span class="tool-category__en">Data</span>
+        </h2>
+        <div class="tool-list">
+          <a href="./file_to_hex.htm">文件 → 十六进制</a>
+          <a href="./hex_to_file.htm">十六进制 → 文件</a>
+          <a href="./file_to_base64.htm">文件 → Base64</a>
+          <a href="./unique_str.htm">去重 / 排序</a>
+          <a href="./bin_decoder.htm">二进制解码器</a>
+        </div>
+      </div>
 
-		<footer class="page-footer">
-			<p class="copyright">@鸽子笼 2020-2026</p>
-		</footer>
-	</main>
+      <!-- 代码/文本 -->
+      <div class="tool-category" data-reveal>
+        <h2 class="tool-category__title">
+          <span class="tool-category__cn">代码 / 文本</span>
+          <span class="tool-category__en">Text</span>
+        </h2>
+        <div class="tool-list">
+          <a href="./cpp_text_escape.htm">文本 → C++ 转义</a>
+          <a href="./cpp_unescape.htm">C++ 转义 → 文本</a>
+          <a href="./pascal_escape.htm">文本 → Pascal 转义</a>
+          <a href="./regexp.htm">正则表达式测试</a>
+          <a href="./html_list_gen.htm">文本 → HTML 列表</a>
+        </div>
+      </div>
+
+      <!-- 其他 -->
+      <div class="tool-category" data-reveal>
+        <h2 class="tool-category__title">
+          <span class="tool-category__cn">其他工具</span>
+          <span class="tool-category__en">Misc</span>
+        </h2>
+        <div class="tool-list">
+          <a href="./wave_gen.htm">WAVE 音频生成器</a>
+          <a href="./par_resistors.htm">并联电阻计算器</a>
+          <a href="./diskstats.htm">/proc/diskstats 格式化</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p class="site-footer__row">
+      <a href="https://erma0.cn">主页</a>
+      <span class="sep" aria-hidden="true">·</span>
+      <a href="../">作品集</a>
+      <span class="sep" aria-hidden="true">·</span>
+      <a href="https://github.com/erma0" target="_blank" rel="noopener noreferrer">GitHub</a>
+    </p>
+    <p class="site-footer__small">© 2026 鸽子笼</p>
+  </footer>
+
+  <script defer src="../animations.js"></script>
 </body>
-
 </html>

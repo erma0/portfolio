@@ -5,6 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>作品集 · 鸽子笼</title>
   <meta name="description" content="erma0 的作品与工具集 — 收录日常小工具、开源项目与可点击的成果。" />
+  <meta name="theme-color" content="#f6f3ec" />
+  <meta property="og:title" content="作品集 · 鸽子笼" />
+  <meta property="og:description" content="erma0 的作品与工具集 — 收录日常小工具、开源项目与可点击的成果。" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://works.erma0.cn" />
+  <meta property="og:image" content="https://works.erma0.cn/og-image.png" />
+  <link rel="canonical" href="https://works.erma0.cn" />
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🕊️</text></svg>" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -15,22 +22,20 @@
 <body>
   <div class="grain" aria-hidden="true"></div>
 
-  <!-- 顶部导航 -->
   <header class="site-header" id="siteHeader">
     <a class="brand" href="https://erma0.cn" aria-label="返回主页">
-      <span class="brand__mark">🕊</span>
+      <span class="brand__mark" aria-hidden="true">🕊</span>
       <span class="brand__name">erma0</span>
       <span class="brand__sub">/ works</span>
     </a>
     <nav class="site-nav" aria-label="主导航">
       <a href="#works">作品</a>
-      <a href="https://blog.erma0.cn" target="_blank" rel="noopener">博客 ↗</a>
+      <a href="https://blog.erma0.cn" target="_blank" rel="noopener noreferrer">博客 ↗</a>
       <a class="site-nav__ghost" href="https://erma0.cn">← 主页</a>
     </nav>
   </header>
 
   <main>
-    <!-- 极简头部：一行标题 + 一行小字 -->
     <section class="hero" id="top">
       <p class="hero__eyebrow" data-reveal>SELECTED WORKS · 2026</p>
       <h1 class="hero__title">
@@ -42,7 +47,6 @@
       </p>
     </section>
 
-    <!-- 作品网格 -->
     <section class="works" id="works" aria-labelledby="worksTitle">
       <header class="section-head" data-reveal>
         <h2 id="worksTitle" class="section-title">
@@ -51,8 +55,7 @@
         </h2>
       </header>
 
-      <div class="grid" id="worksGrid">
-        <!-- JS 数据驱动渲染，配置见 data.js -->
+      <div class="grid" id="worksGrid" role="list">
         <noscript>
           <div class="card" style="opacity:1;transform:none;grid-column:1/-1;text-align:center;padding:48px 32px;">
             <p style="color:var(--ink-mute);margin:0;">请启用 JavaScript 以查看作品列表。</p>
@@ -66,12 +69,12 @@
   <footer class="site-footer">
     <p class="site-footer__row">
       <a href="https://erma0.cn">主页</a>
-      <span class="sep">·</span>
-      <a href="https://blog.erma0.cn" target="_blank" rel="noopener">博客</a>
-      <span class="sep">·</span>
-      <a href="https://github.com/erma0" target="_blank" rel="noopener">GitHub</a>
-      <span class="sep">·</span>
-      <a href="https://www.zhihu.com/people/Dovecote" target="_blank" rel="noopener">知乎</a>
+      <span class="sep" aria-hidden="true">·</span>
+      <a href="https://blog.erma0.cn" target="_blank" rel="noopener noreferrer">博客</a>
+      <span class="sep" aria-hidden="true">·</span>
+      <a href="https://github.com/erma0" target="_blank" rel="noopener noreferrer">GitHub</a>
+      <span class="sep" aria-hidden="true">·</span>
+      <a href="https://www.zhihu.com/people/Dovecote" target="_blank" rel="noopener noreferrer">知乎</a>
     </p>
     <p class="site-footer__small">© 2026 鸽子笼 · 纯静态，零构建</p>
   </footer>

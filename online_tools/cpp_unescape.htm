@@ -2,17 +2,22 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>C++ 字符串 → 文本反转义工具</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
   <link rel="stylesheet" href="./css/tool.css">
+  <script src="./js/utils.js"></script>
 
 </head>
 <body>
+<div class="grain" aria-hidden="true"></div>
 <div id="bg"></div>
 <main class="container">
   <nav class="top-nav">
-    <a href="../" class="back-link">← 作品集</a>
+    <a href="../index.html" class="back-link">← 作品集</a>
     <a href="./index.html">← 工具列表</a>
   </nav>
   <header class="tool-header">
@@ -22,8 +27,10 @@
   <section class="tool-body">
 <script type="text/javascript">
 //<!--
+    function showToast(msg){var t=document.createElement('div');t.textContent=msg;t.style.cssText='position:fixed;top:20px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 24px;border-radius:8px;font-size:14px;z-index:9999;opacity:0;transition:opacity .3s';document.body.appendChild(t);requestAnimationFrame(function(){t.style.opacity='1'});setTimeout(function(){t.style.opacity='0';setTimeout(function(){t.remove()},300)},2500)}
+
     function showErrorInfo(text, pos) {
-      alert("错误：\r\n" + text + "\r\n位置（源码偏移）：" + pos);
+      showToast("错误：" + text + " 位置（源码偏移）：" + pos);
     }
 
     function cstr_decode(input) {
@@ -128,7 +135,7 @@
 <p>将 C 风格字符串字面量还原为原始文本（反转义）。</p>
       <form name="frmConvert" action="">
 				<p>C/C++ 字符串字面量：</p>
-			    <p><textarea name="ed_input" rows="10" cols="67" style="width: 550px;"></textarea></p>		  
+			    <p><textarea name="ed_input" rows="10" cols="67"></textarea></p>		  
 			  <p>
 			    <button type=button name="btnConvert"
             onclick="Convert()">
@@ -137,7 +144,7 @@
 			  </p>
 				<p>反转义文本：</p>
 			    <p>
-            <textarea name="ed_output" rows="10" cols="67" style="width: 550px;"></textarea>          
+            <textarea name="ed_output" rows="10" cols="67"></textarea><button type="button" onclick="copyToClipboard(this.previousElementSibling.value)">复制</button>
           </p> 
 			</form>
   </section>

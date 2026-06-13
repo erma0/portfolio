@@ -2,17 +2,22 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>WAV 音频文件生成器</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
   <link rel="stylesheet" href="./css/tool.css">
+  <script src="./js/utils.js"></script>
 
 </head>
 <body>
+<div class="grain" aria-hidden="true"></div>
 <div id="bg"></div>
 <main class="container">
   <nav class="top-nav">
-    <a href="../" class="back-link">← 作品集</a>
+    <a href="../index.html" class="back-link">← 作品集</a>
     <a href="./index.html">← 工具列表</a>
   </nav>
   <header class="tool-header">
@@ -22,17 +27,18 @@
   <section class="tool-body">
 <script type="text/javascript">
 //<!--
-    
+    function showToast(msg){var t=document.createElement('div');t.textContent=msg;t.style.cssText='position:fixed;top:20px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 24px;border-radius:8px;font-size:14px;z-index:9999;opacity:0;transition:opacity .3s';document.body.appendChild(t);requestAnimationFrame(function(){t.style.opacity='1'});setTimeout(function(){t.style.opacity='0';setTimeout(function(){t.remove()},300)},2500)}
+
     function CreateFile() {
       var filename = document.frmGenerator.filename.value;
       var numberOfSamples = parseInt(document.frmGenerator.numberOfSamples.value);
       if (numberOfSamples < 0) {
-        alert("采样点数无效！");
+        showToast("采样点数无效！");
         return;
       }
       var samplingFrequency = parseInt(document.frmGenerator.samplingFrequency.value);
       if (samplingFrequency <= 0 || samplingFrequency > 0xFFFFFFFF) {
-        alert("采样频率值无效！");
+        showToast("采样频率值无效！");
         return;
       }
       // TODO
@@ -173,18 +179,18 @@
     <p>
     
 	  <form name="frmGenerator" action="">
-      <p>采样频率（Hz）： <input type="text" name="samplingFrequency" value="48000" style="width: 80px;"></p>
+      <p>采样频率（Hz）： <input type="text" name="samplingFrequency" value="48000"></p>
       <p>采样位深：
         <select name="bitsPerSample">
             <option value="16">16 位</option>
             <option value="24">24 位</option>
         </select>      
       </p>    
-      <p>总采样点数： <input type="text" name="numberOfSamples" value="192000" style="width: 100px;"></p>
+      <p>总采样点数： <input type="text" name="numberOfSamples" value="192000"></p>
 
 			<p>波形公式（直接执行的 JavaScript 表达式）：
         <br>
-				<textarea name="formula" rows="4" cols="67" style="width: 550px;">
+				<textarea name="formula" rows="4" cols="67">
 10000 * Math.sin(2 * Math.PI * 1000/samplingFrequency * n)
         </textarea>
         <br>
@@ -213,7 +219,7 @@
       
 			<p>创建文件名：</p>
 	    <p>
-  			<input type="text" name="filename" value="myfile.wav" style="width: 550px;">
+  			<input type="text" name="filename" value="myfile.wav">
 			</p>	  
 	  
 		  <p>

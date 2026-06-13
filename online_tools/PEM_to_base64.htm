@@ -2,77 +2,11 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PEM → Base64 转换器</title>
-  <link rel="stylesheet" href="./css/tool.css">
-
+  <title>重定向</title>
+  <meta http-equiv="refresh" content="0;url=base64_pem.htm">
 </head>
 <body>
-<div id="bg"></div>
-<main class="container">
-  <nav class="top-nav">
-    <a href="../" class="back-link">← 作品集</a>
-    <a href="./index.html">← 工具列表</a>
-  </nav>
-  <header class="tool-header">
-    <h1>PEM → Base64 转换器</h1>
-    <p class="tool-desc">将 PEM 格式证书/密钥提取为纯 Base64 字符串</p>
-  </header>
-  <section class="tool-body">
-
-<p>客户端处理（JavaScript，数据不会上传服务器）。将 PEM（"Privacy-enhanced Electronic Mail"）格式转换为 Base64，本质是合并多行 Base64，可选移除 PEM 头尾标识。</p>
-    <form name="frmConvert" action="">
-        <p>粘贴 PEM 内容：</p>
-        <p><textarea name="edInput" rows="10" cols="67" style="width: 550px;"></textarea></p>
-        <p>选项：</p>
-        <p><input type="checkbox" name="chbRemoveHeaderAndFooter" value="" checked="checked">移除 PEM 头尾标识</p>
-
-        <p>
-            <button type="button" name="btnConvert" onclick="Convert()">转换</button>
-        </p>        
-
-        <p>输出：</p>
-        <p><textarea name="edOutput" rows="8" cols="67" style="width: 550px;"></textarea></p>
-    </form>
-    <script type="text/javascript">
-    //<!--
-    //var base64chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
-    function cleanBase64(input) {
-        var output = input.replace(/[^A-Za-z0-9+/=]/g, "");
-        if (output != input)
-            alert("警告：输入中的非 Base64 字符（含换行符）已被忽略。");
-        return output;
-    }
-
-
-    function Convert() {
-        var input = document.frmConvert.edInput.value;
-        var removeHeaderAndFooter = document.frmConvert.chbRemoveHeaderAndFooter.checked;
-        var output = "";
-
-        if (!removeHeaderAndFooter) {
-            output = input.replace(/\r/g, '');
-            output = output.replace(/\n/g, '');
-        } else {
-            var lines = input.split(/\r?\n/);
-            for (var i = 0; i < lines.length; i++) {
-                var line = lines[i];
-                if (line.indexOf('-----') < 0) {
-                    output += line;
-                }
-            }
-        }
-
-        document.frmConvert.edOutput.value = output;
-    }
-
-    //-->
-    </script>
-  </section>
-  <footer class="page-footer">
-    <p class="copyright">@鸽子笼 2020-2026</p>
-  </footer>
-</main>
+<p>已跳转至 <a href="base64_pem.htm">Base64 ↔ PEM</a></p>
 </body>
 </html>

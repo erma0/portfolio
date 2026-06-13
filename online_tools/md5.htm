@@ -2,18 +2,22 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MD5 哈希计算器</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
   <link rel="stylesheet" href="./css/tool.css">
   <script src="./js/utils.js"></script>
   <script src="./js/md5.js"></script>
 </head>
 <body>
+<div class="grain" aria-hidden="true"></div>
 <div id="bg"></div>
 <main class="container">
   <nav class="top-nav">
-    <a href="../" class="back-link">← 作品集</a>
+    <a href="../index.html" class="back-link">← 作品集</a>
     <a href="./index.html">← 工具列表</a>
   </nav>
   <header class="tool-header">
@@ -26,6 +30,7 @@
 可多次更新 MD5 状态，每次可将输入视为文本或十六进制缓冲区（例如将 salt/nonce 视为二进制，将密码视为文本）。</p>
 
 <script>
+function showToast(msg){var t=document.createElement('div');t.textContent=msg;t.style.cssText='position:fixed;top:20px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 24px;border-radius:8px;font-size:14px;z-index:9999;opacity:0;transition:opacity .3s';document.body.appendChild(t);requestAnimationFrame(function(){t.style.opacity='1'});setTimeout(function(){t.style.opacity='0';setTimeout(function(){t.remove()},300)},2500)}
 let initialized = false;
 
 function md5Init() {
@@ -48,11 +53,11 @@ function md5UpdateHex() {
 
     // 验证十六进制格式
     if (!isValidHex(input)) {
-        alert('错误：不是有效的十六进制字符串，包含非十六进制字符。');
+        showToast("错误：包含非十六进制字符");
         return;
     }
     if (!isEvenHexLength(input)) {
-        alert('错误：不是有效的十六进制字符串，长度不是 2 字节的整数倍。');
+        showToast("错误：十六进制长度不是 2 的整数倍");
         return;
     }
 
@@ -86,7 +91,7 @@ function md5Finish() {
   <p><button type="button" onclick="md5Finish()">完成计算 / 获取结果（md5_finish）</button></p>
 
   <p><label for="md5Output">输出 MD5：</label></p>
-  <p><input type="text" name="output" id="md5Output" value="" readonly></p>
+  <p><input type="text" name="output" id="md5Output" value="" readonly><button type="button" onclick="copyToClipboard(this.previousElementSibling.value)">复制</button></p>
 </form>
   </section>
   <footer class="page-footer">

@@ -2,17 +2,22 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>文本 → Pascal 字符串转义工具</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
   <link rel="stylesheet" href="./css/tool.css">
+  <script src="./js/utils.js"></script>
 
 </head>
 <body>
+<div class="grain" aria-hidden="true"></div>
 <div id="bg"></div>
 <main class="container">
   <nav class="top-nav">
-    <a href="../" class="back-link">← 作品集</a>
+    <a href="../index.html" class="back-link">← 作品集</a>
     <a href="./index.html">← 工具列表</a>
   </nav>
   <header class="tool-header">
@@ -140,7 +145,7 @@ function insertAtCursor(myField, myValue)
   </p>
       <form name="frmConvert" action="">
 				<p>源文本：</p>
-			    <p><textarea onkeydown="return interceptTabs(event, this);" name="ed_input" rows="10" cols="67" style="width: 550px;"></textarea></p>
+			    <p><textarea onkeydown="return interceptTabs(event, this);" name="ed_input" rows="10" cols="67"></textarea></p>
         <p>选项：</p>
           <p><input type="checkbox" name="chbSplitLines" value="split" checked="yes">将输出拆分为多行</p>			  
 			  <p>
@@ -151,7 +156,7 @@ function insertAtCursor(myField, myValue)
 			  </p>
 				<p>Pascal 字符串字面量</p>
 			    <p>
-            <textarea name="ed_output" rows="10" cols="67" style="width: 550px;"></textarea>          
+            <textarea name="ed_output" rows="10" cols="67"></textarea><button type="button" onclick="copyToClipboard(this.previousElementSibling.value)">复制</button>
           </p> 
 			</form>
   </section>

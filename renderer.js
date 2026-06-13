@@ -16,8 +16,10 @@
   /* ---- 工具函数 ---- */
 
   var ESCAPE_MAP = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+  var ESCAPE_RE = /[&<>"']/;
   function escapeHtml(s) {
-    return String(s || '').replace(/[&<>"']/g, function (c) { return ESCAPE_MAP[c]; });
+    var str = String(s || '');
+    return ESCAPE_RE.test(str) ? str.replace(/[&<>"']/g, function (c) { return ESCAPE_MAP[c]; }) : str;
   }
 
   function resolveLink(item) {
@@ -26,9 +28,9 @@
     return '#';
   }
 
-  function actionLabel(item) {
-    if (item.action === 'open') return '打开 →';
-    if (item.action === 'link') return '访问 →';
+  function actionLabel(action) {
+    if (action === 'open') return '打开 →';
+    if (action === 'link') return '访问 →';
     return '查看 →';
   }
 
@@ -41,6 +43,7 @@
   /* ---- 渲染 ---- */
 
   var frag = document.createDocumentFragment();
+  var featureUsed = false;
 
   sorted.forEach(function (item, idx) {
     try {
@@ -49,23 +52,29 @@
       card.setAttribute('data-reveal', '');
       card.setAttribute('data-tilt', '');
 
-      if (item.featured) card.classList.add('card--feature');
+      if (item.featured && !featureUsed) {
+        card.classList.add('card--feature');
+        featureUsed = true;
+      }
       if (item.status === 'wip')       card.classList.add('card--wip');
       if (item.status === 'archived')   card.classList.add('card--archived');
 
       var link = resolveLink(item);
       card.href = link;
-      if (item.action === 'link') card.target = '_blank';
+      if (item.action === 'link') {
+        card.target = '_blank';
+        card.rel = 'noopener noreferrer';
+      }
       if (link === '#') card.setAttribute('aria-disabled', 'true');
 
       /* 标签 */
       var tagsHtml = '';
       if (item.tags && item.tags.length) {
-        var tagSpans = item.tags.map(function (t) {
-          var cls = t.color === 'accent' ? 'card__tag--accent' : 'card__tag';
+        tagsHtml = item.tags.map(function (t) {
+          var cls = t.color === 'accent' ? 'card__tag card__tag--accent' : 'card__tag';
           return '<span class="' + cls + '">' + escapeHtml(t.text) + '</span>';
         }).join('');
-        tagsHtml = '<div class="card__tags">' + tagSpans + '</div>';
+        tagsHtml = '<div class="card__tags">' + tagsHtml + '</div>';
       }
 
       /* 备注 */
@@ -83,7 +92,7 @@
         '<p class="card__desc">' + escapeHtml(item.desc) + '</p>' +
         '<div class="card__foot">' +
           '<span>' + escapeHtml(item.stack || '') + '</span>' +
-          '<span class="card__link">' + actionLabel(item) + '</span>' +
+          '<span class="card__link">' + actionLabel(item.action) + '</span>' +
         '</div>';
 
       frag.appendChild(card);

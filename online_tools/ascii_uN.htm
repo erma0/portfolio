@@ -2,17 +2,22 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ASCII → u16/u32/u64 十六进制转换器</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
   <link rel="stylesheet" href="./css/tool.css">
+  <script src="./js/utils.js"></script>
 
 </head>
 <body>
+<div class="grain" aria-hidden="true"></div>
 <div id="bg"></div>
 <main class="container">
   <nav class="top-nav">
-    <a href="../" class="back-link">← 作品集</a>
+    <a href="../index.html" class="back-link">← 作品集</a>
     <a href="./index.html">← 工具列表</a>
   </nav>
   <header class="tool-header">
@@ -22,16 +27,6 @@
   <section class="tool-body">
 <script type="text/javascript">
 //<!--
-    var hD='0123456789ABCDEF';
-    function dec2hex(d) {
-        var h = hD.substr(d&15,1);
-        while (d>15) {
-            d>>=4;
-            h=hD.substr(d&15,1)+h;
-        }
-        return h;
-    }
-    
     function copyOutputToClipboard(btn) {
         var target;
         if (btn == document.frmConvert.btnCopy2B)
@@ -193,14 +188,14 @@
       <form name="frmConvert" action="">
 				<p>输入文本：</p>
 			    <p>
-            <textarea name="ed_input" rows="10" cols="67" style="width: 550px;" oninput="onInputChange()"></textarea>
+            <textarea name="ed_input" rows="10" cols="67" oninput="onInputChange()"></textarea>
           </p>
         <p>选项：<br>
           <input type="checkbox" name="chbSeparator" value="sep" checked="yes">输出添加 0x 前缀及逗号分隔符<br>
           <input type="checkbox" name="chbBigEndian" value="sep">大端序输出<br>
           <input type="checkbox" name="chbConvertOnChange" value="sep">输入变化时立即转换<br>
-          32 位值的后缀（例如 UL） <input type="text" name="suffix4B" value="" style="width: 50px;"><br>          
-          64 位值的后缀（例如 ULL） <input type="text" name="suffix8B" value="ULL" style="width: 50px;">
+          32 位值的后缀（例如 UL） <input type="text" name="suffix4B" value=""><br>          
+          64 位值的后缀（例如 ULL） <input type="text" name="suffix8B" value="ULL">
         </p>
         <p>
 			    <button type=button name="btnConvert"
@@ -209,11 +204,11 @@
           </button>
 			  </p>
 				<p>输出：16 位整数</p>
-			  <p><input type="text" name="hex2B" value="" style="width: 550px;"><button type=button name="btnCopy2B" onclick="copyOutputToClipboard(this)">复制</button></p>			    
+			  <p><input type="text" name="hex2B" value=""><button type=button name="btnCopy2B" onclick="copyOutputToClipboard(this)">复制</button></p>			    
 				<p>输出：32 位整数</p>
-			  <p><input type="text" name="hex4B" value="" style="width: 550px;"><button type=button name="btnCopy4B" onclick="copyOutputToClipboard(this)">复制</button></p>				    
+			  <p><input type="text" name="hex4B" value=""><button type=button name="btnCopy4B" onclick="copyOutputToClipboard(this)">复制</button></p>				    
 				<p>输出：64 位整数</p>
-			  <p><input type="text" name="hex8B" value="" style="width: 550px;"><button type=button name="btnCopy8B" onclick="copyOutputToClipboard(this)">复制</button></p>			    
+			  <p><input type="text" name="hex8B" value=""><button type=button name="btnCopy8B" onclick="copyOutputToClipboard(this)">复制</button></p>			    
 			  
 			</form>
   </section>

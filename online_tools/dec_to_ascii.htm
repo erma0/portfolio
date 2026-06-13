@@ -2,17 +2,22 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>十进制 → ASCII 转换器</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
   <link rel="stylesheet" href="./css/tool.css">
+  <script src="./js/utils.js"></script>
 
 </head>
 <body>
+<div class="grain" aria-hidden="true"></div>
 <div id="bg"></div>
 <main class="container">
   <nav class="top-nav">
-    <a href="../" class="back-link">← 作品集</a>
+    <a href="../index.html" class="back-link">← 作品集</a>
     <a href="./index.html">← 工具列表</a>
   </nav>
   <header class="tool-header">
@@ -123,10 +128,10 @@
       </p>
       <form name="frmConvert" action="">
 				<p>Decimal number series:</p>
-			    <p><input type="text" name="dec" value="" style="width: 550px;"></p>
+			    <p><input type="text" name="dec" value=""></p>
         <p>Note: decimal numbers can be separated by any non-digit character(s).</p>
 				<p>Normalized, comma-separated input:</p>
-			    <p><input type="text" name="cleaned_dec" readonly="readonly" value="" style="width: 550px;"></p>
+			    <p><input type="text" name="cleaned_dec" readonly="readonly" value=""><button type="button" onclick="copyToClipboard(this.previousElementSibling.value)">复制</button></p>
         <br>				
         <p>解码数据（ASCII 文本），32~126 范围外字节以斜体显示为 <i>[byte value]</i>:<br>        
         <div id="divDecodedText">

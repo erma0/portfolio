@@ -2,75 +2,107 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ASCII → 十六进制数组转换器</title>
+  <title>ASCII ↔ 十六进制</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
   <link rel="stylesheet" href="./css/tool.css">
-
+  <script src="./js/utils.js"></script>
 </head>
 <body>
+<div class="grain" aria-hidden="true"></div>
 <div id="bg"></div>
 <main class="container">
   <nav class="top-nav">
-    <a href="../" class="back-link">← 作品集</a>
+    <a href="../index.html" class="back-link">← 作品集</a>
     <a href="./index.html">← 工具列表</a>
   </nav>
   <header class="tool-header">
-    <h1>ASCII → 十六进制数组转换器</h1>
-    <p class="tool-desc">将 ASCII 文本转换为 C 风格的十六进制数组</p>
+    <h1>ASCII ↔ 十六进制</h1>
+    <p class="tool-desc">在线 ASCII 文本与十六进制互转工具</p>
   </header>
   <section class="tool-body">
-<script type="text/javascript">
-//<!--
-    var hD='0123456789ABCDEF';
-    function dec2hex(d) {
-        var h = hD.substr(d&15,1);
-        while (d>15) {
-            d>>=4;
-            h=hD.substr(d&15,1)+h;
-        }
-        return h;
-    }    
-    
-    function Convert() {
-        var input = document.frmConvert.ed_input.value;
-        var separator1 = "", separator2 = "";
-        if (document.frmConvert.chbSeparator.checked)
-        {
-          separator1 = "0x";
-          separator2 = ", "
-        }
-        var hexText = "";
-        for (i=0; i<input.length; i++) {
-          var charVal = input.charCodeAt(i);
-          hexText = hexText + separator1 + (charVal<16?"0":"") + dec2hex(charVal) + separator2;       
-        }
-        document.frmConvert.hex.value = hexText;
-    } 
 
-//-->
+<h2>ASCII → 十六进制</h2>
+<script>
+function asciiToHexConvert() {
+  const input = document.frmAsciiToHex.ed_input.value;
+  let separator1 = '', separator2 = '';
+  if (document.frmAsciiToHex.chbSeparator.checked) {
+    separator1 = '0x';
+    separator2 = ', ';
+  }
+  let hexText = '';
+  for (let i = 0; i < input.length; i++) {
+    const charVal = input.charCodeAt(i);
+    hexText += separator1 + dec2hex(charVal) + separator2;
+  }
+  document.frmAsciiToHex.hex.value = hexText;
+}
 </script>
-<form name="frmConvert" action="">
-				<p>输入文本：</p>
-			    <p>
-            <textarea name="ed_input" rows="10" cols="67" style="width: 550px;"></textarea>
-          </p>
-        <p>选项：</p>
-          <p><input type="checkbox" name="chbSeparator" value="sep" checked="yes">输出添加 0x 前缀及逗号分隔符</p>
-				<p>输出十六进制数组</p>
-			    <p><input type="text" name="hex" value="" style="width: 550px;"></p>			    
-			  <p>
-			    <button type=button name="btnConvert"
-            onclick="Convert()">
-            转换
-          </button>
-			  </p>
-			</form>
-      <p>
-      另见： <a href="http://erma0.cn/bin/bin2hex/bin2hex.exe">bin2hex.exe（Windows）</a>
-      / <a href="http://erma0.cn/bin/bin2hex/bin2hex">bin2hex（Linux）</a>
-      (<a href="http://erma0.cn/bin/bin2hex/bin2hex.c">源代码</a>).
-      </p>
+
+<form name="frmAsciiToHex" action="">
+  <p>输入文本：</p>
+  <p><textarea name="ed_input" rows="10" cols="67"></textarea></p>
+  <p>选项：</p>
+  <p><input type="checkbox" name="chbSeparator" value="sep" id="a2h_chbSep" checked="checked"><label for="a2h_chbSep">输出添加 0x 前缀及逗号分隔符</label></p>
+  <p>输出十六进制数组</p>
+  <p><input type="text" name="hex" value="" readonly><button type="button" onclick="copyToClipboard(this.previousElementSibling.value)">复制</button></p>
+  <p><button type="button" onclick="asciiToHexConvert()">转换</button></p>
+</form>
+
+<hr>
+
+<h2>十六进制 → ASCII</h2>
+<script>
+function hexToAsciiConvert() {
+  const cleaned_hex = cleanHex(document.frmHexToAscii.hex.value, document.frmHexToAscii.chbSeparator.checked);
+  document.frmHexToAscii.cleaned_hex.value = cleaned_hex;
+  if (cleaned_hex.length % 2) {
+    showToast('错误：清理后的十六进制字符串长度为奇数。');
+    return;
+  }
+
+  const bytes = hex2bytes(cleaned_hex);
+
+  let htmlStr = '<p style="font-family: courier new, monospace"><b>';
+  for (let i = 0; i < bytes.length; i++) {
+    if (bytes[i] >= 32 && bytes[i] <= 126) {
+      const ch = String.fromCharCode(bytes[i]);
+      switch (ch) {
+        case '&': htmlStr += '&amp;'; break;
+        case '<': htmlStr += '&lt;'; break;
+        case '>': htmlStr += '&gt;'; break;
+        case '"': htmlStr += '&quot;'; break;
+        case "'": htmlStr += '&#039;'; break;
+        default: htmlStr += ch;
+      }
+    } else {
+      htmlStr += '<i>[' + bytes[i] + ']</i>';
+    }
+  }
+  htmlStr += '</b></p>';
+  document.getElementById('divHexToAsciiText').innerHTML = htmlStr;
+}
+</script>
+
+<form name="frmHexToAscii" action="">
+  <p>十六进制字符串：</p>
+  <p><input type="text" name="hex" value=""></p>
+  <p>所有非十六进制字符将被忽略，"12AB34" = "12 AB 34" = "12, AB, 34" 等。输入不区分大小写。</p>
+  <p>选项：</p>
+  <p><input type="checkbox" name="chbSeparator" value="sep" id="h2a_chbSep" checked="checked"><label for="h2a_chbSep">移除输入中的 "0x" 前缀</label></p>
+  <p>清理后的输入：</p>
+  <p><input type="text" name="cleaned_hex" value="" readonly><button type="button" onclick="copyToClipboard(this.previousElementSibling.value)">复制</button></p>
+  <p>解码数据（ASCII 文本），32~126 范围外的字节以斜体显示为 <i>[byte value]</i>：</p>
+  <div id="divHexToAsciiText">
+    <p><i>（解码后的文本将显示在此处）</i></p>
+  </div>
+  <p><button type="button" onclick="hexToAsciiConvert()">转换</button></p>
+</form>
+
   </section>
   <footer class="page-footer">
     <p class="copyright">@鸽子笼 2020-2026</p>

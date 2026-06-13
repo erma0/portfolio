@@ -2,17 +2,22 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SHA1 哈希计算器</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
   <link rel="stylesheet" href="./css/tool.css">
+  <script src="./js/utils.js"></script>
 <script type="text/javascript" src="./js/rusha.js"></script>
 </head>
 <body>
+<div class="grain" aria-hidden="true"></div>
 <div id="bg"></div>
 <main class="container">
   <nav class="top-nav">
-    <a href="../" class="back-link">← 作品集</a>
+    <a href="../index.html" class="back-link">← 作品集</a>
     <a href="./index.html">← 工具列表</a>
   </nav>
   <header class="tool-header">
@@ -23,20 +28,6 @@
 <script type="text/javascript">
 //<!--
 	var rusha = new Rusha();
-
-  var hD='0123456789ABCDEF';
-  function dec2hex(d) {
-      var h = hD.substr(d&15,1);
-      while (d>15) {
-          d>>=4;
-          h=hD.substr(d&15,1)+h;
-      }
-      return h;
-  }
-  
-  function hex2dec(h) {
-    return parseInt(h, 16);
-  }
 
   var initialized = false;
   function HashInit() {
@@ -109,19 +100,19 @@
       使用 <a href="https://github.com/srijs/rusha">Rusha</a> 库。
       <form name="frmCalc" action="">
 			  <p>
-			    <button type=button name="btnInit" style="width: 470px"
+			    <button type=button name="btnInit"
             onclick="HashInit()">
             重新初始化（清空哈希状态）
           </button>
 			  </p>
 
 				<p>输入：</p>
-		    <p><input type="text" name="input" value="" style="width: 470px; font-family: courier, monospace; font-size: large;"><br>
-			    <button type=button name="btnUpdateText" style="width: 470px"
+		    <p><input type="text" name="input" value="" style="font-family: courier, monospace; font-size: large;"><br>
+			    <button type=button name="btnUpdateText"
             onclick="HashUpdateText()">
             以文本方式更新
           </button>          
-			    <button type=button name="btnUpdateHex" style="width: 470px"
+			    <button type=button name="btnUpdateHex"
             onclick="HashUpdateHex()">
             以十六进制方式更新
           </button>
@@ -132,13 +123,13 @@
         </p>
 			  <p>
 			    <br>
-          <button type=button name="btnFinish" style="width: 470px"
+          <button type=button name="btnFinish"
             onclick="HashFinish()">
             完成计算 / 获取结果
           </button>
 			  </p>
         <p>SHA1 结果：</p>
-        <p><input type="text" name="output" value="" style="width: 470px; font-family: courier, monospace; font-size: large;"></p>  
+        <p><input type="text" name="output" value="" style="font-family: courier, monospace; font-size: large;"><button type="button" onclick="copyToClipboard(this.previousElementSibling.value)">复制</button></p>  
 			</form>
   </section>
   <footer class="page-footer">
