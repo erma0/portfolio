@@ -4,45 +4,61 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MD5 计算器</title>
-  <script src="./js/utils.js"></script>
-  <script src="./js/tool-page.js"></script>
-  <script src="./js/md5.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+  <link rel="stylesheet" href="./css/tool.css" />
+  <script>document.documentElement.className='js'</script>
 </head>
 <body>
 <noscript><p style="text-align:center;padding:4rem">此工具需要 JavaScript 支持。</p></noscript>
+<div class="grain" aria-hidden="true"></div>
+<header class="site-header" id="siteHeader" data-nav="tool"></header>
+<script src="../nav.js"></script>
+
+<main class="container">
+  <header class="tool-header">
+    <h1>MD5 计算器</h1>
+    <p class="tool-desc">在线计算文本或文件的 MD5 哈希值</p>
+  </header>
+  <section class="tool-body" id="toolBody"></section>
+  <footer class="page-footer">
+    <p class="copyright">©鸽子笼 2020-2026</p>
+  </footer>
+</main>
+<script src="./js/utils.js"></script>
+<script src="./js/tool-page.js"></script>
+<script src="./js/md5.js"></script>
 <script>
-ToolPage.render({
-  title: 'MD5 计算器',
-  desc: '在线计算文本或文件的 MD5 哈希值',
-  body: function(body) {
-    var desc = ToolPage.el('p');
-    desc.textContent = '此计算器用于计算挑战-握手认证（CHAP）等认证方案所需的 MD5 摘要。可多次更新 MD5 状态，每次可将输入视为文本或十六进制缓冲区。';
-    body.appendChild(desc);
+(function() {
+  var body = document.getElementById('toolBody');
+  var desc = ToolPage.el('p');
+  desc.textContent = '此计算器用于计算挑战-握手认证（CHAP）等认证方案所需的 MD5 摘要。可多次更新 MD5 状态，每次可将输入视为文本或十六进制缓冲区。';
+  body.appendChild(desc);
 
-    var card1 = ToolPage.formCard();
-    card1.appendChild(ToolPage.field('输入', '输入文本或十六进制字符串，然后选择更新方式', ToolPage.inputRow('md5Input', {placeholder: '输入文本或十六进制数据'})));
-    card1.appendChild(ToolPage.btnGroup([
-      {text: '以文本方式更新', onclick: md5UpdateText},
-      {text: '以十六进制方式更新', className: 'btn-outline', onclick: md5UpdateHex}
-    ]));
-    body.appendChild(card1);
+  var card1 = ToolPage.formCard();
+  card1.appendChild(ToolPage.field('输入', '输入文本或十六进制字符串，然后选择更新方式', ToolPage.inputRow('md5Input', {placeholder: '输入文本或十六进制数据'})));
+  card1.appendChild(ToolPage.btnGroup([
+    {text: '以文本方式更新', onclick: md5UpdateText},
+    {text: '以十六进制方式更新', className: 'btn-outline', onclick: md5UpdateHex}
+  ]));
+  body.appendChild(card1);
 
-    var card2 = ToolPage.formCard();
-    card2.appendChild(ToolPage.btnGroup([
-      {text: '重新初始化', onclick: md5Init},
-      {text: '完成计算', onclick: md5Finish}
-    ]));
-    var hint = ToolPage.el('span', 'field-hint');
-    hint.textContent = '初始化后可多次更新状态，完成后获取最终哈希值';
-    card2.appendChild(hint);
-    body.appendChild(card2);
+  var card2 = ToolPage.formCard();
+  card2.appendChild(ToolPage.btnGroup([
+    {text: '重新初始化', onclick: md5Init},
+    {text: '完成计算', onclick: md5Finish}
+  ]));
+  var hint = ToolPage.el('span', 'field-hint');
+  hint.textContent = '初始化后可多次更新状态，完成后获取最终哈希值';
+  card2.appendChild(hint);
+  body.appendChild(card2);
 
-    var result = ToolPage.resultCard('resultArea', 'MD5 输出');
-    result.appendChild(ToolPage.inputRow('md5Output', {readonly: true}));
-    body.appendChild(result);
-  }
-});
-
+  var result = ToolPage.resultCard('resultArea', 'MD5 输出');
+  result.appendChild(ToolPage.inputRow('md5Output', {readonly: true}));
+  body.appendChild(result);
+})();
 var initialized = false;
 
 function md5Init() {
@@ -89,6 +105,8 @@ function md5Finish() {
     }
     document.getElementById('md5Output').value = out;
 }
+ToolPage.wireCopyButtons();
 </script>
+<script defer src="../animations.js"></script>
 </body>
 </html>

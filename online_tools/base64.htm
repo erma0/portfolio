@@ -4,75 +4,32 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Base64 ↔ 十六进制</title>
-  <script src="./js/utils.js"></script>
-  <script src="./js/tool-page.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+  <link rel="stylesheet" href="./css/tool.css" />
+  <script>document.documentElement.className='js'</script>
 </head>
 <body>
 <noscript><p style="text-align:center;padding:4rem">此工具需要 JavaScript 支持。</p></noscript>
+<div class="grain" aria-hidden="true"></div>
+<header class="site-header" id="siteHeader" data-nav="tool"></header>
+<script src="../nav.js"></script>
+
+<main class="container">
+  <header class="tool-header">
+    <h1>Base64 ↔ 十六进制</h1>
+    <p class="tool-desc">在线 Base64 与十六进制字符串互转工具，支持导出二进制文件</p>
+  </header>
+  <section class="tool-body" id="toolBody"></section>
+  <footer class="page-footer">
+    <p class="copyright">©鸽子笼 2020-2026</p>
+  </footer>
+</main>
+<script src="./js/utils.js"></script>
+<script src="./js/tool-page.js"></script>
 <script>
-ToolPage.render({
-  title: 'Base64 ↔ 十六进制',
-  desc: '在线 Base64 与十六进制字符串互转工具，支持导出二进制文件',
-  body: function(body) {
-
-    /* ====== Base64 → 十六进制 ====== */
-    var card1 = ToolPage.formCard();
-    card1.appendChild(ToolPage.field('Base64 字符串', null, ToolPage.inputRow('b64_input', { placeholder: '输入 Base64 编码字符串' })));
-
-    var opts1 = ToolPage.field('选项');
-    opts1.appendChild(ToolPage.checkbox('b64_addPrefix', '输出添加 0x 前缀'));
-    opts1.appendChild(ToolPage.checkbox('b64_lowercase', '使用小写十六进制字符'));
-    card1.appendChild(opts1);
-
-    card1.appendChild(ToolPage.btnGroup([{ text: '转换', onclick: b64ToHexConvert }]));
-    body.appendChild(card1);
-
-    // 输出区域
-    var resultCard1 = ToolPage.el('div', 'result-card');
-    resultCard1.id = 'b64_result_card';
-    resultCard1.style.display = 'none';
-    resultCard1.appendChild(ToolPage.field('解码数据（十六进制）', null, ToolPage.inputRow('b64_hex_output', { readonly: true })));
-    var asciiField = ToolPage.field('解码数据（ASCII 文本）', '32~126 范围外的字节以斜体显示为 [byte value]');
-    var asciiDiv = ToolPage.el('div', 'result-value');
-    asciiDiv.id = 'b64_ascii_output';
-    asciiDiv.innerHTML = '<i>（解码后的文本将显示在此处）</i>';
-    asciiField.appendChild(asciiDiv);
-    resultCard1.appendChild(asciiField);
-    body.appendChild(resultCard1);
-
-    // 文件导出
-    var cardFile = ToolPage.formCard();
-    cardFile.appendChild(ToolPage.field('导出为二进制文件', '将解码结果保存为原始二进制文件（客户端生成）', ToolPage.inputRow('b64_filename', { value: 'myfile.dat', placeholder: '文件名' })));
-    cardFile.appendChild(ToolPage.btnGroup([{ text: '转换为文件', className: 'btn-outline', onclick: b64ToHexConvertToFile }]));
-    body.appendChild(cardFile);
-
-    body.appendChild(ToolPage.divider());
-
-    /* ====== 十六进制 → Base64 ====== */
-    var card2 = ToolPage.formCard();
-    card2.appendChild(ToolPage.field('十六进制字符串', '所有非十六进制字符将被忽略，"12AB34" = "12 AB 34" = "12, AB, 34" 等。输入不区分大小写。', ToolPage.inputRow('hex_input', { placeholder: '输入十六进制字符串' })));
-
-    var opts2 = ToolPage.field('选项');
-    opts2.appendChild(ToolPage.checkbox('hex_remove0x', '移除输入中的 "0x" 前缀', true));
-    card2.appendChild(opts2);
-
-    card2.appendChild(ToolPage.btnGroup([{ text: '转换', onclick: hexToB64Convert }]));
-    body.appendChild(card2);
-
-    // 输出区域
-    var resultCard2 = ToolPage.el('div', 'result-card');
-    resultCard2.id = 'hex_result_card';
-    resultCard2.style.display = 'none';
-    resultCard2.appendChild(ToolPage.field('清理后的输入', null, ToolPage.inputRow('hex_cleaned_output', { readonly: true })));
-    resultCard2.appendChild(ToolPage.field('输出（Base64）', null, ToolPage.inputRow('hex_b64_output', { readonly: true })));
-    body.appendChild(resultCard2);
-
-    var linkP = ToolPage.el('p');
-    linkP.innerHTML = '相关工具：<a href="base64_multi.htm">批量 Base64 → 十六进制转换器</a>';
-    body.appendChild(linkP);
-  }
-});
-
 /* ---- Base64 → 十六进制 ---- */
 function b64ToHexConvert() {
   var input = document.getElementById('b64_input').value;
@@ -140,6 +97,68 @@ function hexToB64Convert() {
   document.getElementById('hex_b64_output').value = base64Encode(bytes);
   document.getElementById('hex_result_card').style.display = '';
 }
+
+(function() {
+  var body = document.getElementById('toolBody');
+
+    /* ====== Base64 → 十六进制 ====== */
+    var card1 = ToolPage.formCard();
+    card1.appendChild(ToolPage.field('Base64 字符串', null, ToolPage.inputRow('b64_input', { placeholder: '输入 Base64 编码字符串' })));
+
+    var opts1 = ToolPage.field('选项');
+    opts1.appendChild(ToolPage.checkbox('b64_addPrefix', '输出添加 0x 前缀'));
+    opts1.appendChild(ToolPage.checkbox('b64_lowercase', '使用小写十六进制字符'));
+    card1.appendChild(opts1);
+
+    card1.appendChild(ToolPage.btnGroup([{ text: '转换', onclick: b64ToHexConvert }]));
+    body.appendChild(card1);
+
+    // 输出区域
+    var resultCard1 = ToolPage.el('div', 'result-card');
+    resultCard1.id = 'b64_result_card';
+    resultCard1.style.display = 'none';
+    resultCard1.appendChild(ToolPage.field('解码数据（十六进制）', null, ToolPage.inputRow('b64_hex_output', { readonly: true })));
+    var asciiField = ToolPage.field('解码数据（ASCII 文本）', '32~126 范围外的字节以斜体显示为 [byte value]');
+    var asciiDiv = ToolPage.el('div', 'result-value');
+    asciiDiv.id = 'b64_ascii_output';
+    asciiDiv.innerHTML = '<i>（解码后的文本将显示在此处）</i>';
+    asciiField.appendChild(asciiDiv);
+    resultCard1.appendChild(asciiField);
+    body.appendChild(resultCard1);
+
+    // 文件导出
+    var cardFile = ToolPage.formCard();
+    cardFile.appendChild(ToolPage.field('导出为二进制文件', '将解码结果保存为原始二进制文件（客户端生成）', ToolPage.inputRow('b64_filename', { value: 'myfile.dat', placeholder: '文件名' })));
+    cardFile.appendChild(ToolPage.btnGroup([{ text: '转换为文件', className: 'btn-outline', onclick: b64ToHexConvertToFile }]));
+    body.appendChild(cardFile);
+
+    body.appendChild(ToolPage.divider());
+
+    /* ====== 十六进制 → Base64 ====== */
+    var card2 = ToolPage.formCard();
+    card2.appendChild(ToolPage.field('十六进制字符串', '所有非十六进制字符将被忽略，"12AB34" = "12 AB 34" = "12, AB, 34" 等。输入不区分大小写。', ToolPage.inputRow('hex_input', { placeholder: '输入十六进制字符串' })));
+
+    var opts2 = ToolPage.field('选项');
+    opts2.appendChild(ToolPage.checkbox('hex_remove0x', '移除输入中的 "0x" 前缀', true));
+    card2.appendChild(opts2);
+
+    card2.appendChild(ToolPage.btnGroup([{ text: '转换', onclick: hexToB64Convert }]));
+    body.appendChild(card2);
+
+    // 输出区域
+    var resultCard2 = ToolPage.el('div', 'result-card');
+    resultCard2.id = 'hex_result_card';
+    resultCard2.style.display = 'none';
+    resultCard2.appendChild(ToolPage.field('清理后的输入', null, ToolPage.inputRow('hex_cleaned_output', { readonly: true })));
+    resultCard2.appendChild(ToolPage.field('输出（Base64）', null, ToolPage.inputRow('hex_b64_output', { readonly: true })));
+    body.appendChild(resultCard2);
+
+    var linkP = ToolPage.el('p');
+    linkP.innerHTML = '相关工具：<a href="base64_multi.htm">批量 Base64 → 十六进制转换器</a>';
+    body.appendChild(linkP);
+})();
+ToolPage.wireCopyButtons();
 </script>
+<script defer src="../animations.js"></script>
 </body>
 </html>

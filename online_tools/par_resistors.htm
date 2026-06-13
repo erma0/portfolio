@@ -4,16 +4,34 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>并联电阻搜索工具</title>
-  <script src="./js/utils.js"></script>
-  <script src="./js/tool-page.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+  <link rel="stylesheet" href="./css/tool.css" />
+  <script>document.documentElement.className='js'</script>
 </head>
 <body>
 <noscript><p style="text-align:center;padding:4rem">此工具需要 JavaScript 支持。</p></noscript>
+<div class="grain" aria-hidden="true"></div>
+<header class="site-header" id="siteHeader" data-nav="tool"></header>
+<script src="../nav.js"></script>
+
+<main class="container">
+  <header class="tool-header">
+    <h1>并联电阻搜索工具</h1>
+    <p class="tool-desc">搜索两个并联电阻组合以匹配目标等效阻值</p>
+  </header>
+  <section class="tool-body" id="toolBody"></section>
+  <footer class="page-footer">
+    <p class="copyright">©鸽子笼 2020-2026</p>
+  </footer>
+</main>
+<script src="./js/utils.js"></script>
+<script src="./js/tool-page.js"></script>
 <script>
-ToolPage.render({
-  title: '并联电阻搜索工具',
-  desc: '搜索两个并联电阻组合以匹配目标等效阻值',
-  body: function(body) {
+(function() {
+  var body = document.getElementById('toolBody');
     var p = ToolPage.el('p');
     p.textContent = '此工具在 E24（5% 精度）电阻系列中搜索两个并联后等效阻值最接近目标值的电阻组合，适合用于替代手头缺少的阻值。精确匹配将被排除——本工具专用于搜索替代方案。';
     body.appendChild(p);
@@ -46,8 +64,7 @@ ToolPage.render({
     defaultMsg.textContent = '点击"搜索电阻组合"查看结果';
     rc.appendChild(defaultMsg);
     body.appendChild(rc);
-  }
-});
+})();
 
 var E24_set = [1.0, 1.1, 1.2, 1.3, 1.5, 1.6, 1.8, 2.0, 2.2, 2.4, 2.7, 3.0, 3.3, 3.6, 3.9, 4.3, 4.7, 5.1, 5.6, 6.2, 6.8, 7.5, 8.2, 9.1];
 
@@ -118,6 +135,8 @@ function Execute() {
 
   document.getElementById('divOutput').innerHTML = htmlVal;
 }
+ToolPage.wireCopyButtons();
 </script>
+<script defer src="../animations.js"></script>
 </body>
 </html>

@@ -4,49 +4,32 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>十进制 → ASCII 转换器</title>
-  <script src="./js/utils.js"></script>
-  <script src="./js/tool-page.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+  <link rel="stylesheet" href="./css/tool.css" />
+  <script>document.documentElement.className='js'</script>
 </head>
 <body>
 <noscript><p style="text-align:center;padding:4rem">此工具需要 JavaScript 支持。</p></noscript>
+<div class="grain" aria-hidden="true"></div>
+<header class="site-header" id="siteHeader" data-nav="tool"></header>
+<script src="../nav.js"></script>
+
+<main class="container">
+  <header class="tool-header">
+    <h1>十进制 → ASCII 转换器</h1>
+    <p class="tool-desc">将十进制字节值转换为 ASCII 字符串</p>
+  </header>
+  <section class="tool-body" id="toolBody"></section>
+  <footer class="page-footer">
+    <p class="copyright">©鸽子笼 2020-2026</p>
+  </footer>
+</main>
+<script src="./js/utils.js"></script>
+<script src="./js/tool-page.js"></script>
 <script>
-ToolPage.render({
-  title: '十进制 → ASCII 转换器',
-  desc: '将十进制字节值转换为 ASCII 字符串',
-  body: function(body) {
-    // 输入
-    var c1 = ToolPage.formCard();
-    var inp = document.createElement('input');
-    inp.type = 'text'; inp.id = 'inputDec'; inp.placeholder = '例如 72 101 108 108 111';
-    c1.appendChild(ToolPage.field('十进制数值序列', '十进制数值可以用任意非数字字符分隔。', inp));
-    body.appendChild(c1);
-
-    // 转换按钮
-    body.appendChild(ToolPage.btnGroup([{ text: '转换', onclick: convert }]));
-
-    // 规范化输入
-    var c2 = ToolPage.formCard();
-    c2.appendChild(ToolPage.field('规范化输入', null, ToolPage.inputRow('cleanedDec', { readonly: true, placeholder: '逗号分隔的数值' })));
-    body.appendChild(c2);
-
-    // 解码结果
-    var rc = ToolPage.el('div', 'result-card');
-    var f = ToolPage.el('div', 'field');
-    var lbl = ToolPage.el('span', 'field-label');
-    lbl.textContent = 'ASCII 解码结果';
-    f.appendChild(lbl);
-    var hint = ToolPage.el('span', 'field-hint');
-    hint.textContent = '32~126 范围外字节以斜体显示为 [字节值]';
-    f.appendChild(hint);
-    var rv = ToolPage.el('div', 'result-value');
-    rv.id = 'decodedText'; rv.style.minHeight = '2rem';
-    rv.innerHTML = '<em>（解码后的文本将显示在此处）</em>';
-    f.appendChild(rv);
-    rc.appendChild(f);
-    body.appendChild(rc);
-  }
-});
-
 function convert() {
   var input = document.getElementById('inputDec').value;
   var nums = [];
@@ -91,6 +74,42 @@ function convert() {
   }
   document.getElementById('decodedText').innerHTML = html || '<em>（无输出）</em>';
 }
+
+(function() {
+  var body = document.getElementById('toolBody');
+    // 输入
+    var c1 = ToolPage.formCard();
+    var inp = document.createElement('input');
+    inp.type = 'text'; inp.id = 'inputDec'; inp.placeholder = '例如 72 101 108 108 111';
+    c1.appendChild(ToolPage.field('十进制数值序列', '十进制数值可以用任意非数字字符分隔。', inp));
+    body.appendChild(c1);
+
+    // 转换按钮
+    body.appendChild(ToolPage.btnGroup([{ text: '转换', onclick: convert }]));
+
+    // 规范化输入
+    var c2 = ToolPage.el('div', 'result-card');
+    c2.appendChild(ToolPage.field('规范化输入', null, ToolPage.inputRow('cleanedDec', { readonly: true, placeholder: '逗号分隔的数值' })));
+    body.appendChild(c2);
+
+    // 解码结果
+    var rc = ToolPage.el('div', 'result-card');
+    var f = ToolPage.el('div', 'field');
+    var lbl = ToolPage.el('span', 'field-label');
+    lbl.textContent = 'ASCII 解码结果';
+    f.appendChild(lbl);
+    var hint = ToolPage.el('span', 'field-hint');
+    hint.textContent = '32~126 范围外字节以斜体显示为 [字节值]';
+    f.appendChild(hint);
+    var rv = ToolPage.el('div', 'result-value');
+    rv.id = 'decodedText'; rv.style.minHeight = '2rem';
+    rv.innerHTML = '<em>（解码后的文本将显示在此处）</em>';
+    f.appendChild(rv);
+    rc.appendChild(f);
+    body.appendChild(rc);
+})();
+ToolPage.wireCopyButtons();
 </script>
+<script defer src="../animations.js"></script>
 </body>
 </html>

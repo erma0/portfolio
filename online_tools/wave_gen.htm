@@ -4,16 +4,34 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>WAV 音频文件生成器</title>
-  <script src="./js/utils.js"></script>
-  <script src="./js/tool-page.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+  <link rel="stylesheet" href="./css/tool.css" />
+  <script>document.documentElement.className='js'</script>
 </head>
 <body>
 <noscript><p style="text-align:center;padding:4rem">此工具需要 JavaScript 支持。</p></noscript>
+<div class="grain" aria-hidden="true"></div>
+<header class="site-header" id="siteHeader" data-nav="tool"></header>
+<script src="../nav.js"></script>
+
+<main class="container">
+  <header class="tool-header">
+    <h1>WAV 音频文件生成器</h1>
+    <p class="tool-desc">在线生成指定频率和时长的 WAV 格式音频文件</p>
+  </header>
+  <section class="tool-body" id="toolBody"></section>
+  <footer class="page-footer">
+    <p class="copyright">©鸽子笼 2020-2026</p>
+  </footer>
+</main>
+<script src="./js/utils.js"></script>
+<script src="./js/tool-page.js"></script>
 <script>
-ToolPage.render({
-  title: 'WAV 音频文件生成器',
-  desc: '在线生成指定频率和时长的 WAV 格式音频文件',
-  body: function(body) {
+(function() {
+  var body = document.getElementById('toolBody');
     var p1 = ToolPage.el('p');
     p1.textContent = '客户端 JavaScript WAV 音频文件生成器。Audacity 虽有测试信号生成功能，但缺少某些特性——尤其是无法方便地生成 DC 偏置信号。本生成器旨在简化这类操作，替代之前需要生成 16 位采样二进制文件再导入 Audacity 的繁琐流程。';
     body.appendChild(p1);
@@ -87,8 +105,7 @@ ToolPage.render({
     body.appendChild(card3);
 
     body.appendChild(ToolPage.btnGroup([{ text: '生成文件', onclick: CreateFile }]));
-  }
-});
+})();
 
 function CreateFile() {
   var filename = document.getElementById('filename').value;
@@ -210,6 +227,8 @@ function CreateFile() {
   a.click();
   document.body.removeChild(a);
 }
+ToolPage.wireCopyButtons();
 </script>
+<script defer src="../animations.js"></script>
 </body>
 </html>

@@ -51,8 +51,14 @@
 <body>
   <div class="grain" aria-hidden="true"></div>
 
+  <header class="site-header" id="siteHeader" data-nav="works"></header>
+  <script src="../nav.js"></script>
+
+  <button class="back-to-top" id="backToTop" aria-label="回到顶部">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg>
+  </button>
+
   <article class="detail">
-    <a href="../" class="detail-back">← 作品集</a>
 
     <header class="detail-head">
       <h1>抖音采集工具</h1>
@@ -64,8 +70,8 @@
 
     <div class="detail-body">
       <div class="archived-banner">
-        <strong>⚠ 本项目已于 2026 年 6 月归档。</strong><br>
-        出于对法律法规的尊重，仓库原有代码已移除。以下内容为项目历史记录。
+        <strong>⚠ 本项目已于 2026 年 6 月合规归档，仓库代码已清空。</strong><br>
+        出于对法律法规的尊重，仓库原有代码已移除，仅保留 README 作为历史记录。以下内容为项目功能回顾。
       </div>
 
       <p>
@@ -107,7 +113,7 @@
       <h2>备注</h2>
       <p>
         本项目仓库初衷为 Python 爬虫与 Web 技术的学习实践，源代码仅用于个人研究，从未用于商业用途。
-        项目原获 <strong>560+ Star</strong>，感谢曾经关注过的每一位。
+        项目原获 <strong>1,598 Star</strong>，感谢曾经关注过的每一位。
       </p>
 
       <p class="detail-repo-wrap">
@@ -130,5 +136,20 @@
     </p>
     <p class="site-footer__small">&copy; 2026 鸽子笼</p>
   </footer>
+
+  <script>
+  (function(){
+    var header = document.getElementById('siteHeader');
+    var backBtn = document.getElementById('backToTop');
+    window.addEventListener('scroll', function(){
+      var y = window.scrollY;
+      if(header) header.classList.toggle('is-scrolled', y > 40);
+      if(backBtn) backBtn.classList.toggle('is-visible', y > 400);
+    }, {passive: true});
+    if(backBtn) backBtn.addEventListener('click', function(){
+      window.scrollTo({top:0, behavior:'smooth'});
+    });
+  })();
+  </script>
 </body>
 </html>

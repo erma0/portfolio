@@ -51,7 +51,7 @@ portfolio/
     ├── css/                # tools-index.css / tool.css
     ├── js/                 # utils.js / tool-page.js / tools-registry.js / md5.js / rusha.js
     ├── images/             # 图标
-    └── *.htm               # 各工具页（~25 个，使用 ToolPage.render() 框架）
+    └── *.htm               # 各工具页（~31 个，静态 HTML 直出 + ToolPage 工厂函数）
 ```
 
 ---
@@ -172,14 +172,26 @@ portfolio/
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <!-- 字体 + 全局样式 + 详情页样式 -->
   <link rel="stylesheet" href="../styles.css" />
   <link rel="stylesheet" href="detail.css" />
+  <script>document.documentElement.className='js'</script>
 </head>
 <body>
   <div class="grain" aria-hidden="true"></div>
-  <div class="detail">
-    <a href="../" class="detail-back">← 作品集</a>
+
+  <header class="site-header" id="siteHeader">
+    <a class="brand" href="../" aria-label="返回作品集">
+      <span class="brand__mark" aria-hidden="true">🕊</span>
+      <span class="brand__name">erma0</span>
+    </a>
+    <nav class="site-nav" aria-label="主导航">
+      <a href="../">← 作品集</a>
+      <a href="https://blog.erma0.cn" target="_blank" rel="noopener noreferrer">博客 ↗</a>
+      <a class="site-nav__ghost" href="https://github.com/erma0" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+    </nav>
+  </header>
+
+  <main class="detail">
     <header class="detail-head">
       <h1>项目名</h1>
       <div class="detail-meta">
@@ -190,8 +202,9 @@ portfolio/
     <div class="detail-body">
       <!-- 自由内容：截图、下载、功能介绍、GitHub 链接 -->
     </div>
-  </div>
+  </main>
   <footer class="site-footer">...</footer>
+  <script defer src="../animations.js"></script>
 </body>
 </html>
 ```
@@ -237,6 +250,38 @@ portfolio/
 - 不添加不必要的注释，代码即文档
 - 优先 CDN 引入成熟第三方库，避免重复造轮子
 
+### 导航栏与页脚复用（强制）
+所有内嵌子页面（详情页、工具页、公示牌等）**必须复用**统一的 `site-header` + `site-nav` 固定导航栏和页脚，不得使用自定义返回链接或独立导航。
+
+| 页面类型 | 导航栏实现 | 页脚实现 |
+|---|---|---|
+| 主页 `index.html` | 静态 HTML `site-header` + `site-nav` | 静态 HTML `site-footer` |
+| 详情页 `works/*.html` | 静态 HTML `site-header` + `site-nav` | 静态 HTML `site-footer` |
+| 工具首页 `online_tools/index.html` | 静态 HTML `site-header` + `site-nav` | 静态 HTML `site-footer` |
+| 工具子页 `online_tools/*.htm` | 静态 HTML `site-header` + `site-nav` | 静态 HTML `page-footer` |
+
+**导航栏结构：**
+```html
+<header class="site-header" id="siteHeader">
+  <a class="brand" href="../" aria-label="返回作品集">
+    <span class="brand__mark" aria-hidden="true">🕊</span>
+    <span class="brand__name">erma0</span>
+    <span class="brand__sub">/ tools</span>  <!-- 工具页带此子标记 -->
+  </a>
+  <nav class="site-nav" aria-label="主导航">
+    <!-- 根据页面类型调整链接 -->
+    <a href="./index.html">工具列表</a>      <!-- 工具页 -->
+    <a href="https://blog.erma0.cn" target="_blank" rel="noopener noreferrer">博客 ↗</a>
+    <a class="site-nav__ghost" href="../">← 作品集</a>
+  </nav>
+</header>
+```
+
+**必要配套：**
+- `<script>document.documentElement.className='js'</script>` 在 `<head>` 中（启用 CSS 动画渐进增强）
+- `<script defer src="../animations.js"></script>` 在 `</body>` 前（导航栏滚动效果）
+- 打印模式下隐藏导航栏：`.site-header { display: none !important; }`
+
 ### Git 工作流
 - **最小提交原则**：每完成一个独立功能或修复就本地 commit
 - 提交信息用中文，清晰说明改动
@@ -261,12 +306,12 @@ portfolio/
 
 ### 新增在线工具页
 1. 在 `online_tools/js/tools-registry.js` 的 `window.__TOOLS` 对应分类中添加条目
-2. 在 `online_tools/` 下创建 `tool_name.htm`，使用 `ToolPage.render()` 框架
-3. 框架自动注入字体/CSS/页面外壳，工具页只需定义 `body` 函数
+2. 在 `online_tools/` 下创建 `tool_name.htm`，使用统一模板结构
+3. 复用 `tool.css` 组件类（form-card/field/input-row/result-card 等）
 
-### 工具页框架（tool-page.js）
+### 工具页模板
 
-所有工具页使用统一框架，消除了页面外壳、字体加载、复制按钮等重复代码：
+所有工具页采用**静态 HTML 直出**页面外壳（导航栏、页脚），避免 JS 渲染导致的白屏闪烁和布局偏移。工具逻辑仍用 JS（ToolPage 工厂函数）构建 UI 并挂载到 `#toolBody`：
 
 ```html
 <!DOCTYPE html>
@@ -275,42 +320,85 @@ portfolio/
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>工具标题</title>
-  <script src="./js/utils.js"></script>
-  <script src="./js/tool-page.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+  <link rel="stylesheet" href="./css/tool.css" />
+  <script>document.documentElement.className='js'</script>
 </head>
 <body>
-<noscript><p>此工具需要 JavaScript 支持。</p></noscript>
+<noscript><p style="text-align:center;padding:4rem">此工具需要 JavaScript 支持。</p></noscript>
+<div class="grain" aria-hidden="true"></div>
+<header class="site-header" id="siteHeader">
+  <a class="brand" href="../" aria-label="返回作品集">
+    <span class="brand__mark" aria-hidden="true">🕊</span>
+    <span class="brand__name">erma0</span>
+    <span class="brand__sub">/ tools</span>
+  </a>
+  <nav class="site-nav" aria-label="主导航">
+    <a href="./index.html">工具列表</a>
+    <a href="https://blog.erma0.cn" target="_blank" rel="noopener noreferrer">博客 ↗</a>
+    <a class="site-nav__ghost" href="../">← 作品集</a>
+  </nav>
+</header>
+<main class="container">
+  <header class="tool-header">
+    <h1>工具标题</h1>
+    <p class="tool-desc">工具描述</p>
+  </header>
+  <section class="tool-body" id="toolBody"></section>
+  <footer class="page-footer">
+    <p class="copyright">©鸽子笼 2020-2026</p>
+  </footer>
+</main>
+<script src="./js/utils.js"></script>
+<script src="./js/tool-page.js"></script>
 <script>
-ToolPage.render({
-  title: '工具标题',
-  desc: '工具描述',
-  body: function(body) {
-    // 使用 ToolPage 工厂函数构建 UI
-    var card = ToolPage.formCard();
-    card.appendChild(ToolPage.field('标签', '提示', ToolPage.inputRow('myInput')));
-    body.appendChild(card);
-  }
-});
+(function() {
+  var body = document.getElementById('toolBody');
+  // 使用 ToolPage 工厂函数构建 UI
+  var c1 = ToolPage.formCard();
+  c1.appendChild(ToolPage.field('标签', '提示', ToolPage.inputRow('inputId')));
+  body.appendChild(c1);
+})();
+ToolPage.wireCopyButtons();
 </script>
+<script defer src="../animations.js"></script>
 </body>
 </html>
 ```
 
+**静态 HTML 直出的页面外壳：**
+- `site-header` + `site-nav` 固定导航栏（品牌 🕊 erma0 / tools + 工具列表 + 博客 + ← 作品集）
+- `grain` 噪点纹理
+- `tool-header` 标题区
+- `page-footer` 页脚
+- CSS 通过 `<link>` 直出（`../styles.css` + `./css/tool.css`），无需 JS 注入
+
 **ToolPage 工厂函数：**
 
-| 函数 | 用途 |
+| 类名/函数 | 用途 |
 |---|---|
-| `render(config)` | 渲染页面外壳 + 调用 `config.body()` |
-| `formCard()` | `.form-card` 容器 |
-| `field(label, hint, content)` | `.field` 组（标签 + 内容 + 提示） |
-| `inputRow(id, opts)` | 输入框 + 复制按钮（自动布线） |
-| `textareaRow(id, opts)` | 文本区 + 复制按钮 |
-| `resultCard(id, label)` | 结果展示卡片 |
-| `checkbox(id, label, checked)` | 复选框 |
-| `btnGroup(buttons)` | 按钮组 |
-| `fileField(id, label)` | 文件选择 |
-| `dropZone(id, text)` | 拖拽区域 |
-| `select(id, options, selected)` | 下拉选择 |
+| `ToolPage.formCard()` | 字段分组卡片 |
+| `ToolPage.field(label, hint, content)` | 字段包装器 |
+| `ToolPage.inputRow(id, opts)` | 输入框 + 复制按钮行 |
+| `ToolPage.textareaRow(id, opts)` | 文本区 + 复制按钮行 |
+| `ToolPage.resultCard(id, label)` | 结果展示卡片 |
+| `ToolPage.checkbox(id, label, checked)` | 复选框 label |
+| `ToolPage.btnGroup(buttons)` | 按钮组 |
+| `ToolPage.fileField(id, label)` | 文件选择字段 |
+| `ToolPage.dropZone(id, text)` | 拖拽上传区域 |
+| `ToolPage.select(id, options, selected)` | 下拉选择 |
+| `ToolPage.divider()` | 分隔线 |
+| `ToolPage.el(tag, cls)` | 创建 DOM 元素 |
+| `ToolPage.esc(s)` | HTML 转义 |
+| `ToolPage.wireCopyButtons(root)` | 自动布线复制按钮 |
+| `.option-list` | 选项组（checkbox/radio 统一布局） |
+| `.output-block` | 带叠加复制按钮的 textarea 区域 |
+| `.inline-flex-row` | 行内弹性布局 |
+| `.scroll-x` | 可滚动容器 |
+| `.ink-mute` | 弱化文字颜色辅助类 |
 
 **工具元数据注册表（tools-registry.js）：**
 - `window.__TOOLS` 数组，按分类组织所有工具的 id/title/desc/file
@@ -322,8 +410,8 @@ ToolPage.render({
 - 详情页样式 → `works/detail.css`
 - 工具首页样式 → `online_tools/css/tools-index.css`
 - 单工具页公用 → `online_tools/css/tool.css`
-- 工具页框架 → `online_tools/js/tool-page.js`（页面外壳 + 组件工厂）
 - 工具元数据 → `online_tools/js/tools-registry.js`（`window.__TOOLS`）
+- 工具页框架 → `online_tools/js/tool-page.js`（`ToolPage` IIFE，组件工厂 + `wireCopyButtons()`）
 - 数据与图标 → `data.js`（`window.__WORKS`）
 - 卡片渲染 → `renderer.js`（数据驱动 DOM 生成）
 - 动效系统 → `animations.js`（IO/tilt/glow/split）
@@ -377,4 +465,6 @@ ToolPage.render({
 | 2026-06-13 | 全面优化：①`std_scanner` 死链接改为指向 GitHub 仓库；②`invoice.html` 下载按钮指向 GitHub Releases；③删除死文件 `createFile.js`/`style.css`（暗色）/`hex_to_file_new.htm`；④字符拆分入场添加逐字 40ms 延迟；⑤`online_tools/index.html` 去除内联重复脚本，复用 `animations.js`；⑥添加 `og:image` meta 标签；⑦`grid-board.html` 修复 `theme-color`、提取内联 base64 Logo 为独立 PNG 文件；⑧`AGENT.md` 与实际代码同步更新 |
 | 2026-06-13 | online_tools 深度清理：①删除 6 个无引用重定向页（`PEM_to_base64`/`base64_to_PEM`/`hex_to_ascii`/`hex_to_base64`/`hex_to_base32`/`hex_to_base32hex`）；②8 个工具页移除内联 `showToast` 函数（统一由 `utils.js` 提供）；③31 个工具页移除暗色主题遗留 `<div id="bg">`；④`tool.css` 删除 `#bg { display: none }` 兼容规则 |
 | 2026-06-13 | online_tools UI 现代化：①`tool.css` 新增 `.form-card`/`.field`/`.field-label`/`.field-hint`/`.input-row`/`.btn-copy`/`.result-card`/`.btn-group`/`.btn-outline`/`.drop-zone` 等组件类；②`utils.js` 新增 `openFile()` 通用文件读取函数和 `ICON_COPY` SVG 图标常量；③全部 25 个工具页重写——移除 `<form name="...">` 改用 id-based DOM、`alert()` 全部替换为 `showToast()`、使用现代化卡片式布局、复制按钮统一使用 SVG 图标 |
-| 2026-06-13 | online_tools 架构重构：①新增 `tool-page.js` 公共框架——自动渲染页面外壳（grain/nav/header/footer）、注入字体和 CSS、提供 11 个组件工厂函数（formCard/field/inputRow/textareaRow/resultCard/checkbox/btnGroup/fileField/dropZone/select/divider）；②新增 `tools-registry.js` 集中元数据注册表——`window.__TOOLS` 按分类组织所有工具的 id/title/desc/file；③`index.html` 从注册表动态渲染工具网格；④全部 25 个工具页改用 `ToolPage.render()` 框架，每个页面从 ~120 行缩减到 ~40 行 |
+| 2026-06-13 | online_tools 架构重构：①新增 `tools-registry.js` 集中元数据注册表——`window.__TOOLS` 按分类组织所有工具的 id/title/desc/file；②`index.html` 从注册表动态渲染工具网格；③全部 25 个工具页使用统一静态 HTML 模板 + tool.css 组件类（form-card/field/input-row/result-card 等），直出无 JS 渲染依赖 |
+| 2026-06-13 | 导航栏与页脚统一复用：①所有工具子页（31 个 .htm）通过 `tool-page.js` 动态生成 `site-header` + `site-nav` 固定导航栏，替代旧的 `top-nav` 文字链接；②`tool-page.js` 新增 `ICON_COPY` 常量修复 IIFE 执行失败问题；③`grid-board.html`（公示牌）从自定义 `back-link` 改为复用 `site-header` + `site-nav`；④所有子页面引入 `animations.js` 启用导航栏滚动效果；⑤`tool.css` 移除 `.top-nav` 样式，新增 `.inline-flex-row`/`.scroll-x`/`.ink-mute` 辅助类；⑥全部工具页选项区统一使用 `.option-list` 布局，移除内联样式 |
+| 2026-06-13 | 工具页静态 HTML 直出重构：①`tool-page.js` 移除 `render()`/`injectHead()`，仅保留工厂函数和 `wireCopyButtons()`；②全部 31 个 .htm 工具页从 `ToolPage.render()` JS 动态渲染改为静态 HTML 直出页面外壳（grain/site-header/site-nav/tool-header/tool-body/page-footer）；③CSS 通过 `<link>` 直出（fonts + styles.css + tool.css），脚本移至 `</body>` 前；④`utils.js` 新增全局 `ICON_COPY` 常量；⑤工具逻辑仍用 JS（ToolPage 工厂函数）构建 UI 并挂载到 `#toolBody` |

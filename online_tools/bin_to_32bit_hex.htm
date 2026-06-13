@@ -4,16 +4,34 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>BIN ↔ 32位十六进制转换器</title>
-  <script src="./js/utils.js"></script>
-  <script src="./js/tool-page.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+  <link rel="stylesheet" href="./css/tool.css" />
+  <script>document.documentElement.className='js'</script>
 </head>
 <body>
 <noscript><p style="text-align:center;padding:4rem">此工具需要 JavaScript 支持。</p></noscript>
+<div class="grain" aria-hidden="true"></div>
+<header class="site-header" id="siteHeader" data-nav="tool"></header>
+<script src="../nav.js"></script>
+
+<main class="container">
+  <header class="tool-header">
+    <h1>BIN ↔ 32位十六进制转换器</h1>
+    <p class="tool-desc">二进制整数与 32 位十六进制数之间的双向转换</p>
+  </header>
+  <section class="tool-body" id="toolBody"></section>
+  <footer class="page-footer">
+    <p class="copyright">©鸽子笼 2020-2026</p>
+  </footer>
+</main>
+<script src="./js/utils.js"></script>
+<script src="./js/tool-page.js"></script>
 <script>
-ToolPage.render({
-  title: 'BIN ↔ 32位十六进制转换器',
-  desc: '二进制整数与 32 位十六进制数之间的双向转换',
-  body: function(body) {
+(function() {
+  var body = document.getElementById('toolBody');
     var p = ToolPage.el('p');
     p.textContent = '将 32 位二进制数转换为 32 位十六进制数，支持反向转换。此工具适用于编辑 DTS 文件场景。C/C++ 支持用位运算（预定义值左移到预定义位置的和）来清晰表达数值，但 DTS 语言不支持这种语法。在进行寄存器掩码操作（尤其是跨越多个十六进制位边界的多位操作，如第 22 位的偏移量）时，该工具可减少出错风险。';
     body.appendChild(p);
@@ -98,8 +116,9 @@ ToolPage.render({
         if (cb) cb.checked = !!(num & (1 << i));
       }
     }
-  }
-});
+})();
+ToolPage.wireCopyButtons();
 </script>
+<script defer src="../animations.js"></script>
 </body>
 </html>

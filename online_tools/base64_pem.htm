@@ -4,16 +4,34 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Base64 ↔ PEM</title>
-  <script src="./js/utils.js"></script>
-  <script src="./js/tool-page.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+  <link rel="stylesheet" href="./css/tool.css" />
+  <script>document.documentElement.className='js'</script>
 </head>
 <body>
 <noscript><p style="text-align:center;padding:4rem">此工具需要 JavaScript 支持。</p></noscript>
+<div class="grain" aria-hidden="true"></div>
+<header class="site-header" id="siteHeader" data-nav="tool"></header>
+<script src="../nav.js"></script>
+
+<main class="container">
+  <header class="tool-header">
+    <h1>Base64 ↔ PEM</h1>
+    <p class="tool-desc">在线 Base64 与 PEM 格式互转工具，纯客户端运行，数据不会上传服务器</p>
+  </header>
+  <section class="tool-body" id="toolBody"></section>
+  <footer class="page-footer">
+    <p class="copyright">©鸽子笼 2020-2026</p>
+  </footer>
+</main>
+<script src="./js/utils.js"></script>
+<script src="./js/tool-page.js"></script>
 <script>
-ToolPage.render({
-  title: 'Base64 ↔ PEM',
-  desc: '在线 Base64 与 PEM 格式互转工具，纯客户端运行，数据不会上传服务器',
-  body: function(body) {
+(function() {
+  var body = document.getElementById('toolBody');
 
     /* ====== Base64 → PEM ====== */
     var h2a = ToolPage.el('h2');
@@ -109,8 +127,7 @@ ToolPage.render({
     b64Field.appendChild(b64Row);
     rc3.appendChild(b64Field);
     body.appendChild(rc3);
-  }
-});
+})();
 
 /* ---- Base64 → PEM ---- */
 function cleanBase64(input) {
@@ -154,6 +171,8 @@ function pemToB64Convert() {
 
   document.getElementById('pemOutput').value = output;
 }
+ToolPage.wireCopyButtons();
 </script>
+<script defer src="../animations.js"></script>
 </body>
 </html>

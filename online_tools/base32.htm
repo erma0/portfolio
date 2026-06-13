@@ -4,16 +4,80 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Base32 ↔ 十六进制</title>
-  <script src="./js/utils.js"></script>
-  <script src="./js/tool-page.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+  <link rel="stylesheet" href="./css/tool.css" />
+  <script>document.documentElement.className='js'</script>
 </head>
 <body>
 <noscript><p style="text-align:center;padding:4rem">此工具需要 JavaScript 支持。</p></noscript>
+<div class="grain" aria-hidden="true"></div>
+<header class="site-header" id="siteHeader" data-nav="tool"></header>
+<script src="../nav.js"></script>
+
+<main class="container">
+  <header class="tool-header">
+    <h1>Base32 ↔ 十六进制</h1>
+    <p class="tool-desc">在线 Base32 与十六进制字符串互转工具</p>
+  </header>
+  <section class="tool-body" id="toolBody"></section>
+  <footer class="page-footer">
+    <p class="copyright">©鸽子笼 2020-2026</p>
+  </footer>
+</main>
+<script src="./js/utils.js"></script>
+<script src="./js/tool-page.js"></script>
 <script>
-ToolPage.render({
-  title: 'Base32 ↔ 十六进制',
-  desc: '在线 Base32 与十六进制字符串互转工具',
-  body: function(body) {
+/* ---- Base32 → 十六进制 ---- */
+function b32ToHexConvert() {
+  var input = document.getElementById('b32tohex_input').value;
+  var bytes = base32Decode(input);
+
+  var useSeparator = document.getElementById('b32tohex_chbSep').checked;
+  var useLowercase = document.getElementById('b32tohex_chbLower').checked;
+  var separator = useSeparator ? ' 0x' : '';
+  var hexText = bytes2hex(bytes, separator, useLowercase);
+  document.getElementById('b32tohex_hex').value = hexText;
+
+  var htmlStr = '';
+  for (var i = 0; i < bytes.length; i++) {
+    if (bytes[i] >= 32 && bytes[i] <= 126) {
+      var ch = String.fromCharCode(bytes[i]);
+      switch (ch) {
+        case '&': htmlStr += '&amp;'; break;
+        case '<': htmlStr += '&lt;'; break;
+        case '>': htmlStr += '&gt;'; break;
+        case '"': htmlStr += '&quot;'; break;
+        case "'": htmlStr += '&#039;'; break;
+        default: htmlStr += ch;
+      }
+    } else {
+      htmlStr += '<i>[' + bytes[i] + ']</i>';
+    }
+  }
+  document.getElementById('b32tohex_decoded_text').innerHTML = htmlStr;
+  document.getElementById('b32tohex_result_card').style.display = '';
+}
+
+/* ---- 十六进制 → Base32 ---- */
+function hexToB32Convert() {
+  var cleaned_hex = cleanHex(document.getElementById('h2b32_hex').value, document.getElementById('h2b32_chbSep').checked);
+  document.getElementById('h2b32_cleaned_hex').value = cleaned_hex;
+  if (cleaned_hex.length % 2) {
+    showToast('错误：清理后的十六进制字符串长度为奇数。');
+    document.getElementById('h2b32_base32').value = '';
+    document.getElementById('h2b32_result_card').style.display = '';
+    return;
+  }
+  var bytes = hex2bytes(cleaned_hex);
+  document.getElementById('h2b32_base32').value = base32Encode(bytes);
+  document.getElementById('h2b32_result_card').style.display = '';
+}
+
+(function() {
+  var body = document.getElementById('toolBody');
 
     /* ====== Base32 → 十六进制 ====== */
     var card1 = ToolPage.formCard();
@@ -65,54 +129,9 @@ ToolPage.render({
     var linkP = ToolPage.el('p');
     linkP.innerHTML = '相关工具：<a href="hex_to_base32_multi.htm">批量十六进制 → Base32 转换器</a>';
     body.appendChild(linkP);
-  }
-});
-
-/* ---- Base32 → 十六进制 ---- */
-function b32ToHexConvert() {
-  var input = document.getElementById('b32tohex_input').value;
-  var bytes = base32Decode(input);
-
-  var useSeparator = document.getElementById('b32tohex_chbSep').checked;
-  var useLowercase = document.getElementById('b32tohex_chbLower').checked;
-  var separator = useSeparator ? ' 0x' : '';
-  var hexText = bytes2hex(bytes, separator, useLowercase);
-  document.getElementById('b32tohex_hex').value = hexText;
-
-  var htmlStr = '';
-  for (var i = 0; i < bytes.length; i++) {
-    if (bytes[i] >= 32 && bytes[i] <= 126) {
-      var ch = String.fromCharCode(bytes[i]);
-      switch (ch) {
-        case '&': htmlStr += '&amp;'; break;
-        case '<': htmlStr += '&lt;'; break;
-        case '>': htmlStr += '&gt;'; break;
-        case '"': htmlStr += '&quot;'; break;
-        case "'": htmlStr += '&#039;'; break;
-        default: htmlStr += ch;
-      }
-    } else {
-      htmlStr += '<i>[' + bytes[i] + ']</i>';
-    }
-  }
-  document.getElementById('b32tohex_decoded_text').innerHTML = htmlStr;
-  document.getElementById('b32tohex_result_card').style.display = '';
-}
-
-/* ---- 十六进制 → Base32 ---- */
-function hexToB32Convert() {
-  var cleaned_hex = cleanHex(document.getElementById('h2b32_hex').value, document.getElementById('h2b32_chbSep').checked);
-  document.getElementById('h2b32_cleaned_hex').value = cleaned_hex;
-  if (cleaned_hex.length % 2) {
-    showToast('错误：清理后的十六进制字符串长度为奇数。');
-    document.getElementById('h2b32_base32').value = '';
-    document.getElementById('h2b32_result_card').style.display = '';
-    return;
-  }
-  var bytes = hex2bytes(cleaned_hex);
-  document.getElementById('h2b32_base32').value = base32Encode(bytes);
-  document.getElementById('h2b32_result_card').style.display = '';
-}
+})();
+ToolPage.wireCopyButtons();
 </script>
+<script defer src="../animations.js"></script>
 </body>
 </html>

@@ -4,16 +4,34 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>十六进制 → 文件下载器</title>
-  <script src="./js/utils.js"></script>
-  <script src="./js/tool-page.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+  <link rel="stylesheet" href="./css/tool.css" />
+  <script>document.documentElement.className='js'</script>
 </head>
 <body>
 <noscript><p style="text-align:center;padding:4rem">此工具需要 JavaScript 支持。</p></noscript>
+<div class="grain" aria-hidden="true"></div>
+<header class="site-header" id="siteHeader" data-nav="tool"></header>
+<script src="../nav.js"></script>
+
+<main class="container">
+  <header class="tool-header">
+    <h1>十六进制 → 文件下载器</h1>
+    <p class="tool-desc">将十六进制字符串转换为二进制文件并下载，纯客户端运行</p>
+  </header>
+  <section class="tool-body" id="toolBody"></section>
+  <footer class="page-footer">
+    <p class="copyright">©鸽子笼 2020-2026</p>
+  </footer>
+</main>
+<script src="./js/utils.js"></script>
+<script src="./js/tool-page.js"></script>
 <script>
-ToolPage.render({
-  title: '十六进制 → 文件下载器',
-  desc: '将十六进制字符串转换为二进制文件并下载，纯客户端运行',
-  body: function(body) {
+(function() {
+  var body = document.getElementById('toolBody');
     // 描述
     var desc = ToolPage.el('p');
     desc.textContent = '从十六进制字符串生成任意二进制文件。纯客户端，数据不会上传。';
@@ -43,8 +61,7 @@ ToolPage.render({
     var links = ToolPage.el('p');
     links.innerHTML = '对于较大的（超过几 MB）数据集，<a href="http://erma0.cn/bin/hex_to_file/hex_to_file.exe">hex_to_file.exe（Windows）</a> 可能更有用。另一个较旧的控制台程序：<a href="http://erma0.cn/bin/hex2bin/hex2bin.zip">hex2bin.zip</a>。';
     body.appendChild(links);
-  }
-});
+})();
 
 function doConvert() {
   var hex = document.getElementById('hexInput').value;
@@ -58,6 +75,8 @@ function doConvert() {
   }
   createFileFromHex(cleaned, filename);
 }
+ToolPage.wireCopyButtons();
 </script>
+<script defer src="../animations.js"></script>
 </body>
 </html>

@@ -4,16 +4,34 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>批量 Base64 → 十六进制转换器</title>
-  <script src="./js/utils.js"></script>
-  <script src="./js/tool-page.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+  <link rel="stylesheet" href="./css/tool.css" />
+  <script>document.documentElement.className='js'</script>
 </head>
 <body>
 <noscript><p style="text-align:center;padding:4rem">此工具需要 JavaScript 支持。</p></noscript>
+<div class="grain" aria-hidden="true"></div>
+<header class="site-header" id="siteHeader" data-nav="tool"></header>
+<script src="../nav.js"></script>
+
+<main class="container">
+  <header class="tool-header">
+    <h1>批量 Base64 → 十六进制转换器</h1>
+    <p class="tool-desc">逐行将多个 Base64 字符串转换为十六进制</p>
+  </header>
+  <section class="tool-body" id="toolBody"></section>
+  <footer class="page-footer">
+    <p class="copyright">©鸽子笼 2020-2026</p>
+  </footer>
+</main>
+<script src="./js/utils.js"></script>
+<script src="./js/tool-page.js"></script>
 <script>
-ToolPage.render({
-  title: '批量 Base64 → 十六进制转换器',
-  desc: '逐行将多个 Base64 字符串转换为十六进制',
-  body: function(body) {
+(function() {
+  var body = document.getElementById('toolBody');
     var p = ToolPage.el('p');
     p.textContent = '将 Base64 字符串列表（每行一个，可从 LibreOffice/OpenOffice Calc 单列导出为 CSV）批量转换为十六进制字符串列表。每行输出包含十六进制字符串及逗号后的状态信息，若转换失败或含非法字符则会标注，输出结果可作为两列 CSV 再次导入 Calc。';
     body.appendChild(p);
@@ -38,8 +56,7 @@ ToolPage.render({
     var rc = ToolPage.el('div', 'result-card');
     rc.appendChild(ToolPage.field('解码数据（十六进制）+ 注释', '双列 CSV 格式，第二列为空 = 无错误', ToolPage.textareaRow('hexOutput', { rows: 10, readonly: true })));
     body.appendChild(rc);
-  }
-});
+})();
 
 function Convert() {
   var separator = "";
@@ -65,6 +82,8 @@ function Convert() {
   }
   document.getElementById('hexOutput').value = hexText;
 }
+ToolPage.wireCopyButtons();
 </script>
+<script defer src="../animations.js"></script>
 </body>
 </html>

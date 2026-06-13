@@ -4,29 +4,32 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>文本 → Base64 编码器</title>
-  <script src="./js/utils.js"></script>
-  <script src="./js/tool-page.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+  <link rel="stylesheet" href="./css/tool.css" />
+  <script>document.documentElement.className='js'</script>
 </head>
 <body>
 <noscript><p style="text-align:center;padding:4rem">此工具需要 JavaScript 支持。</p></noscript>
+<div class="grain" aria-hidden="true"></div>
+<header class="site-header" id="siteHeader" data-nav="tool"></header>
+<script src="../nav.js"></script>
+
+<main class="container">
+  <header class="tool-header">
+    <h1>文本 → Base64 编码器</h1>
+    <p class="tool-desc">将 UTF-8 文本编码为 Base64 字符串</p>
+  </header>
+  <section class="tool-body" id="toolBody"></section>
+  <footer class="page-footer">
+    <p class="copyright">©鸽子笼 2020-2026</p>
+  </footer>
+</main>
+<script src="./js/utils.js"></script>
+<script src="./js/tool-page.js"></script>
 <script>
-ToolPage.render({
-  title: '文本 → Base64 编码器',
-  desc: '将 UTF-8 文本编码为 Base64 字符串',
-  body: function(body) {
-
-    var card1 = ToolPage.formCard();
-    card1.appendChild(ToolPage.field('输入文本', null, ToolPage.textareaRow('inputText', { rows: 6, placeholder: '在此输入要编码的文本…' })));
-    body.appendChild(card1);
-
-    body.appendChild(ToolPage.btnGroup([{ text: '转换', onclick: convert }]));
-
-    var rc = ToolPage.el('div', 'result-card');
-    rc.appendChild(ToolPage.field('Base64 输出', null, ToolPage.inputRow('outputBase64', { readonly: true, placeholder: '编码结果将显示在此处' })));
-    body.appendChild(rc);
-  }
-});
-
 function convert() {
   var text = document.getElementById('inputText').value;
   var bytes = [];
@@ -57,6 +60,22 @@ function convert() {
   }
   document.getElementById('outputBase64').value = base64Encode(bytes);
 }
+
+(function() {
+  var body = document.getElementById('toolBody');
+
+    var card1 = ToolPage.formCard();
+    card1.appendChild(ToolPage.field('输入文本', null, ToolPage.textareaRow('inputText', { rows: 6, placeholder: '在此输入要编码的文本…' })));
+    body.appendChild(card1);
+
+    body.appendChild(ToolPage.btnGroup([{ text: '转换', onclick: convert }]));
+
+    var rc = ToolPage.el('div', 'result-card');
+    rc.appendChild(ToolPage.field('Base64 输出', null, ToolPage.inputRow('outputBase64', { readonly: true, placeholder: '编码结果将显示在此处' })));
+    body.appendChild(rc);
+})();
+ToolPage.wireCopyButtons();
 </script>
+<script defer src="../animations.js"></script>
 </body>
 </html>

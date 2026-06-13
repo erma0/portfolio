@@ -9,36 +9,27 @@
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🕊</text></svg>" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../styles.css" />
+<script>document.documentElement.className='js'</script>
 <style>
   *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
-    background: #0F172A;
+    background: var(--bg);
     display: flex;
     flex-direction: column;
     align-items: center;
     font-family: 'Noto Sans SC', sans-serif;
   }
-
-  .back-link {
-    position: fixed;
-    top: 16px;
-    left: 20px;
-    z-index: 100;
-    color: #94B8D8;
-    font-size: 13px;
-    text-decoration: none;
-    transition: color 0.2s;
-    font-family: 'Noto Sans SC', sans-serif;
-  }
-  .back-link:hover { color: #FFF; }
 
   .wrapper {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 48px 0 0 0;
+    flex-direction: row;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 80px 16px 0;
+    gap: 20px;
     width: 100%;
   }
 
@@ -49,7 +40,7 @@
     display: flex;
     flex-direction: column;
     transform-origin: top center;
-    box-shadow: 0 0 30px rgba(0,0,0,0.3);
+    box-shadow: 0 2px 8px rgba(26,26,26,.06), 0 8px 32px rgba(26,26,26,.10);
   }
 
   .header {
@@ -251,15 +242,20 @@
     white-space: nowrap;
   }
 
-  .toolbar {
+  .side-toolbar {
     display: flex;
-    gap: 12px;
-    padding: 12px 0 20px;
+    flex-direction: column;
+    gap: 10px;
+    padding-top: 10px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 96px;
+    min-height: calc(100vh - 96px);
   }
   .tool-btn {
-    background: rgba(255,255,255,0.1);
-    color: #CBD5E1;
-    border: 1px solid rgba(255,255,255,0.15);
+    background: var(--bg-soft);
+    color: var(--ink-soft);
+    border: 1px solid var(--line);
     border-radius: 8px;
     padding: 10px 24px;
     font-size: 15px;
@@ -267,7 +263,7 @@
     font-family: 'Noto Sans SC', sans-serif;
     transition: all 0.2s;
   }
-  .tool-btn:hover { background: rgba(255,255,255,0.2); color: #FFF; }
+  .tool-btn:hover { background: var(--line); color: var(--ink); }
   .tool-btn.primary { background: #173F6F; border-color: #173F6F; color: #FFF; }
   .tool-btn.primary:hover { background: #1D4F8A; }
 
@@ -307,40 +303,66 @@
   .btn-secondary:hover { background: #E2E8F0; }
   .btn-reset { background: none; border: none; color: #DC2626; font-size: 14px; cursor: pointer; text-decoration: underline; margin-right: auto; }
 
-  .site-footer {
-    width: 100%;
-    padding: 20px 0 28px;
-    text-align: center;
-    color: #64748B;
+  .side-footer {
+    margin-top: auto;
+    padding-top: 16px;
+    border-top: 1px solid var(--line);
     font-size: 12px;
-    font-family: 'Noto Sans SC', sans-serif;
+    color: var(--ink-mute);
+    font-family: var(--font-sans);
+    line-height: 1.8;
   }
-  .site-footer a { color: #94B8D8; text-decoration: none; transition: color 0.2s; }
-  .site-footer a:hover { color: #FFF; }
-  .site-footer .sep { margin: 0 8px; opacity: 0.4; }
-  .site-footer .small { font-size: 11px; opacity: 0.5; margin-top: 4px; }
+  .side-footer a { color: var(--ink-soft); text-decoration: none; transition: color 0.2s; }
+  .side-footer a:hover { color: var(--accent); }
+  .side-footer .sep { margin: 0 6px; opacity: 0.4; }
+  .side-footer .small { display: block; font-size: 11px; opacity: 0.5; margin-top: 2px; }
 
   @media print {
     @page { size: 1080px 1620px; margin: 0; }
     * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
     body { background: #FFF; margin: 0; padding: 0; }
     .wrapper { padding: 0; }
-    .toolbar, .modal-overlay, .back-link, .site-footer { display: none !important; }
+    .side-toolbar, .modal-overlay, .site-header, .grain { display: none !important; }
     .board { box-shadow: none; transform: none !important; margin-bottom: 0 !important; }
   }
 
   #btnExport:disabled { opacity: 0.6; cursor: wait; }
+
+  @media (max-width: 768px) {
+    .wrapper {
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+    }
+    .side-toolbar {
+      flex-direction: row;
+      flex-wrap: wrap;
+      justify-content: center;
+      position: static;
+      min-height: auto;
+      padding: 12px 0 20px;
+    }
+    .side-footer {
+      width: 100%;
+      text-align: center;
+      border-top: none;
+      padding-top: 8px;
+    }
+  }
 </style>
 </head>
 <body>
-<a href="../" class="back-link">← 作品集</a>
+<div class="grain" aria-hidden="true"></div>
+
+<header class="site-header" id="siteHeader" data-nav="works"></header>
+<script src="../nav.js"></script>
 
 <div class="wrapper">
   <div class="board" id="board">
 
     <div class="header">
       <div class="header-title">安全生产网格员公示牌</div>
-      <div class="header-sub" id="headerSub">无锡天鹏菜篮子工程有限公司 · 安全生产网格化管理</div>
+      <div class="header-sub" id="headerSub">安全网格化某某有限公司 · 安全生产网格化管理</div>
     </div>
 
     <div class="body-content">
@@ -352,7 +374,7 @@
           <div class="photo-hint" id="photoHint">一寸免冠照片</div>
         </div>
         <div class="identity-row">
-          <div class="identity-text" id="identityText">李卫东 · 安全员</div>
+          <div class="identity-text" id="identityText">王建国 · 安全员</div>
         </div>
       </div>
 
@@ -362,21 +384,21 @@
         <div class="card-row">
           <div class="card">
             <div class="card-label">联系电话</div>
-            <div class="card-value" id="cardPhone">138-0510-6829</div>
+            <div class="card-value" id="cardPhone">186-2345-6789</div>
           </div>
           <div class="card">
             <div class="card-label">责任区域</div>
-            <div class="card-value" id="cardArea">冷库及加工车间 A-F 区</div>
+            <div class="card-value" id="cardArea">综合厂区 C 栋</div>
           </div>
         </div>
         <div class="card-row">
           <div class="card">
             <div class="card-label">所属部门</div>
-            <div class="card-value" id="cardDept">安全生产管理部</div>
+            <div class="card-value" id="cardDept">综合管理部</div>
           </div>
           <div class="card">
             <div class="card-label">网格编号</div>
-            <div class="card-value" id="cardGridId">TP-SC-0018</div>
+            <div class="card-value" id="cardGridId">WG-AQ-0073</div>
           </div>
         </div>
       </div>
@@ -400,24 +422,32 @@
 
     <div class="footer-bar">
       <img class="footer-logo" id="footerLogo" src="" alt="">
-      <span class="footer-text" id="footerUnit">苏豪天鹏安委办</span>
-      <span class="footer-text" id="footerPhone">监督电话：0510-82363173    应急电话：0510-82363110</span>
+      <span class="footer-text" id="footerUnit">某某安委办</span>
+      <span class="footer-text" id="footerPhone">监督电话：0512-66778899    应急电话：0512-66778800</span>
     </div>
 
   </div>
 
-  <div class="toolbar">
+  <aside class="side-toolbar">
     <button class="tool-btn" onclick="openEdit()">✏️ 编辑信息</button>
     <button class="tool-btn primary" id="btnExport" onclick="exportPDF()">📄 保存为 PDF</button>
     <button class="tool-btn" id="btnPNG" onclick="exportPNG()">🖼 保存为 PNG</button>
     <button class="tool-btn" id="btnSVG" onclick="exportSVG()">🎨 保存为 SVG</button>
-  </div>
+    <div class="side-footer">
+      <a href="https://erma0.cn">主页</a>
+      <span class="sep">·</span>
+      <a href="../">作品集</a>
+      <span class="sep">·</span>
+      <a href="https://github.com/erma0" target="_blank" rel="noopener noreferrer">GitHub</a>
+      <span class="small">© 2026 鸽子笼</span>
+    </div>
+  </aside>
 </div>
 
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal">
     <h2>编辑公示牌信息</h2>
-    <label>公司名称</label><input id="f_company" placeholder="例：无锡天鹏菜篮子工程有限公司">
+    <label>公司名称</label><input id="f_company" placeholder="例：安全网格化某某有限公司">
     <div class="row2" style="margin-top:16px">
       <div><label>姓名</label><input id="f_name" placeholder="姓名"></div>
       <div><label>岗位</label><input id="f_role" placeholder="岗位"></div>
@@ -427,16 +457,16 @@
       <input type="file" id="f_photo" accept="image/*" onchange="previewPhoto(event)">
       <img class="photo-preview" id="photoPreview" alt="">
     </div>
-    <label>联系电话</label><input id="f_phone" placeholder="例：138-0510-6829">
-    <label>责任区域</label><textarea id="f_area" placeholder="例：冷库及加工车间 A-F 区"></textarea>
+    <label>联系电话</label><input id="f_phone" placeholder="例：186-2345-6789">
+    <label>责任区域</label><textarea id="f_area" placeholder="例：综合厂区 C 栋"></textarea>
     <div class="row2">
-      <div><label>所属部门</label><input id="f_dept" placeholder="例：安全生产管理部"></div>
-      <div><label>网格编号</label><input id="f_gridId" placeholder="例：TP-SC-0018"></div>
+      <div><label>所属部门</label><input id="f_dept" placeholder="例：综合管理部"></div>
+      <div><label>网格编号</label><input id="f_gridId" placeholder="例：WG-AQ-0073"></div>
     </div>
     <label>工作职责（每行一条）</label><textarea id="f_duties" placeholder="1. 开展常态化安全巡查，排查消防、电气及设备设施等风险隐患&#10;2. 跟踪督促隐患整改，重大隐患及时上报，全程落实闭环管理&#10;3. …&#10;4. …&#10;5. …&#10;6. …" style="min-height:160px"></textarea>
     <div class="row2">
-      <div><label>监督电话</label><input id="f_tel1" placeholder="例：0510-82363173"></div>
-      <div><label>应急电话</label><input id="f_tel2" placeholder="例：0510-82363110"></div>
+      <div><label>监督电话</label><input id="f_tel1" placeholder="例：0512-66778899"></div>
+      <div><label>应急电话</label><input id="f_tel2" placeholder="例：0512-66778800"></div>
     </div>
     <label>企业 Logo</label>
     <div class="photo-upload">
@@ -451,24 +481,18 @@
   </div>
 </div>
 
-<footer class="site-footer">
-  <p>
-    <a href="https://erma0.cn">主页</a>
-    <span class="sep">·</span>
-    <a href="../">作品集</a>
-    <span class="sep">·</span>
-    <a href="https://github.com/erma0" target="_blank" rel="noopener noreferrer">GitHub</a>
-  </p>
-  <p class="small">© 2026 鸽子笼</p>
-</footer>
-
 <script>
 (function(){
   var board = document.getElementById('board'), W = 1080, H = 1620;
   function resize(){
-    var s = Math.min((window.innerWidth-16)/W, (window.innerHeight-80)/H);
+    var sidePanel = document.querySelector('.side-toolbar');
+    var sideW = (sidePanel && window.innerWidth > 768) ? sidePanel.offsetWidth + 20 : 0;
+    var s = Math.min((window.innerWidth - 32 - sideW) / W, (window.innerHeight - 80) / H);
     board.style.transform = 'scale('+s+')';
-    board.style.marginBottom = (-(H*(1-s))) + 'px';
+    var marginH = -(W * (1 - s));
+    board.style.marginLeft = (marginH / 2) + 'px';
+    board.style.marginRight = (marginH / 2) + 'px';
+    board.style.marginBottom = (-(H * (1 - s))) + 'px';
   }
   resize();
   window.addEventListener('resize', resize);
@@ -921,11 +945,11 @@ function _svgMultiLineText(text, x, y, size, color, lineH, maxW){
 
 var SK = 'notice_board_data';
 var DF = {
-  company:'无锡天鹏菜篮子工程有限公司', name:'李卫东', role:'安全员', photo:'',
-  phone:'138-0510-6829', area:'冷库及加工车间 A-F 区', dept:'安全生产管理部',
-  gridId:'TP-SC-0018', tel1:'0510-82363173', tel2:'0510-82363110',
+  company:'安全网格化某某有限公司', name:'王建国', role:'安全员', photo:'',
+  phone:'186-2345-6789', area:'综合厂区 C 栋', dept:'综合管理部',
+  gridId:'WG-AQ-0073', tel1:'0512-66778899', tel2:'0512-66778800',
   duties:'1. 开展常态化安全巡查，排查消防、电气及设备设施等风险隐患\n2. 跟踪督促隐患整改，重大隐患及时上报，全程落实闭环管理\n3. 宣传安全法规制度，组织培训演练，普及应急防护知识技能\n4. 摸排网格场所情况底数，动态更新安全管理台账\n5. 监督落实安全操作规程，及时制止违章作业\n6. 联动处置险情，配合应急救援，接受全员监督',
-  footerUnit:'苏豪天鹏安委办',
+  footerUnit:'某某安委办',
   logo:'images/logo.png'
 };
 
@@ -1051,5 +1075,6 @@ document.getElementById('modalOverlay').addEventListener('click', function(e){
   if(e.target === this) closeEdit();
 });
 </script>
+<script defer src="../animations.js"></script>
 </body>
 </html>

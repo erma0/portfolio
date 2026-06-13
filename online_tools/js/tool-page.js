@@ -1,20 +1,14 @@
 /**
- * tool-page.js — 工具页公共框架
- * 自动渲染页面外壳（grain/nav/header/footer），提供表单组件工厂函数
+ * tool-page.js — 工具页公共组件库
+ * 提供表单组件工厂函数和复制按钮自动布线
  *
- * 用法:
- *   ToolPage.render({
- *     title: '工具标题',
- *     desc: '工具描述',
- *     body: function(bodyEl) { ... }
- *   });
+ * 页面外壳（导航栏/页脚等）由各 .htm 静态 HTML 直出
  */
 var ToolPage = (function () {
   'use strict';
 
   /* ---- 常量 ---- */
-  var FONTS_HREF = 'https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap';
-  var COPYRIGHT = '\u00A9鸽子笼 2020-2026';
+  var ICON_COPY = '⧉';
 
   /* ---- DOM 辅助 ---- */
   function el(tag, cls) {
@@ -26,60 +20,6 @@ var ToolPage = (function () {
     var d = document.createElement('div');
     d.textContent = s;
     return d.innerHTML;
-  }
-
-  /* ---- 注入 <head> 资源 ---- */
-  function injectHead(extraCSS) {
-    var head = document.head;
-    // Fonts preconnect
-    var pc1 = el('link'); pc1.rel = 'preconnect'; pc1.href = 'https://fonts.googleapis.com'; head.appendChild(pc1);
-    var pc2 = el('link'); pc2.rel = 'preconnect'; pc2.href = 'https://fonts.gstatic.com'; pc2.crossOrigin = ''; head.appendChild(pc2);
-    // Fonts CSS
-    var fonts = el('link'); fonts.rel = 'stylesheet'; fonts.href = FONTS_HREF; head.appendChild(fonts);
-    // Main styles
-    var mainCSS = el('link'); mainCSS.rel = 'stylesheet'; mainCSS.href = '../styles.css'; head.appendChild(mainCSS);
-    // Tool styles
-    var toolCSS = el('link'); toolCSS.rel = 'stylesheet'; toolCSS.href = './css/tool.css'; head.appendChild(toolCSS);
-    // Extra CSS
-    if (extraCSS) {
-      var x = el('link'); x.rel = 'stylesheet'; x.href = extraCSS; head.appendChild(x);
-    }
-  }
-
-  /* ---- 渲染页面外壳 ---- */
-  function render(config) {
-    injectHead(config.extraCSS);
-
-    // Grain
-    var grain = el('div', 'grain');
-    grain.setAttribute('aria-hidden', 'true');
-    document.body.prepend(grain);
-
-    // Main container
-    var main = el('main', 'container');
-
-    // Nav
-    var nav = el('nav', 'top-nav');
-    nav.innerHTML = '<a href="../index.html" class="back-link">\u2190 作品集</a><a href="./index.html">\u2190 工具列表</a>';
-    main.appendChild(nav);
-
-    // Header
-    var header = el('header', 'tool-header');
-    header.innerHTML = '<h1>' + esc(config.title) + '</h1>' +
-      (config.desc ? '<p class="tool-desc">' + esc(config.desc) + '</p>' : '');
-    main.appendChild(header);
-
-    // Tool body
-    var body = el('section', 'tool-body');
-    if (config.body) config.body(body);
-    main.appendChild(body);
-
-    // Footer
-    var footer = el('footer', 'page-footer');
-    footer.innerHTML = '<p class="copyright">' + COPYRIGHT + '</p>';
-    main.appendChild(footer);
-
-    document.body.appendChild(main);
   }
 
   /* ============ 组件工厂 ============ */
@@ -252,7 +192,6 @@ var ToolPage = (function () {
 
   /* ---- 导出 ---- */
   return {
-    render: render,
     formCard: formCard,
     field: field,
     inputRow: inputRow,

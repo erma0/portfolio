@@ -15,8 +15,14 @@
 <body>
   <div class="grain" aria-hidden="true"></div>
 
+  <header class="site-header" id="siteHeader" data-nav="works"></header>
+  <script src="../nav.js"></script>
+
+  <button class="back-to-top" id="backToTop" aria-label="回到顶部">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg>
+  </button>
+
   <div class="detail">
-    <a href="../" class="detail-back">← 作品集</a>
 
     <header class="detail-head">
       <h1><!-- TITLE --></h1>
@@ -62,11 +68,26 @@
     <p class="site-footer__row">
       <a href="https://erma0.cn">主页</a>
       <span class="sep">·</span>
-      <a href="https://blog.erma0.cn" target="_blank" rel="noopener">博客</a>
+      <a href="../">作品集</a>
       <span class="sep">·</span>
       <a href="https://github.com/erma0" target="_blank" rel="noopener">GitHub</a>
     </p>
-    <p class="site-footer__small">© 2026 鸽子笼 · 纯静态，零构建</p>
+    <p class="site-footer__small">© 2026 鸽子笼</p>
   </footer>
+
+  <script>
+  (function(){
+    var header = document.getElementById('siteHeader');
+    var backBtn = document.getElementById('backToTop');
+    window.addEventListener('scroll', function(){
+      var y = window.scrollY;
+      if(header) header.classList.toggle('is-scrolled', y > 40);
+      if(backBtn) backBtn.classList.toggle('is-visible', y > 400);
+    }, {passive: true});
+    if(backBtn) backBtn.addEventListener('click', function(){
+      window.scrollTo({top:0, behavior:'smooth'});
+    });
+  })();
+  </script>
 </body>
 </html>

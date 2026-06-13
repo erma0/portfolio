@@ -4,54 +4,32 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ASCII ↔ 十六进制</title>
-  <script src="./js/utils.js"></script>
-  <script src="./js/tool-page.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+  <link rel="stylesheet" href="./css/tool.css" />
+  <script>document.documentElement.className='js'</script>
 </head>
 <body>
 <noscript><p style="text-align:center;padding:4rem">此工具需要 JavaScript 支持。</p></noscript>
+<div class="grain" aria-hidden="true"></div>
+<header class="site-header" id="siteHeader" data-nav="tool"></header>
+<script src="../nav.js"></script>
+
+<main class="container">
+  <header class="tool-header">
+    <h1>ASCII ↔ 十六进制</h1>
+    <p class="tool-desc">在线 ASCII 文本与十六进制互转工具</p>
+  </header>
+  <section class="tool-body" id="toolBody"></section>
+  <footer class="page-footer">
+    <p class="copyright">©鸽子笼 2020-2026</p>
+  </footer>
+</main>
+<script src="./js/utils.js"></script>
+<script src="./js/tool-page.js"></script>
 <script>
-ToolPage.render({
-  title: 'ASCII ↔ 十六进制',
-  desc: '在线 ASCII 文本与十六进制互转工具',
-  body: function(body) {
-    // ASCII → 十六进制
-    var c1 = ToolPage.formCard();
-    var ta = document.createElement('textarea');
-    ta.id = 'a2h_input'; ta.rows = 6;
-    c1.appendChild(ToolPage.field('输入文本', null, ta));
-    c1.appendChild(ToolPage.field('选项', null, ToolPage.checkbox('a2h_chbSep', '输出添加 0x 前缀及逗号分隔符', true)));
-    c1.appendChild(ToolPage.btnGroup([{ text: '转换', onclick: asciiToHexConvert }]));
-    body.appendChild(c1);
-
-    var rc1 = ToolPage.el('div', 'result-card');
-    rc1.id = 'a2h_result_card'; rc1.style.display = 'none';
-    rc1.appendChild(ToolPage.field('输出十六进制数组', null, ToolPage.inputRow('a2h_hex', { readonly: true })));
-    body.appendChild(rc1);
-
-    body.appendChild(ToolPage.divider());
-
-    // 十六进制 → ASCII
-    var c2 = ToolPage.formCard();
-    var inp = document.createElement('input');
-    inp.type = 'text'; inp.id = 'h2a_hex';
-    c2.appendChild(ToolPage.field('十六进制字符串', '所有非十六进制字符将被忽略，"12AB34" = "12 AB 34" = "12, AB, 34" 等。输入不区分大小写。', inp));
-    c2.appendChild(ToolPage.field('选项', null, ToolPage.checkbox('h2a_chbSep', '移除输入中的 "0x" 前缀', true)));
-    c2.appendChild(ToolPage.btnGroup([{ text: '转换', onclick: hexToAsciiConvert }]));
-    body.appendChild(c2);
-
-    var rc2 = ToolPage.el('div', 'result-card');
-    rc2.id = 'h2a_result_card'; rc2.style.display = 'none';
-    rc2.appendChild(ToolPage.field('清理后的输入', null, ToolPage.inputRow('h2a_cleaned_hex', { readonly: true })));
-    var decSec = ToolPage.el('div');
-    decSec.style.marginTop = '0.75rem';
-    var decDiv = ToolPage.el('div', 'result-value');
-    decDiv.id = 'h2a_decoded_text'; decDiv.style.marginTop = '0.4rem';
-    decSec.appendChild(ToolPage.field('解码数据（ASCII 文本）', '32~126 范围外的字节以斜体显示为 [byte value]', decDiv));
-    rc2.appendChild(decSec);
-    body.appendChild(rc2);
-  }
-});
-
 function asciiToHexConvert() {
   var input = document.getElementById('a2h_input').value;
   var addSep = document.getElementById('a2h_chbSep').checked;
@@ -94,6 +72,47 @@ function hexToAsciiConvert() {
   document.getElementById('h2a_decoded_text').innerHTML = html;
   document.getElementById('h2a_result_card').style.display = '';
 }
+
+(function() {
+  var body = document.getElementById('toolBody');
+    // ASCII → 十六进制
+    var c1 = ToolPage.formCard();
+    var ta = document.createElement('textarea');
+    ta.id = 'a2h_input'; ta.rows = 6;
+    c1.appendChild(ToolPage.field('输入文本', null, ta));
+    c1.appendChild(ToolPage.field('选项', null, ToolPage.checkbox('a2h_chbSep', '输出添加 0x 前缀及逗号分隔符', true)));
+    c1.appendChild(ToolPage.btnGroup([{ text: '转换', onclick: asciiToHexConvert }]));
+    body.appendChild(c1);
+
+    var rc1 = ToolPage.el('div', 'result-card');
+    rc1.id = 'a2h_result_card'; rc1.style.display = 'none';
+    rc1.appendChild(ToolPage.field('输出十六进制数组', null, ToolPage.inputRow('a2h_hex', { readonly: true })));
+    body.appendChild(rc1);
+
+    body.appendChild(ToolPage.divider());
+
+    // 十六进制 → ASCII
+    var c2 = ToolPage.formCard();
+    var inp = document.createElement('input');
+    inp.type = 'text'; inp.id = 'h2a_hex';
+    c2.appendChild(ToolPage.field('十六进制字符串', '所有非十六进制字符将被忽略，"12AB34" = "12 AB 34" = "12, AB, 34" 等。输入不区分大小写。', inp));
+    c2.appendChild(ToolPage.field('选项', null, ToolPage.checkbox('h2a_chbSep', '移除输入中的 "0x" 前缀', true)));
+    c2.appendChild(ToolPage.btnGroup([{ text: '转换', onclick: hexToAsciiConvert }]));
+    body.appendChild(c2);
+
+    var rc2 = ToolPage.el('div', 'result-card');
+    rc2.id = 'h2a_result_card'; rc2.style.display = 'none';
+    rc2.appendChild(ToolPage.field('清理后的输入', null, ToolPage.inputRow('h2a_cleaned_hex', { readonly: true })));
+    var decSec = ToolPage.el('div');
+    decSec.style.marginTop = '0.75rem';
+    var decDiv = ToolPage.el('div', 'result-value');
+    decDiv.id = 'h2a_decoded_text'; decDiv.style.marginTop = '0.4rem';
+    decSec.appendChild(ToolPage.field('解码数据（ASCII 文本）', '32~126 范围外的字节以斜体显示为 [byte value]', decDiv));
+    rc2.appendChild(decSec);
+    body.appendChild(rc2);
+})();
+ToolPage.wireCopyButtons();
 </script>
+<script defer src="../animations.js"></script>
 </body>
 </html>

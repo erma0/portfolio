@@ -4,44 +4,60 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SHA1 哈希计算器</title>
-  <script src="./js/utils.js"></script>
-  <script src="./js/tool-page.js"></script>
-  <script src="./js/rusha.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+  <link rel="stylesheet" href="./css/tool.css" />
+  <script>document.documentElement.className='js'</script>
 </head>
 <body>
 <noscript><p style="text-align:center;padding:4rem">此工具需要 JavaScript 支持。</p></noscript>
+<div class="grain" aria-hidden="true"></div>
+<header class="site-header" id="siteHeader" data-nav="tool"></header>
+<script src="../nav.js"></script>
+
+<main class="container">
+  <header class="tool-header">
+    <h1>SHA1 哈希计算器</h1>
+    <p class="tool-desc">在线计算文本或文件的 SHA1 哈希值，支持混合输入（文本、十六进制或文件，可任意组合添加到哈希）。使用 Rusha 库，纯客户端运行。</p>
+  </header>
+  <section class="tool-body" id="toolBody"></section>
+  <footer class="page-footer">
+    <p class="copyright">©鸽子笼 2020-2026</p>
+  </footer>
+</main>
+<script src="./js/utils.js"></script>
+<script src="./js/tool-page.js"></script>
+<script src="./js/rusha.js"></script>
 <script>
-ToolPage.render({
-  title: 'SHA1 哈希计算器',
-  desc: '在线计算文本或文件的 SHA1 哈希值，支持混合输入（文本、十六进制或文件，可任意组合添加到哈希）。使用 Rusha 库，纯客户端运行。',
-  body: function(body) {
-    var card1 = ToolPage.formCard();
-    card1.appendChild(ToolPage.field(null, null, ToolPage.btnGroup([{text: '重新初始化（清空哈希状态）', className: 'btn-outline', onclick: hashInit}])));
-    body.appendChild(card1);
+(function() {
+  var body = document.getElementById('toolBody');
+  var card1 = ToolPage.formCard();
+  card1.appendChild(ToolPage.field(null, null, ToolPage.btnGroup([{text: '重新初始化（清空哈希状态）', className: 'btn-outline', onclick: hashInit}])));
+  body.appendChild(card1);
 
-    var card2 = ToolPage.formCard();
-    card2.appendChild(ToolPage.field('输入数据', '输入文本或十六进制字符串，然后选择更新方式', ToolPage.inputRow('sha1Input', {placeholder: '输入文本或十六进制字符串'})));
-    card2.appendChild(ToolPage.btnGroup([
-      {text: '以文本方式更新', onclick: hashUpdateText},
-      {text: '以十六进制方式更新', onclick: hashUpdateHex}
-    ]));
-    body.appendChild(card2);
+  var card2 = ToolPage.formCard();
+  card2.appendChild(ToolPage.field('输入数据', '输入文本或十六进制字符串，然后选择更新方式', ToolPage.inputRow('sha1Input', {placeholder: '输入文本或十六进制字符串'})));
+  card2.appendChild(ToolPage.btnGroup([
+    {text: '以文本方式更新', onclick: hashUpdateText},
+    {text: '以十六进制方式更新', onclick: hashUpdateHex}
+  ]));
+  body.appendChild(card2);
 
-    var card3 = ToolPage.formCard();
-    card3.appendChild(ToolPage.fileField('sha1FileInput', '文件输入'));
-    var fileHint = ToolPage.el('span', 'field-hint');
-    fileHint.textContent = '选择文件后立即将文件内容添加到哈希计算';
-    card3.appendChild(fileHint);
-    body.appendChild(card3);
+  var card3 = ToolPage.formCard();
+  card3.appendChild(ToolPage.fileField('sha1FileInput', '文件输入'));
+  var fileHint = ToolPage.el('span', 'field-hint');
+  fileHint.textContent = '选择文件后立即将文件内容添加到哈希计算';
+  card3.appendChild(fileHint);
+  body.appendChild(card3);
 
-    body.appendChild(ToolPage.btnGroup([{text: '完成计算 / 获取结果', onclick: hashFinish}]));
+  body.appendChild(ToolPage.btnGroup([{text: '完成计算 / 获取结果', onclick: hashFinish}]));
 
-    var result = ToolPage.resultCard('resultArea', 'SHA1 结果');
-    result.appendChild(ToolPage.inputRow('sha1Output', {readonly: true, placeholder: '点击「完成计算」获取结果'}));
-    body.appendChild(result);
-  }
-});
-
+  var result = ToolPage.resultCard('resultArea', 'SHA1 结果');
+  result.appendChild(ToolPage.inputRow('sha1Output', {readonly: true, placeholder: '点击「完成计算」获取结果'}));
+  body.appendChild(result);
+})();
 var rusha = new Rusha();
 var initialized = false;
 
@@ -103,6 +119,8 @@ document.getElementById('sha1FileInput').addEventListener('change', function(e) 
     readFileAsArray(e.target.files[0]);
   }
 });
+ToolPage.wireCopyButtons();
 </script>
+<script defer src="../animations.js"></script>
 </body>
 </html>
