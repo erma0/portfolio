@@ -42,7 +42,7 @@ portfolio/
 ├── works/                  # ★ 各作品详情页
 │   ├── detail.css          # 详情页共享样式
 │   ├── detail-template.html # 详情页标准模板（复制后替换标记）
-│   ├── invoice.html        # 发票打印系统详情页
+│   ├── invoice.html        # 发票打印工具详情页
 │   └── ...                 # 后续按需创建
 └── online_tools/           # 在线工具子模块（❄️ 冻结，不再新增）
     ├── index.html          # 工具集首页 — 分类导航
@@ -105,7 +105,7 @@ portfolio/
 {
   // ── 基础信息 ──
   id: 'invoice',              // 唯一标识
-  title: '发票打印系统',        // 卡片标题
+  title: '发票打印工具',        // 卡片标题
   desc: '...',                 // 描述文字
   icon: '<svg ...>...</svg>',  // SVG 图标（24×24 viewBox，描边风格）
 
@@ -290,7 +290,7 @@ portfolio/
 
 | 项目 | 技术栈 | 类型 | 链接 |
 |---|---|---|---|
-| 发票打印系统 | Tauri 2 · Rust · pdf-lib · print.js | 跨平台桌面应用 | 主推 |
+| 发票打印工具 | Tauri 2 · Rust · pdf-lib · print.js | 跨平台桌面应用 | 主推 |
 | 抖音采集工具 | Python · FastAPI · React · Vite · Aria2 | 桌面/Web/CLI | GitHub |
 | std_scanner | Python · FastAPI · pywebview | 标准文档抓取 | GitHub |
 | 在线工具集（复刻） | HTML · Vanilla JS | 编码/哈希/转换工具 | /online_tools/ |
