@@ -13,7 +13,6 @@
 </head>
 <body>
 <div class="grain" aria-hidden="true"></div>
-<div id="bg"></div>
 <main class="container">
   <nav class="top-nav">
     <a href="../index.html" class="back-link">← 作品集</a>
@@ -25,19 +24,131 @@
   </header>
   <section class="tool-body">
 
-<h2>Base64 → 十六进制</h2>
+    <!-- ====== Base64 → 十六进制 ====== -->
+    <div class="form-card">
+      <div class="field">
+        <label class="field-label" for="b64_input">Base64 字符串</label>
+        <div class="input-row">
+          <input type="text" id="b64_input" placeholder="输入 Base64 编码字符串">
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field-label">选项</label>
+        <label style="display:inline-flex;align-items:center;gap:0.3rem;margin-right:1.2rem;cursor:pointer">
+          <input type="checkbox" id="b64_addPrefix">
+          <span style="font-size:0.85rem;color:var(--ink-soft)">输出添加 0x 前缀</span>
+        </label>
+        <label style="display:inline-flex;align-items:center;gap:0.3rem;cursor:pointer">
+          <input type="checkbox" id="b64_lowercase">
+          <span style="font-size:0.85rem;color:var(--ink-soft)">使用小写十六进制字符</span>
+        </label>
+      </div>
+
+      <div class="btn-group">
+        <button type="button" onclick="b64ToHexConvert()">转换</button>
+      </div>
+    </div>
+
+    <!-- 输出区域 -->
+    <div class="result-card" id="b64_result_card" style="display:none">
+      <div class="field">
+        <label class="field-label">解码数据（十六进制）</label>
+        <div class="input-row">
+          <input type="text" id="b64_hex_output" readonly>
+          <button type="button" class="btn-copy" onclick="copyToClipboard(document.getElementById('b64_hex_output').value)"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="5" width="9" height="9" rx="1.5"/><path d="M3 11V3a1.5 1.5 0 011.5-1.5H11"/></svg></button>
+        </div>
+      </div>
+      <div class="field">
+        <label class="field-label">解码数据（ASCII 文本）</label>
+        <span class="field-hint">32~126 范围外的字节以斜体显示为 <i>[byte value]</i></span>
+        <div id="b64_ascii_output" class="result-value"><i>（解码后的文本将显示在此处）</i></div>
+      </div>
+    </div>
+
+    <!-- 文件导出 -->
+    <div class="form-card">
+      <div class="field">
+        <label class="field-label" for="b64_filename">导出为二进制文件</label>
+        <div class="input-row">
+          <input type="text" id="b64_filename" value="myfile.dat" placeholder="文件名">
+        </div>
+        <span class="field-hint">将解码结果保存为原始二进制文件（客户端生成）</span>
+      </div>
+      <div class="btn-group">
+        <button type="button" class="btn-outline" onclick="b64ToHexConvertToFile()">转换为文件</button>
+      </div>
+    </div>
+
+    <hr>
+
+    <!-- ====== 十六进制 → Base64 ====== -->
+    <div class="form-card">
+      <div class="field">
+        <label class="field-label" for="hex_input">十六进制字符串</label>
+        <div class="input-row">
+          <input type="text" id="hex_input" placeholder="输入十六进制字符串">
+        </div>
+        <span class="field-hint">所有非十六进制字符将被忽略，"12AB34" = "12 AB 34" = "12, AB, 34" 等。输入不区分大小写。</span>
+      </div>
+
+      <div class="field">
+        <label class="field-label">选项</label>
+        <label style="display:inline-flex;align-items:center;gap:0.3rem;cursor:pointer">
+          <input type="checkbox" id="hex_remove0x" checked>
+          <span style="font-size:0.85rem;color:var(--ink-soft)">移除输入中的 "0x" 前缀</span>
+        </label>
+      </div>
+
+      <div class="btn-group">
+        <button type="button" onclick="hexToB64Convert()">转换</button>
+      </div>
+    </div>
+
+    <!-- 输出区域 -->
+    <div class="result-card" id="hex_result_card" style="display:none">
+      <div class="field">
+        <label class="field-label">清理后的输入</label>
+        <div class="input-row">
+          <input type="text" id="hex_cleaned_output" readonly>
+          <button type="button" class="btn-copy" onclick="copyToClipboard(document.getElementById('hex_cleaned_output').value)"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="5" width="9" height="9" rx="1.5"/><path d="M3 11V3a1.5 1.5 0 011.5-1.5H11"/></svg></button>
+        </div>
+      </div>
+      <div class="field">
+        <label class="field-label">输出（Base64）</label>
+        <div class="input-row">
+          <input type="text" id="hex_b64_output" readonly>
+          <button type="button" class="btn-copy" onclick="copyToClipboard(document.getElementById('hex_b64_output').value)"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="5" width="9" height="9" rx="1.5"/><path d="M3 11V3a1.5 1.5 0 011.5-1.5H11"/></svg></button>
+        </div>
+      </div>
+    </div>
+
+    <p>相关工具：<a href="base64_multi.htm">批量 Base64 → 十六进制转换器</a></p>
+  </section>
+  <footer class="page-footer">
+    <p class="copyright">@鸽子笼 2020-2026</p>
+  </footer>
+</main>
+
 <script>
+/* ---- Base64 → 十六进制 ---- */
 function b64ToHexConvert() {
-  const input = document.frmB64ToHex.encoded.value;
+  const input = document.getElementById('b64_input').value;
   const bytes = base64Decode(input);
+  if (!bytes.length && input.trim()) {
+    showToast('无效的 Base64 输入');
+    return;
+  }
 
-  const useSeparator = document.frmB64ToHex.chbSeparator.checked;
-  const useLowercase = document.frmB64ToHex.chbLowercaseOutput.checked;
-  const separator = useSeparator ? ' 0x' : '';
-  const hexText = bytes2hex(bytes, separator, useLowercase);
-  document.frmB64ToHex.hex.value = hexText;
+  const addPrefix = document.getElementById('b64_addPrefix').checked;
+  const lowercase = document.getElementById('b64_lowercase').checked;
+  const separator = addPrefix ? ' 0x' : '';
+  const hexText = bytes2hex(bytes, separator, lowercase);
 
-  let htmlStr = '<p style="font-family: courier new, monospace"><b>';
+  document.getElementById('b64_hex_output').value = hexText;
+
+  // ASCII 文本展示
+  let htmlStr = '';
   for (let i = 0; i < bytes.length; i++) {
     const byte = bytes[i];
     if (byte >= 32 && byte <= 126) {
@@ -54,82 +165,40 @@ function b64ToHexConvert() {
       htmlStr += '<i>[' + byte + ']</i>';
     }
   }
-  htmlStr += '</b></p>';
-  document.getElementById('divB64DecodedText').innerHTML = htmlStr;
+  document.getElementById('b64_ascii_output').innerHTML = htmlStr || '<i>（无可显示文本）</i>';
+  document.getElementById('b64_result_card').style.display = '';
 }
 
 function b64ToHexConvertToFile() {
   b64ToHexConvert();
-  const hex = document.frmB64ToHex.hex.value;
-  const fileName = document.frmB64ToHex.filename.value || 'myfile.dat';
-  createFileFromHex(hex, fileName);
-}
-</script>
-
-<form name="frmB64ToHex" action="">
-  <p><label for="b64_encoded">Base64 字符串：</label></p>
-  <p><input type="text" name="encoded" id="b64_encoded" value=""></p>
-
-  <p>选项：</p>
-  <p>
-    <input type="checkbox" name="chbSeparator" value="sep" id="b64_chbSep">
-    <label for="b64_chbSep">输出添加 0x 前缀</label>
-    <br>
-    <input type="checkbox" name="chbLowercaseOutput" value="lowercaseHex" id="b64_chbLower">
-    <label for="b64_chbLower">使用小写十六进制字符</label>
-  </p>
-
-  <p><label for="b64_hex">解码数据（十六进制）</label></p>
-  <p><input type="text" name="hex" id="b64_hex" value="" readonly><button type="button" onclick="copyToClipboard(this.previousElementSibling.value)">复制</button></p>
-
-  <p>解码数据（ASCII 文本），32~126 范围外的字节以斜体显示为 <i>[byte value]</i>：</p>
-  <div id="divB64DecodedText">
-    <p><i>（解码后的文本将显示在此处）</i></p>
-  </div>
-
-  <p><button type="button" onclick="b64ToHexConvert()">转换</button></p>
-
-  <h3>转换为原始二进制文件（客户端）</h3>
-  <p><label for="b64_filename">创建文件名：</label></p>
-  <p><input type="text" name="filename" id="b64_filename" value="myfile.dat"></p>
-  <p><button type="button" onclick="b64ToHexConvertToFile()">转换为文件</button></p>
-</form>
-
-<hr>
-
-<h2>十六进制 → Base64</h2>
-<script>
-function hexToB64Convert() {
-  const cleaned_hex = cleanHex(document.frmHexToB64.hex.value, document.frmHexToB64.chbSeparator.checked);
-  document.frmHexToB64.cleaned_hex.value = cleaned_hex;
-  if (cleaned_hex.length % 2) {
-    showToast('错误：清理后的十六进制字符串长度为奇数。');
-    document.frmHexToB64.base64.value = '';
+  const hex = document.getElementById('b64_hex_output').value;
+  if (!hex) {
+    showToast('请先转换 Base64 数据');
     return;
   }
-  const bytes = hex2bytes(cleaned_hex);
-  document.frmHexToB64.base64.value = base64Encode(bytes);
+  const fileName = document.getElementById('b64_filename').value || 'myfile.dat';
+  createFileFromHex(hex, fileName);
+}
+
+/* ---- 十六进制 → Base64 ---- */
+function hexToB64Convert() {
+  const input = document.getElementById('hex_input').value;
+  const remove0x = document.getElementById('hex_remove0x').checked;
+  const cleaned = cleanHex(input, remove0x);
+
+  document.getElementById('hex_cleaned_output').value = cleaned;
+
+  if (cleaned.length % 2) {
+    showToast('错误：清理后的十六进制字符串长度为奇数。');
+    document.getElementById('hex_b64_output').value = '';
+    document.getElementById('hex_result_card').style.display = '';
+    return;
+  }
+
+  const bytes = hex2bytes(cleaned);
+  document.getElementById('hex_b64_output').value = base64Encode(bytes);
+  document.getElementById('hex_result_card').style.display = '';
 }
 </script>
-
-<form name="frmHexToB64" action="">
-  <p>十六进制字符串：</p>
-  <p><input type="text" name="hex" value=""></p>
-  <p>所有非十六进制字符将被忽略，"12AB34" = "12 AB 34" = "12, AB, 34" 等。输入不区分大小写。</p>
-  <p>选项：</p>
-  <p><input type="checkbox" name="chbSeparator" value="sep" id="h2b_chbSep" checked="checked"><label for="h2b_chbSep">移除输入中的 "0x" 前缀</label></p>
-  <p>清理后的输入：</p>
-  <p><input type="text" name="cleaned_hex" value="" readonly><button type="button" onclick="copyToClipboard(this.previousElementSibling.value)">复制</button></p>
-  <p>输出（Base64）：</p>
-  <p><input type="text" name="base64" value="" readonly><button type="button" onclick="copyToClipboard(this.previousElementSibling.value)">复制</button></p>
-  <p><button type="button" onclick="hexToB64Convert()">转换</button></p>
-</form>
-
-<p>相关工具：<a href="base64_multi.htm">批量 Base64 → 十六进制转换器</a></p>
-  </section>
-  <footer class="page-footer">
-    <p class="copyright">@鸽子笼 2020-2026</p>
-  </footer>
-</main>
 </body>
 </html>

@@ -10,11 +10,9 @@
   <link rel="stylesheet" href="../styles.css" />
   <link rel="stylesheet" href="./css/tool.css">
   <script src="./js/utils.js"></script>
-
 </head>
 <body>
 <div class="grain" aria-hidden="true"></div>
-<div id="bg"></div>
 <main class="container">
   <nav class="top-nav">
     <a href="../index.html" class="back-link">← 作品集</a>
@@ -25,214 +23,195 @@
     <p class="tool-desc">在线生成指定频率和时长的 WAV 格式音频文件</p>
   </header>
   <section class="tool-body">
-<script type="text/javascript">
-//<!--
-    function showToast(msg){var t=document.createElement('div');t.textContent=msg;t.style.cssText='position:fixed;top:20px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 24px;border-radius:8px;font-size:14px;z-index:9999;opacity:0;transition:opacity .3s';document.body.appendChild(t);requestAnimationFrame(function(){t.style.opacity='1'});setTimeout(function(){t.style.opacity='0';setTimeout(function(){t.remove()},300)},2500)}
+    <p>客户端 JavaScript WAV 音频文件生成器。Audacity 虽有测试信号生成功能，但缺少某些特性——尤其是无法方便地生成 DC 偏置信号。本生成器旨在简化这类操作，替代之前需要生成 16 位采样二进制文件再导入 Audacity 的繁琐流程。</p>
+    <p>波形由采样频率、每采样位深以及采样值的 JavaScript 公式来描述。</p>
 
-    function CreateFile() {
-      var filename = document.frmGenerator.filename.value;
-      var numberOfSamples = parseInt(document.frmGenerator.numberOfSamples.value);
-      if (numberOfSamples < 0) {
-        showToast("采样点数无效！");
-        return;
-      }
-      var samplingFrequency = parseInt(document.frmGenerator.samplingFrequency.value);
-      if (samplingFrequency <= 0 || samplingFrequency > 0xFFFFFFFF) {
-        showToast("采样频率值无效！");
-        return;
-      }
-      // TODO
-      var bitsPerSample;
-      if (document.frmGenerator.bitsPerSample.selectedIndex == 1) {
-        bitsPerSample = 24;
-      } else {
-        bitsPerSample = 16;
-      }
-      var numChannels = 1;
+    <div class="form-card">
+      <div class="field">
+        <label class="field-label" for="samplingFrequency">采样频率（Hz）</label>
+        <input type="text" id="samplingFrequency" value="48000">
+      </div>
+      <div class="field">
+        <label class="field-label" for="bitsPerSample">采样位深</label>
+        <select id="bitsPerSample">
+          <option value="16">16 位</option>
+          <option value="24">24 位</option>
+        </select>
+      </div>
+      <div class="field">
+        <label class="field-label" for="numberOfSamples">总采样点数</label>
+        <input type="text" id="numberOfSamples" value="192000">
+      </div>
+    </div>
 
-      var binary = new Array();      
-      var pos = 0;
-      // "RIFF" chunk descriptor
-      binary[pos++] = 'R'.charCodeAt();
-      binary[pos++] = 'I'.charCodeAt();
-      binary[pos++] = 'F'.charCodeAt();
-      binary[pos++] = 'F'.charCodeAt();
-      // skip chunksize to be filled later
-      var posChunkSize = pos;
-      binary[pos++] = 0x00;      
-      binary[pos++] = 0x00;      
-      binary[pos++] = 0x00;      
-      binary[pos++] = 0x00;      
-      // Format
-      binary[pos++] = 'W'.charCodeAt();
-      binary[pos++] = 'A'.charCodeAt();
-      binary[pos++] = 'V'.charCodeAt();
-      binary[pos++] = 'E'.charCodeAt();
-      
-      // "fmt ", subchunk 1
-      binary[pos++] = 'f'.charCodeAt();
-      binary[pos++] = 'm'.charCodeAt();
-      binary[pos++] = 't'.charCodeAt();
-      binary[pos++] = ' '.charCodeAt();
-      // subchunk 1 size
-      binary[pos++] = 16;
-      binary[pos++] = 0;
-      binary[pos++] = 0;
-      binary[pos++] = 0;
-      // audio format = PCM
-      binary[pos++] = 1;
-      binary[pos++] = 0;
-      // number of channels
-      binary[pos++] = numChannels & 0xFF;
-      binary[pos++] = (numChannels & 0xFF00) >> 8;
-      // SampleRate
-      binary[pos++] = samplingFrequency & 0xFF;
-      binary[pos++] = (samplingFrequency & 0xFF00) >> 8;
-      binary[pos++] = (samplingFrequency & 0xFF0000) >> 16;
-      binary[pos++] = (samplingFrequency & 0xFF000000) >> 24;
-      // ByteRate = SampleRate * NumChannels * BitsPerSample/8
-      var byteRate = samplingFrequency * numChannels * bitsPerSample/8;
-      binary[pos++] = byteRate & 0xFF;
-      binary[pos++] = (byteRate & 0xFF00) >> 8;
-      binary[pos++] = (byteRate & 0xFF0000) >> 16;
-      binary[pos++] = (byteRate & 0xFF000000) >> 24;
-      // BlockAlign       == NumChannels * BitsPerSample/8
-      var blockAlign = numChannels * bitsPerSample/8;
-      binary[pos++] = blockAlign & 0xFF;
-      binary[pos++] = (blockAlign & 0xFF00) >> 8;
-      // bitsPerSample
-      binary[pos++] = bitsPerSample & 0xFF;
-      binary[pos++] = (bitsPerSample & 0xFF00) >> 8;
-      
-      // "data", subchunk 2
-      binary[pos++] = 'd'.charCodeAt();
-      binary[pos++] = 'a'.charCodeAt();
-      binary[pos++] = 't'.charCodeAt();
-      binary[pos++] = 'a'.charCodeAt();
-      // Subchunk2Size    == NumSamples * NumChannels * BitsPerSample/8
-      var subchunk2Size = numberOfSamples * numChannels * bitsPerSample/8;
-      binary[pos++] = subchunk2Size & 0xFF;
-      binary[pos++] = (subchunk2Size & 0xFF00) >> 8;
-      binary[pos++] = (subchunk2Size & 0xFF0000) >> 16;
-      binary[pos++] = (subchunk2Size & 0xFF000000) >> 24;
-      
-      var minInt;
-      var maxInt;
-      if (bitsPerSample == 16) {
-        maxInt = -1+(1<<15);
-        minInt = -1<<15;
-      } else {
-        maxInt = -1+(1<<23);
-        minInt = -1<<23;      
-      }
-      
-      var generateFunction = "function generateFn(){ return (" + document.frmGenerator.formula.value + ");}";
-      eval(generateFunction);
-            
-      // actual data
-      for (n = 0; n < numberOfSamples; n++) {
-        var sampleValue = generateFn();
-        if (sampleValue < minInt) {
-          sampleValue = minInt;
-        } else if (sampleValue > maxInt) {
-          sampleValue = maxInt;
-        }
-        if (bitsPerSample == 16) {
-          binary[pos++] = sampleValue & 0xFF;
-          binary[pos++] = (sampleValue & 0xFF00) >> 8;
-        } else {
-          binary[pos++] = sampleValue & 0xFF;
-          binary[pos++] = (sampleValue & 0xFF00) >> 8;
-          binary[pos++] = (sampleValue & 0xFF0000) >> 16;
-        }                          
-      }
-
-      // fill correct chunk size
-      var chunkSizeVal = pos - 8;
-      pos = posChunkSize;
-      binary[pos++] = chunkSizeVal & 0xFF;
-      binary[pos++] = (chunkSizeVal & 0xFF00) >> 8;
-      binary[pos++] = (chunkSizeVal & 0xFF0000) >> 16;
-      binary[pos++] = (chunkSizeVal & 0xFF000000) >> 24;
-      
-  		var byteArray = new Uint8Array(binary);
-  		var a = window.document.createElement('a');
-  
-  		a.href = window.URL.createObjectURL(new Blob([byteArray], { type: 'application/octet-stream' }));
-  		a.download = filename;
-  
-  		// Append anchor to body.
-  		document.body.appendChild(a)
-  		a.click();
-  
-  		// Remove anchor from body
-  		document.body.removeChild(a)        
-    } 
-
-//-->
-</script>
-<p>客户端 JavaScript WAV 音频文件生成器。
-    <br>
-    Audacity 虽有测试信号生成功能（如正弦波），但缺少某些特性——尤其是无法方便地生成 DC 偏置信号（用于同时测试多个 I2S 输出时，通过示波器而非真实 I2S 编解码器进行测试）。本生成器旨在简化这类操作，替代之前需要生成 16 位采样二进制文件再导入 Audacity 的繁琐流程。
-    </p>
-    <p>使用本生成器时，波形由采样频率（写入 WAV 文件头）、每采样位深以及采样值的 JavaScript 公式来描述。
-    <p>
-    
-	  <form name="frmGenerator" action="">
-      <p>采样频率（Hz）： <input type="text" name="samplingFrequency" value="48000"></p>
-      <p>采样位深：
-        <select name="bitsPerSample">
-            <option value="16">16 位</option>
-            <option value="24">24 位</option>
-        </select>      
-      </p>    
-      <p>总采样点数： <input type="text" name="numberOfSamples" value="192000"></p>
-
-			<p>波形公式（直接执行的 JavaScript 表达式）：
-        <br>
-				<textarea name="formula" rows="4" cols="67">
-10000 * Math.sin(2 * Math.PI * 1000/samplingFrequency * n)
-        </textarea>
-        <br>
-        可用符号：
-        <dl class="code">
+    <div class="form-card">
+      <div class="field">
+        <label class="field-label" for="formula">波形公式</label>
+        <textarea id="formula" rows="4">10000 * Math.sin(2 * Math.PI * 1000/samplingFrequency * n)</textarea>
+        <span class="field-hint">直接执行的 JavaScript 表达式</span>
+      </div>
+      <div class="field">
+        <span class="field-label">可用符号</span>
+        <dl>
           <dt><strong>n</strong></dt>
-            <dd>采样点索引</dd>
+          <dd>采样点索引</dd>
           <dt><strong>samplingFrequency</strong></dt>
-            <dd>采样频率（即上方填写的值）</dd>
+          <dd>采样频率（即上方填写的值）</dd>
         </dl>
-        <br>
-        示例：
-        <dl class="code">
+      </div>
+      <div class="field">
+        <span class="field-label">示例</span>
+        <dl>
           <dt><strong>3</strong></dt>
-            <dd>所有采样点均为常量 3（DC 偏置）</dd>
+          <dd>所有采样点均为常量 3（DC 偏置）</dd>
           <dt><strong>n % 10000</strong></dt>
-            <dd>锯齿波，值从 0 升至 9999 后循环</dd>
-          <dt><strong>( (n/(samplingFrequency/(2*50))) &amp; 0x01 ) ? 8000 : -4000</strong></dt>
-            <dd>非对称（+8000/-4000）50Hz 方波</dd>
+          <dd>锯齿波，值从 0 升至 9999 后循环</dd>
+          <dt><strong>((n/(samplingFrequency/(2*50))) &amp; 0x01) ? 8000 : -4000</strong></dt>
+          <dd>非对称（+8000/-4000）50Hz 方波</dd>
           <dt><strong>10000 * Math.sin(2 * Math.PI * 1000/samplingFrequency * n)</strong></dt>
-            <dd>正弦波，1000 Hz，振幅 = 10000</dd>
-        </dl>        
-        <br>
-        不同波形可以自由组合（相加）。采样值计算后会根据所选位深（16 或 24 位）进行饱和限幅。
-			</p>
-      
-			<p>创建文件名：</p>
-	    <p>
-  			<input type="text" name="filename" value="myfile.wav">
-			</p>	  
-	  
-		  <p>
-		    <button type=button name="btnCreateFile"
-           onclick="CreateFile()">
-           生成文件
-         </button>
-		  </p>
-		</form>
+          <dd>正弦波，1000 Hz，振幅 = 10000</dd>
+        </dl>
+        <span class="field-hint">不同波形可以自由组合（相加）。采样值计算后会根据所选位深进行饱和限幅。</span>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <div class="field">
+        <label class="field-label" for="filename">文件名</label>
+        <input type="text" id="filename" value="myfile.wav">
+      </div>
+    </div>
+
+    <div class="btn-group">
+      <button type="button" onclick="CreateFile()">生成文件</button>
+    </div>
   </section>
   <footer class="page-footer">
     <p class="copyright">@鸽子笼 2020-2026</p>
   </footer>
 </main>
+
+<script>
+function CreateFile() {
+  var filename = document.getElementById('filename').value;
+  var numberOfSamples = parseInt(document.getElementById('numberOfSamples').value);
+  if (isNaN(numberOfSamples) || numberOfSamples < 0) {
+    showToast("采样点数无效！");
+    return;
+  }
+  var samplingFrequency = parseInt(document.getElementById('samplingFrequency').value);
+  if (isNaN(samplingFrequency) || samplingFrequency <= 0 || samplingFrequency > 0xFFFFFFFF) {
+    showToast("采样频率值无效！");
+    return;
+  }
+  var bitsPerSample = parseInt(document.getElementById('bitsPerSample').value);
+  var numChannels = 1;
+
+  var binary = new Array();
+  var pos = 0;
+
+  // "RIFF" chunk descriptor
+  binary[pos++] = 'R'.charCodeAt();
+  binary[pos++] = 'I'.charCodeAt();
+  binary[pos++] = 'F'.charCodeAt();
+  binary[pos++] = 'F'.charCodeAt();
+  // skip chunksize to be filled later
+  var posChunkSize = pos;
+  binary[pos++] = 0x00;
+  binary[pos++] = 0x00;
+  binary[pos++] = 0x00;
+  binary[pos++] = 0x00;
+  // Format
+  binary[pos++] = 'W'.charCodeAt();
+  binary[pos++] = 'A'.charCodeAt();
+  binary[pos++] = 'V'.charCodeAt();
+  binary[pos++] = 'E'.charCodeAt();
+
+  // "fmt ", subchunk 1
+  binary[pos++] = 'f'.charCodeAt();
+  binary[pos++] = 'm'.charCodeAt();
+  binary[pos++] = 't'.charCodeAt();
+  binary[pos++] = ' '.charCodeAt();
+  // subchunk 1 size
+  binary[pos++] = 16; binary[pos++] = 0; binary[pos++] = 0; binary[pos++] = 0;
+  // audio format = PCM
+  binary[pos++] = 1; binary[pos++] = 0;
+  // number of channels
+  binary[pos++] = numChannels & 0xFF;
+  binary[pos++] = (numChannels & 0xFF00) >> 8;
+  // SampleRate
+  binary[pos++] = samplingFrequency & 0xFF;
+  binary[pos++] = (samplingFrequency & 0xFF00) >> 8;
+  binary[pos++] = (samplingFrequency & 0xFF0000) >> 16;
+  binary[pos++] = (samplingFrequency & 0xFF000000) >> 24;
+  // ByteRate
+  var byteRate = samplingFrequency * numChannels * bitsPerSample / 8;
+  binary[pos++] = byteRate & 0xFF;
+  binary[pos++] = (byteRate & 0xFF00) >> 8;
+  binary[pos++] = (byteRate & 0xFF0000) >> 16;
+  binary[pos++] = (byteRate & 0xFF000000) >> 24;
+  // BlockAlign
+  var blockAlign = numChannels * bitsPerSample / 8;
+  binary[pos++] = blockAlign & 0xFF;
+  binary[pos++] = (blockAlign & 0xFF00) >> 8;
+  // bitsPerSample
+  binary[pos++] = bitsPerSample & 0xFF;
+  binary[pos++] = (bitsPerSample & 0xFF00) >> 8;
+
+  // "data", subchunk 2
+  binary[pos++] = 'd'.charCodeAt();
+  binary[pos++] = 'a'.charCodeAt();
+  binary[pos++] = 't'.charCodeAt();
+  binary[pos++] = 'a'.charCodeAt();
+  // Subchunk2Size
+  var subchunk2Size = numberOfSamples * numChannels * bitsPerSample / 8;
+  binary[pos++] = subchunk2Size & 0xFF;
+  binary[pos++] = (subchunk2Size & 0xFF00) >> 8;
+  binary[pos++] = (subchunk2Size & 0xFF0000) >> 16;
+  binary[pos++] = (subchunk2Size & 0xFF000000) >> 24;
+
+  var minInt, maxInt;
+  if (bitsPerSample === 16) {
+    maxInt = -1 + (1 << 15);
+    minInt = -1 << 15;
+  } else {
+    maxInt = -1 + (1 << 23);
+    minInt = -1 << 23;
+  }
+
+  var generateFunction = "function generateFn(){ return (" + document.getElementById('formula').value + ");}";
+  eval(generateFunction);
+
+  for (var n = 0; n < numberOfSamples; n++) {
+    var sampleValue = generateFn();
+    if (sampleValue < minInt) sampleValue = minInt;
+    else if (sampleValue > maxInt) sampleValue = maxInt;
+    if (bitsPerSample === 16) {
+      binary[pos++] = sampleValue & 0xFF;
+      binary[pos++] = (sampleValue & 0xFF00) >> 8;
+    } else {
+      binary[pos++] = sampleValue & 0xFF;
+      binary[pos++] = (sampleValue & 0xFF00) >> 8;
+      binary[pos++] = (sampleValue & 0xFF0000) >> 16;
+    }
+  }
+
+  // fill correct chunk size
+  var chunkSizeVal = pos - 8;
+  pos = posChunkSize;
+  binary[pos++] = chunkSizeVal & 0xFF;
+  binary[pos++] = (chunkSizeVal & 0xFF00) >> 8;
+  binary[pos++] = (chunkSizeVal & 0xFF0000) >> 16;
+  binary[pos++] = (chunkSizeVal & 0xFF000000) >> 24;
+
+  var byteArray = new Uint8Array(binary);
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([byteArray], { type: 'application/octet-stream' }));
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+</script>
 </body>
 </html>

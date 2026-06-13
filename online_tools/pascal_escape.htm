@@ -10,11 +10,9 @@
   <link rel="stylesheet" href="../styles.css" />
   <link rel="stylesheet" href="./css/tool.css">
   <script src="./js/utils.js"></script>
-
 </head>
 <body>
 <div class="grain" aria-hidden="true"></div>
-<div id="bg"></div>
 <main class="container">
   <nav class="top-nav">
     <a href="../index.html" class="back-link">← 作品集</a>
@@ -25,144 +23,109 @@
     <p class="tool-desc">将文本转换为 Pascal/Delphi 字符串字面量</p>
   </header>
   <section class="tool-body">
-<script type="text/javascript">
-//<!--
 
-function insertAtCursor(myField, myValue)
-    {
-    //IE support
-    if (document.selection) 
-        {
-        myField.focus();
-        sel = document.selection.createRange();
-        sel.text = myValue;
-        }
-    
-    //MOZILLA/NETSCAPE support
-    else if (myField.selectionStart || myField.selectionStart == '0') 
-        {
-        var startPos = myField.selectionStart;
-        var endPos = myField.selectionEnd;
-        restoreTop = myField.scrollTop;
-        
-        myField.value = myField.value.substring(0, startPos) + myValue + myField.value.substring(endPos, myField.value.length);
-        
-        myField.selectionStart = startPos + myValue.length; 
-        myField.selectionEnd = startPos + myValue.length;
-        
-        if (restoreTop>0)
-            {
-            myField.scrollTop = restoreTop;
-            }
-        } 
-    else 
-        {
-        myField.value += myValue;
-        }
-    }
+    <div class="form-card">
+      <div class="field">
+        <label class="field-label" for="ed_input">源文本</label>
+        <textarea id="ed_input" rows="10"></textarea>
+        <span class="field-hint">输入需要转义的原始文本</span>
+      </div>
+    </div>
 
-    function interceptTabs(evt, control)
-        {
-        key = evt.keyCode ? evt.keyCode : evt.which ? evt.which : evt.charCode;
-        if (key==9)
-            {
-            insertAtCursor(control, '\t');
-            return false; 
-            }
-        else
-            {
-            return key;
-            }
-        }
+    <div class="form-card">
+      <div class="field">
+        <label class="field-label">选项</label>
+        <label><input type="checkbox" id="chbSplitLines" checked> 将输出拆分为多行</label>
+      </div>
+    </div>
 
-    function pascal_encode(input) {
-        var output = "";
-        var splitLines = document.frmConvert.chbSplitLines.checked;
-        var quoted = false;
-        for (i = 0; i < input.length; i++) {
-            switch (input[i]) {
-            case '\n':
-              if (quoted) {
-                output += "'";
-                quoted = false;
-              }            
-              if (splitLines) {
-                output += "#10";
-                if (i < input.length - 1) {
-                  output += " +\n";
-                } else {
-                  output += "\n";
-                }
-              } else {
-                output += "#10";              
-              }
-              break;
-            case '\r':
-              if (quoted) {
-                output += "'";
-                quoted = false;
-              }
-              output += "#13";
-              break;
-            case '\t':
-              if (quoted) {
-                output += "'";
-                quoted = false;
-              }
-              output += "#9";
-              break;
-            case '\'':
-              if (quoted == false) {
-                output += "'";
-                quoted = true;
-              }
-              output += "''";
-              break;
-            default:
-              if (quoted == false) {
-                output += "'";
-                quoted = true;
-              }
-              output += input[i];
-              break;	     
-            }                       
-        }
-        if (quoted) {
-          output += "'";
-        }
-        return output;
-    } 
-    
-    function Convert() {
-        var output = pascal_encode(document.frmConvert.ed_input.value);
-        document.frmConvert.ed_output.value = output;
-    } 
+    <div class="btn-group">
+      <button type="button" id="btnConvert">转换</button>
+    </div>
 
-//-->
-</script>
-<p>将文本转换为 Pascal 单行或多行字符串字面量，转义换行符、制表符、引号等。<br>
-    已通过 <a href="http://www.lazarus-ide.org/">Lazarus</a> 简要测试。
-  </p>
-      <form name="frmConvert" action="">
-				<p>源文本：</p>
-			    <p><textarea onkeydown="return interceptTabs(event, this);" name="ed_input" rows="10" cols="67"></textarea></p>
-        <p>选项：</p>
-          <p><input type="checkbox" name="chbSplitLines" value="split" checked="yes">将输出拆分为多行</p>			  
-			  <p>
-			    <button type=button name="btnConvert"
-            onclick="Convert()">
-            转换
-          </button>
-			  </p>
-				<p>Pascal 字符串字面量</p>
-			    <p>
-            <textarea name="ed_output" rows="10" cols="67"></textarea><button type="button" onclick="copyToClipboard(this.previousElementSibling.value)">复制</button>
-          </p> 
-			</form>
+    <div class="result-card">
+      <label class="field-label">Pascal 字符串字面量</label>
+      <div class="input-row">
+        <textarea id="ed_output" rows="10" readonly></textarea>
+        <button type="button" class="btn-copy" id="btnCopyOutput"></button>
+      </div>
+      <span class="field-hint">已通过 <a href="https://www.lazarus-ide.org/">Lazarus</a> 简要测试</span>
+    </div>
+
   </section>
   <footer class="page-footer">
     <p class="copyright">@鸽子笼 2020-2026</p>
   </footer>
 </main>
+
+<script>
+function pascal_encode(input) {
+  var output = '';
+  var splitLines = document.getElementById('chbSplitLines').checked;
+  var quoted = false;
+  for (var i = 0; i < input.length; i++) {
+    switch (input[i]) {
+    case '\n':
+      if (quoted) {
+        output += "'";
+        quoted = false;
+      }
+      if (splitLines) {
+        output += '#10';
+        if (i < input.length - 1) {
+          output += ' +\n';
+        } else {
+          output += '\n';
+        }
+      } else {
+        output += '#10';
+      }
+      break;
+    case '\r':
+      if (quoted) {
+        output += "'";
+        quoted = false;
+      }
+      output += '#13';
+      break;
+    case '\t':
+      if (quoted) {
+        output += "'";
+        quoted = false;
+      }
+      output += '#9';
+      break;
+    case "'":
+      if (!quoted) {
+        output += "'";
+        quoted = true;
+      }
+      output += "''";
+      break;
+    default:
+      if (!quoted) {
+        output += "'";
+        quoted = true;
+      }
+      output += input[i];
+      break;
+    }
+  }
+  if (quoted) {
+    output += "'";
+  }
+  return output;
+}
+
+document.getElementById('btnCopyOutput').innerHTML = ICON_COPY;
+document.getElementById('btnCopyOutput').addEventListener('click', function() {
+  copyToClipboard(document.getElementById('ed_output').value);
+});
+
+document.getElementById('btnConvert').addEventListener('click', function() {
+  var output = pascal_encode(document.getElementById('ed_input').value);
+  document.getElementById('ed_output').value = output;
+});
+</script>
 </body>
 </html>

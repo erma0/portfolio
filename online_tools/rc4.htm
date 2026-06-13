@@ -10,11 +10,9 @@
   <link rel="stylesheet" href="../styles.css" />
   <link rel="stylesheet" href="./css/tool.css">
   <script src="./js/utils.js"></script>
-
 </head>
 <body>
 <div class="grain" aria-hidden="true"></div>
-<div id="bg"></div>
 <main class="container">
   <nav class="top-nav">
     <a href="../index.html" class="back-link">← 作品集</a>
@@ -26,7 +24,7 @@
   </header>
   <section class="tool-body">
 
-<p>客户端 RC4 加密/解密（JavaScript，数据不会上传服务器）。注意：大文件可能导致资源消耗过高，浏览器崩溃，大文件建议使用离线工具。</p>
+    <p>客户端 RC4 加密/解密（JavaScript，数据不会上传服务器）。注意：大文件可能导致资源消耗过高，浏览器崩溃，大文件建议使用离线工具。</p>
     <p>RC4 是一种对称流密码，加密和解密使用同一操作——将输入数据与由密码/初始向量生成的长密钥流（256 字节状态）进行 XOR 运算。
     由于 XOR 的特性：(X ^ Y) ^ Y = X，第一次运行加密（X ^ Y），第二次以相同密钥流运行即可解密。</p>
     <p>安全建议（*）：</p>
@@ -36,38 +34,137 @@
       <li>丢弃密钥流开头的若干字节（RC-dropN）以降低偏差</li>
     </ul>
     <p>（*）不保证绝对安全；若丢失初始向量或 dropN 参数，加密数据将无法恢复</p>
-    <form name="frmConvert" action="">
-      <p>源文件：
-      <input type="file" name="fileinput" onchange="openFile(event)" /></p>
-      <p>初始向量（十六进制，任意长度，最多 256 字节）：<br>
-      <input type="text" name="initial_bytes" value="0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88">
-      <br>
-      丢弃密钥流前 <input type="text" name="dropN" value="256"> 个字节。
-      </p>
-        <p>选项：</p>
-          <p><input type="checkbox" name="chbSeparator" value="sep" checked="checked">移除初始向量中的 "0x" 前缀及非十六进制字符</p>
-        <p>清理后的初始向量（已移除非十六进制字符）：</p>
-        <p><input type="text" name="cleaned_hex" readonly="readonly" value=""><button type="button" onclick="copyToClipboard(this.previousElementSibling.value)">复制</button></p>				      
-        
-        <p>创建文件名：</p>
-        <p>
-        <input type="text" name="filename" value="file.rc4">
-        </p>      
-      <p>
-        <button type="button" name="btnConvert" onclick="Convert()">加密/解密</button>
-      </p>
-    </form>
-    <!-- <h2>Offline tool</h2>
-    <p>
-    Simple win32 application with similar functionality. Password / initial vector can be entered as text
-    or in hexadecimal form. There is also option to skip (copy directly) initial bytes (e.g. header) from processed file.
-    Turbo C++: <a href="../bin/RC4/FileEncryptDecrypt.zip">File加密解密.zip</a><br>
-    <img src="../bin/RC4/FileEncryptDecrypt.png" alt="RC4 file encrypt and decrypt">     
-    </p> -->
+
+    <div class="form-card">
+      <div class="field">
+        <label class="field-label" for="fileinput">源文件</label>
+        <input type="file" id="fileinput" onchange="handleFile(event)">
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="initial_bytes">初始向量</label>
+        <input type="text" id="initial_bytes" value="0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88">
+        <span class="field-hint">十六进制，任意长度，最多 256 字节</span>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="dropN">丢弃密钥流字节数 (dropN)</label>
+        <input type="text" id="dropN" value="256">
+      </div>
+
+      <div class="field">
+        <label class="field-label">选项</label>
+        <label><input type="checkbox" id="chbSeparator" checked> 移除初始向量中的 "0x" 前缀及非十六进制字符</label>
+      </div>
+
+      <div class="field">
+        <label class="field-label">清理后的初始向量</label>
+        <div class="input-row">
+          <input type="text" id="cleaned_hex" readonly="readonly" value="">
+          <button type="button" class="btn-copy" onclick="copyToClipboard(document.getElementById('cleaned_hex').value)" aria-label="复制"></button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="filename">创建文件名</label>
+        <input type="text" id="filename" value="file.rc4">
+      </div>
+    </div>
+
+    <div class="btn-group">
+      <button type="button" id="btnConvert" onclick="Convert()">加密/解密</button>
+    </div>
+
+    <div class="result-card">
+      <div class="field">
+        <span class="field-label">处理结果</span>
+        <div class="input-row">
+          <input type="text" id="result_hex" readonly="readonly" value="" placeholder="点击加密/解密后显示结果">
+          <button type="button" class="btn-copy" onclick="copyToClipboard(document.getElementById('result_hex').value)" aria-label="复制"></button>
+        </div>
+      </div>
+    </div>
+
   </section>
   <footer class="page-footer">
     <p class="copyright">@鸽子笼 2020-2026</p>
   </footer>
 </main>
+
+<script>
+// Inject copy icons into btn-copy buttons
+document.querySelectorAll('.btn-copy').forEach(function (btn) {
+  btn.innerHTML = ICON_COPY;
+});
+
+(function () {
+  var fileData = null;
+  var fileName = '';
+
+  window.handleFile = function (event) {
+    openFile(event, function (result) {
+      fileData = result.data;
+      fileName = result.name;
+      document.getElementById('filename').value = fileName + '.rc4';
+    });
+  };
+
+  window.Convert = function () {
+    if (!fileData) {
+      showToast('请先选择源文件');
+      return;
+    }
+
+    var remove0x = document.getElementById('chbSeparator').checked;
+    var cleanedHex = cleanHex(document.getElementById('initial_bytes').value, remove0x);
+    document.getElementById('cleaned_hex').value = cleanedHex;
+
+    if (cleanedHex.length % 2) {
+      showToast('错误：初始向量十六进制长度为奇数');
+      return;
+    }
+
+    var ivBytes = [];
+    for (var i = 0; i < cleanedHex.length / 2; i++) {
+      ivBytes.push(parseInt(cleanedHex.substr(i * 2, 2), 16));
+    }
+
+    var dropN = parseInt(document.getElementById('dropN').value, 10);
+    if (isNaN(dropN) || dropN < 0) dropN = 0;
+
+    // RC4 KSA
+    var S = [];
+    for (var i = 0; i < 256; i++) S[i] = i;
+    var j = 0;
+    for (var i = 0; i < 256; i++) {
+      j = (j + S[i] + ivBytes[i % ivBytes.length]) & 255;
+      var tmp = S[i]; S[i] = S[j]; S[j] = tmp;
+    }
+
+    // RC4 PRGA with dropN
+    var ii = 0, jj = 0;
+    for (var d = 0; d < dropN; d++) {
+      ii = (ii + 1) & 255;
+      jj = (jj + S[ii]) & 255;
+      var tmp = S[ii]; S[ii] = S[jj]; S[jj] = tmp;
+    }
+
+    // Encrypt/decrypt
+    var out = new Uint8Array(fileData.length);
+    for (var k = 0; k < fileData.length; k++) {
+      ii = (ii + 1) & 255;
+      jj = (jj + S[ii]) & 255;
+      var tmp = S[ii]; S[ii] = S[jj]; S[jj] = tmp;
+      out[k] = fileData[k] ^ S[(S[ii] + S[jj]) & 255];
+    }
+
+    var hexResult = bytes2hex(out);
+    document.getElementById('result_hex').value = hexResult;
+
+    var outFilename = document.getElementById('filename').value || 'file.rc4';
+    createFileFromHex(hexResult, outFilename);
+  };
+})();
+</script>
 </body>
 </html>

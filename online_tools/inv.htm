@@ -10,11 +10,9 @@
   <link rel="stylesheet" href="../styles.css" />
   <link rel="stylesheet" href="./css/tool.css">
   <script src="./js/utils.js"></script>
-
 </head>
 <body>
 <div class="grain" aria-hidden="true"></div>
-<div id="bg"></div>
 <main class="container">
   <nav class="top-nav">
     <a href="../index.html" class="back-link">← 作品集</a>
@@ -22,120 +20,118 @@
   </nav>
   <header class="tool-header">
     <h1>位反转工具</h1>
-    <p class="tool-desc">对十六进制数据执行按位取反操作</p>
+    <p class="tool-desc">对十六进制数据执行按位取反操作（NOT）</p>
   </header>
   <section class="tool-body">
-<script type="text/javascript">
-//<!--
-      function showToast(msg){var t=document.createElement('div');t.textContent=msg;t.style.cssText='position:fixed;top:20px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 24px;border-radius:8px;font-size:14px;z-index:9999;opacity:0;transition:opacity .3s';document.body.appendChild(t);requestAnimationFrame(function(){t.style.opacity='1'});setTimeout(function(){t.style.opacity='0';setTimeout(function(){t.remove()},300)},2500)}
 
+    <div class="form-card">
+      <div class="field">
+        <label class="field-label" for="inputHex">十六进制字符串</label>
+        <input type="text" id="inputHex" value="">
+        <span class="field-hint">十六进制集合以外的字符将被忽略，因此 "12AB34" = "12 AB 34" = "12, AB, 34" 等价，输入不区分大小写。</span>
+      </div>
 
-      function ShowDecodedAsText(val) {
-        var target = document.getElementById('divDecodedText');
-        target.innerHTML = val;
-      }
+      <div class="field">
+        <label>
+          <input type="checkbox" id="chkRemove0x" checked="checked">
+          移除输入中的 "0x" 前缀
+        </label>
+      </div>
 
-      function Convert() {
-        var cleaned_hex = cleanHex(document.frmConvert.hex.value, document.frmConvert.chbSeparator.checked);
-        document.frmConvert.cleaned_hex.value = cleaned_hex;
-        if (cleaned_hex.length % 2) {
-          showToast("错误：十六进制长度为奇数");
-          return;
-        }
+      <div class="field">
+        <label>
+          <input type="checkbox" id="chkOutput0x">
+          输出使用 "0x" 前缀及逗号分隔
+        </label>
+      </div>
+    </div>
 
-        var binary = new Array();
-        for (var i = 0; i < cleaned_hex.length / 2; i++) {
-          var h = cleaned_hex.substr(i * 2, 2);
-          binary[i] = 255 - parseInt(h, 16);
-        }
+    <div class="btn-group">
+      <button type="button" onclick="Convert()">转换</button>
+    </div>
 
-        var output = binary;
+    <div class="result-card">
+      <div class="field">
+        <span class="field-label">清理后的输入</span>
+        <div class="input-row">
+          <input type="text" id="outputCleaned" readonly="readonly" value="">
+          <button type="button" class="btn-copy" id="btnCopyCleaned" onclick="copyToClipboard(document.getElementById('outputCleaned').value)"></button>
+        </div>
+      </div>
 
-        var outputSeparator = document.frmConvert.chbOutputSeparator.checked;
+      <div class="field">
+        <span class="field-label">反转后的字节</span>
+        <div class="input-row">
+          <input type="text" id="outputHex" readonly="readonly" value="">
+          <button type="button" class="btn-copy" id="btnCopyHex" onclick="copyToClipboard(document.getElementById('outputHex').value)"></button>
+        </div>
+      </div>
 
-        var htmlStr = "<p style=\"font-family: courier new, monospace\"><b>";
-        var hexStr = "";
-        for (i = 0; i < output.length; i++) {
-          if (outputSeparator) {
-            if (hexStr.length) {
-              hexStr += ", 0x";
-            } else {
-              hexStr += "0x";
-            }
-          }
-          if (output[i] < 16) {
-            hexStr += "0"; // leading zero
-          }
-          hexStr += output[i].toString(16).toUpperCase();
+      <div class="field">
+        <span class="field-label">ASCII 文本</span>
+        <span class="field-hint">32~126 范围外的字节以斜体显示为 [字节值]</span>
+        <div class="result-value" id="outputAscii"><i>（解码后的文本将显示在此处）</i></div>
+      </div>
+    </div>
 
-          if (output[i] >= 32 && output[i] <= 126) {
-            switch (String.fromCharCode(output[i])) {
-              case '&':
-                htmlStr += "&amp;";
-                break;
-              case '<':
-                htmlStr += "&lt;";
-                break;
-              case '>':
-                htmlStr += "&gt;";
-                break;
-              case '"':
-                htmlStr += "&quot;";
-                break;
-              case '\'':
-                htmlStr += "&#039;";
-                break;
-              default:
-                htmlStr += String.fromCharCode(output[i]);
-            }
-          } else {
-            htmlStr += "<i>[" + output[i] + "]<" + "/i>";
-          }
-        }
-        htmlStr += "<" + "/b><" + "/p>"; // stupid W3C validator...
-        //document.frmConvert.hex.value = hexText;
-
-        document.frmConvert.output_hex.value = hexStr;;
-
-        ShowDecodedAsText(htmlStr);
-
-      }
-
-      //-->
-</script>
-<form name="frmConvert" action="">
-        <p>十六进制字符串：</p>
-        <p><input type="text" name="hex" value="" style="font-family: monospace;"></p>
-        <p>注意：十六进制集合以外的字符将被忽略，因此 "12AB34" = "12 AB 34" = "12, AB, 34" 等价。
-          输入不区分大小写。</p>
-        <p>选项：</p>
-        <p>
-          <input type="checkbox" name="chbSeparator" value="sep" checked="checked">移除输入中的 "0x" 前缀
-          <br>
-          <input type="checkbox" name="chbOutputSeparator" value="sepOutput">输出使用 "0x" 前缀及逗号分隔
-        </p>
-        <p>清理后的输入：</p>
-        <p><input type="text" name="cleaned_hex" readonly="readonly" value=""
-            style="font-family: monospace;"><button type="button" onclick="copyToClipboard(this.previousElementSibling.value)">复制</button></p>
-        <br>
-        <p>反转后的字节：</p>
-        <p><input type="text" name="output_hex" readonly="readonly" value=""
-            style="font-family: monospace;"><button type="button" onclick="copyToClipboard(this.previousElementSibling.value)">复制</button></p>
-
-        <p>以 ASCII 文本形式输出数据，32~126 范围外的字节以斜体显示为 <i>[字节值]</i>：<br>
-          <div id="divDecodedText">
-            <p><i>（解码后的文本将显示在此处）</i></p>
-          </div>
-          <p>
-            <button type=button name="btnConvert" onclick="Convert()">
-              转换
-            </button>
-          </p>
-      </form>
   </section>
   <footer class="page-footer">
     <p class="copyright">@鸽子笼 2020-2026</p>
   </footer>
 </main>
+
+<script type="text/javascript">
+function Convert() {
+  var remove0x = document.getElementById('chkRemove0x').checked;
+  var cleaned_hex = cleanHex(document.getElementById('inputHex').value, remove0x);
+  document.getElementById('outputCleaned').value = cleaned_hex;
+
+  if (cleaned_hex.length % 2) {
+    showToast('错误：十六进制长度为奇数');
+    return;
+  }
+
+  var binary = [];
+  for (var i = 0; i < cleaned_hex.length / 2; i++) {
+    var h = cleaned_hex.substr(i * 2, 2);
+    binary[i] = 255 - parseInt(h, 16);
+  }
+
+  var outputSeparator = document.getElementById('chkOutput0x').checked;
+
+  var hexStr = '';
+  for (var i = 0; i < binary.length; i++) {
+    if (outputSeparator) {
+      hexStr += (hexStr.length ? ', 0x' : '0x');
+    }
+    if (binary[i] < 16) {
+      hexStr += '0';
+    }
+    hexStr += binary[i].toString(16).toUpperCase();
+  }
+  document.getElementById('outputHex').value = hexStr;
+
+  var htmlStr = '<b>';
+  for (var i = 0; i < binary.length; i++) {
+    if (binary[i] >= 32 && binary[i] <= 126) {
+      switch (String.fromCharCode(binary[i])) {
+        case '&':  htmlStr += '&amp;'; break;
+        case '<':  htmlStr += '&lt;'; break;
+        case '>':  htmlStr += '&gt;'; break;
+        case '"':  htmlStr += '&quot;'; break;
+        case '\'': htmlStr += '&#039;'; break;
+        default:   htmlStr += String.fromCharCode(binary[i]);
+      }
+    } else {
+      htmlStr += '<i>[' + binary[i] + ']</i>';
+    }
+  }
+  htmlStr += '</b>';
+  document.getElementById('outputAscii').innerHTML = htmlStr;
+}
+
+document.getElementById('btnCopyCleaned').innerHTML = ICON_COPY;
+document.getElementById('btnCopyHex').innerHTML = ICON_COPY;
+</script>
 </body>
 </html>

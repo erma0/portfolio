@@ -10,11 +10,9 @@
   <link rel="stylesheet" href="../styles.css" />
   <link rel="stylesheet" href="./css/tool.css">
   <script src="./js/utils.js"></script>
-
 </head>
 <body>
 <div class="grain" aria-hidden="true"></div>
-<div id="bg"></div>
 <main class="container">
   <nav class="top-nav">
     <a href="../index.html" class="back-link">← 作品集</a>
@@ -25,36 +23,82 @@
     <p class="tool-desc">将本地文件编码为 Base64 字符串（纯客户端）</p>
   </header>
   <section class="tool-body">
+    <p>客户端处理（JavaScript，数据不会上传服务器）。将本地文件转换为 Base64 字符串。注意：文件大于 1MB 时可能导致资源消耗过高，大文件建议使用离线工具。</p>
 
-<p>客户端处理（JavaScript，数据不会上传服务器）。将本地文件转换为 Base64 字符串。
-		注意：文件大于 1MB 时可能导致资源消耗过高（如 Chromium 46 加载数 MB 的文本到 textarea 时有明显问题），大文件建议使用离线工具。
-	  </p>
-	  <form name="frmConvert" action="">
-        <p>选项：</p>
-          <p>
-			<input type="checkbox" name="chbNewline" value="newline">将输出拆分为多行
-		  </p>
-		<p>
-		选择文件：
-		<input type="file" name="fileinput" onchange='openFile(event)' /> 或
-        <span id="drop_zone" ondrop="drop_handler(event);" ondragover="dragover_handler(event);" ondragend="dragend_handler(event);">
+    <div class="form-card">
+      <div class="field">
+        <span class="field-label">选项</span>
+        <label><input type="checkbox" id="chbNewline"> 将输出拆分为多行</label>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <div class="field">
+        <span class="field-label">选择文件</span>
+        <input type="file" id="fileInput" onchange="handleFile(event)">
+      </div>
+      <div class="field">
+        <div class="drop-zone" id="dropZone">
+          <span class="drop-zone__icon">📁</span>
           <strong>拖放文件至此</strong>
-        </span>       
-		</p>        
+        </div>
+      </div>
+    </div>
 
-			  </p>		  
-				<p>输出（Base64）：</p>
-			    <p>
-				<textarea name="ed_output" rows="5" cols="87"></textarea>				
-                <br>
-                <br>
-                <button type="button" name="btnCopyOutputToClipboard" onclick="copyOutputToClipboard()">复制到剪贴板</button>
-				</p>			    
-			</form>
+    <div class="result-card">
+      <span class="field-label">Base64 输出</span>
+      <textarea id="edOutput" rows="5" readonly="readonly"></textarea>
+      <div class="btn-group">
+        <button type="button" onclick="copyToClipboard(document.getElementById('edOutput').value)">复制到剪贴板</button>
+      </div>
+    </div>
   </section>
   <footer class="page-footer">
     <p class="copyright">@鸽子笼 2020-2026</p>
   </footer>
 </main>
+
+<script>
+function processFile(data) {
+  var b64 = base64Encode(data);
+  if (document.getElementById('chbNewline').checked) {
+    b64 = b64.match(/.{1,76}/g).join('\n');
+  }
+  document.getElementById('edOutput').value = b64;
+}
+
+function handleFile(event) {
+  openFile(event, function (result) {
+    processFile(result.data);
+  });
+}
+
+// Drag and drop
+(function () {
+  var dz = document.getElementById('dropZone');
+  dz.addEventListener('dragover', function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+    dz.classList.add('drag-over');
+  });
+  dz.addEventListener('dragleave', function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+    dz.classList.remove('drag-over');
+  });
+  dz.addEventListener('drop', function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+    dz.classList.remove('drag-over');
+    var file = e.dataTransfer.files && e.dataTransfer.files[0];
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function (ev) {
+      processFile(new Uint8Array(ev.target.result));
+    };
+    reader.readAsArrayBuffer(file);
+  });
+})();
+</script>
 </body>
 </html>

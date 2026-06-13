@@ -10,11 +10,9 @@
   <link rel="stylesheet" href="../styles.css" />
   <link rel="stylesheet" href="./css/tool.css">
   <script src="./js/utils.js"></script>
-
 </head>
 <body>
 <div class="grain" aria-hidden="true"></div>
-<div id="bg"></div>
 <main class="container">
   <nav class="top-nav">
     <a href="../index.html" class="back-link">← 作品集</a>
@@ -25,196 +23,146 @@
     <p class="tool-desc">将 ASCII 文本转换为 Unicode 宽字符十六进制数组</p>
   </header>
   <section class="tool-body">
-<script type="text/javascript">
-//<!--
-    function copyOutputToClipboard(btn) {
-        var target;
-        if (btn == document.frmConvert.btnCopy2B)
-          target = document.frmConvert.hex2B;
-        else if (btn == document.frmConvert.btnCopy4B)
-          target = document.frmConvert.hex4B;
-        else if (btn == document.frmConvert.btnCopy8B)
-          target = document.frmConvert.hex8B;
-        else
-          return;
-        
-        // https://stackoverflow.com/questions/51158061/copy-data-to-clipboard-without-selecting-any-text
-        // - restoring original selection doesn't seem to work        
-        var origSelectionStart, origSelectionEnd;
-        origSelectionStart = target.selectionStart;
-        origSelectionEnd = target.selectionEnd;
-        // select the content
-        var currentFocus = document.activeElement;
-        target.focus();
-        target.setSelectionRange(0, target.value.length);
-        var succeed;
-        try {
-            succeed = document.execCommand("copy");
-        } catch(e) {
-            succeed = false;
-        }
-        // restore original focus
-        if (currentFocus && typeof currentFocus.focus === "function") {
-            currentFocus.focus();
-        }
-        // restore prior selection
-        target.setSelectionRange(origSelectionStart, origSelectionEnd);                        
-    }        
-    
-    function Convert() {
-        var input = document.frmConvert.ed_input.value;
-        var separator1 = "", separator2 = "";
-        if (document.frmConvert.chbSeparator.checked) {
-          separator1 = "0x";
-          separator2 = ", "
-        }
-        var bigEndian = document.frmConvert.chbBigEndian.checked;
-        var suffix4B = document.frmConvert.suffix4B.value;        
-        var suffix8B = document.frmConvert.suffix8B.value;                
-        
-        var hexText;
-        
-        if (input.length % 2) {
-          document.frmConvert.hex2B.value = "无效：字符数为奇数，无法组成 16 位整数";      
-        } else {
-          hexText = "";
-          if (bigEndian) {
-            i = 0;
-            while (i < input.length) {
-              hexText += separator1;
-              for (j=0; j<2; j++) {            
-                  charVal = input.charCodeAt(i+j);
-                  hexText += (charVal<16?"0":"") + dec2hex(charVal);
-              }
-              hexText += separator2;       
-              i += 2;
-            }
-          } else {
-            i = 0;
-            while (i < input.length) {
-              hexText += separator1;            
-              for (j=1; j>=0; j--) {            
-                  charVal = input.charCodeAt(i+j);
-                  hexText += (charVal<16?"0":"") + dec2hex(charVal);
-              }
-              hexText += separator2;       
-              i += 2;
-            }          
-          }
-          document.frmConvert.hex2B.value = hexText;
-        }
-        
-        if (input.length % 4) {
-          document.frmConvert.hex4B.value = "无效：字符数不是 4 的整数倍";      
-        } else {
-          hexText = "";
-          if (bigEndian) {
-            i = 0;
-            while (i < input.length) {
-              hexText += separator1;            
-              charVal = input.charCodeAt(i);
-              for (j=0; j<4; j++) {            
-                  charVal = input.charCodeAt(i+j);
-                  hexText += (charVal<16?"0":"") + dec2hex(charVal);
-              }
-              hexText += suffix4B;
-              hexText += separator2;       
-              i += 4;
-            }
-          } else {
-            i = 0;
-            while (i < input.length) {
-              hexText += separator1;            
-              charVal = input.charCodeAt(i);
-              for (j=3; j>=0; j--) {            
-                  charVal = input.charCodeAt(i+j);
-                  hexText += (charVal<16?"0":"") + dec2hex(charVal);
-              }
-              hexText += suffix4B;
-              hexText += separator2;       
-              i += 4;
-            }       
-          }
-          document.frmConvert.hex4B.value = hexText;
-        }
-
-        if (input.length % 8) {
-          document.frmConvert.hex8B.value = "无效：字符数不是 8 的整数倍";      
-        } else {
-          hexText = "";
-          if (bigEndian) {
-            i = 0;
-            while (i < input.length) {
-              hexText += separator1;            
-              charVal = input.charCodeAt(i);
-              for (j=0; j<8; j++) {            
-                  charVal = input.charCodeAt(i+j);
-                  hexText += (charVal<16?"0":"") + dec2hex(charVal);
-              }
-              hexText += suffix8B;
-              hexText += separator2;       
-              i += 8;
-            }
-          } else {
-            i = 0;
-            while (i < input.length) {
-              hexText += separator1;            
-              charVal = input.charCodeAt(i);
-              for (j=7; j>=0; j--) {            
-                  charVal = input.charCodeAt(i+j);
-                  hexText += (charVal<16?"0":"") + dec2hex(charVal);
-              }
-              hexText += suffix8B;
-              hexText += separator2;       
-              i += 8;
-            }       
-          }
-          document.frmConvert.hex8B.value = hexText;
-        }
-
-    }
-    
-    function onInputChange() {
-      if (document.frmConvert.chbConvertOnChange.checked) {
-        Convert();
-      }    
-    } 
-
-//-->
-</script>
-<p>
-    将文本转换为 16位/32位/64位十六进制整数数组。 
-    </p>
-      <form name="frmConvert" action="">
-				<p>输入文本：</p>
-			    <p>
-            <textarea name="ed_input" rows="10" cols="67" oninput="onInputChange()"></textarea>
-          </p>
-        <p>选项：<br>
-          <input type="checkbox" name="chbSeparator" value="sep" checked="yes">输出添加 0x 前缀及逗号分隔符<br>
-          <input type="checkbox" name="chbBigEndian" value="sep">大端序输出<br>
-          <input type="checkbox" name="chbConvertOnChange" value="sep">输入变化时立即转换<br>
-          32 位值的后缀（例如 UL） <input type="text" name="suffix4B" value=""><br>          
-          64 位值的后缀（例如 ULL） <input type="text" name="suffix8B" value="ULL">
-        </p>
-        <p>
-			    <button type=button name="btnConvert"
-            onclick="Convert()">
-            转换
-          </button>
-			  </p>
-				<p>输出：16 位整数</p>
-			  <p><input type="text" name="hex2B" value=""><button type=button name="btnCopy2B" onclick="copyOutputToClipboard(this)">复制</button></p>			    
-				<p>输出：32 位整数</p>
-			  <p><input type="text" name="hex4B" value=""><button type=button name="btnCopy4B" onclick="copyOutputToClipboard(this)">复制</button></p>				    
-				<p>输出：64 位整数</p>
-			  <p><input type="text" name="hex8B" value=""><button type=button name="btnCopy8B" onclick="copyOutputToClipboard(this)">复制</button></p>			    
-			  
-			</form>
+    <div class="form-card">
+      <div class="field">
+        <label class="field-label" for="inputText">输入文本</label>
+        <textarea id="inputText" rows="6" oninput="onInputChange()" placeholder="在此输入要转换的文本…"></textarea>
+      </div>
+      <div class="field">
+        <label class="field-label">选项</label>
+        <label style="display:block;margin-bottom:0.4rem;"><input type="checkbox" id="chbSeparator" checked="checked"> 输出添加 0x 前缀及逗号分隔符</label>
+        <label style="display:block;margin-bottom:0.4rem;"><input type="checkbox" id="chbBigEndian"> 大端序输出</label>
+        <label style="display:block;margin-bottom:0.4rem;"><input type="checkbox" id="chbConvertOnChange"> 输入变化时立即转换</label>
+        <label style="display:block;margin-bottom:0.4rem;">32 位值的后缀（例如 UL） <input type="text" id="suffix4B" value="" style="width:4rem;display:inline;"></label>
+        <label style="display:block;">64 位值的后缀（例如 ULL） <input type="text" id="suffix8B" value="ULL" style="width:4rem;display:inline;"></label>
+      </div>
+    </div>
+    <div class="btn-group">
+      <button type="button" onclick="convert()">转换</button>
+    </div>
+    <div class="result-card">
+      <div class="field">
+        <label class="field-label">输出：16 位整数</label>
+        <div class="input-row">
+          <input type="text" id="hex2B" readonly="readonly" placeholder="16 位十六进制输出">
+          <button type="button" class="btn-copy" onclick="copyToClipboard(document.getElementById('hex2B').value)"><script>document.write(ICON_COPY)</script></button>
+        </div>
+      </div>
+    </div>
+    <div class="result-card">
+      <div class="field">
+        <label class="field-label">输出：32 位整数</label>
+        <div class="input-row">
+          <input type="text" id="hex4B" readonly="readonly" placeholder="32 位十六进制输出">
+          <button type="button" class="btn-copy" onclick="copyToClipboard(document.getElementById('hex4B').value)"><script>document.write(ICON_COPY)</script></button>
+        </div>
+      </div>
+    </div>
+    <div class="result-card">
+      <div class="field">
+        <label class="field-label">输出：64 位整数</label>
+        <div class="input-row">
+          <input type="text" id="hex8B" readonly="readonly" placeholder="64 位十六进制输出">
+          <button type="button" class="btn-copy" onclick="copyToClipboard(document.getElementById('hex8B').value)"><script>document.write(ICON_COPY)</script></button>
+        </div>
+      </div>
+    </div>
   </section>
   <footer class="page-footer">
     <p class="copyright">@鸽子笼 2020-2026</p>
   </footer>
 </main>
+<script>
+function convert() {
+  var input = document.getElementById('inputText').value;
+  var useSep = document.getElementById('chbSeparator').checked;
+  var bigEndian = document.getElementById('chbBigEndian').checked;
+  var suffix4B = document.getElementById('suffix4B').value;
+  var suffix8B = document.getElementById('suffix8B').value;
+  var sep1 = useSep ? '0x' : '';
+  var sep2 = useSep ? ', ' : '';
+
+  // 16-bit
+  if (input.length % 2) {
+    document.getElementById('hex2B').value = '无效：字符数为奇数，无法组成 16 位整数';
+  } else {
+    var hexText = '';
+    var i = 0;
+    while (i < input.length) {
+      hexText += sep1;
+      if (bigEndian) {
+        for (var j = 0; j < 2; j++) {
+          var charVal = input.charCodeAt(i + j);
+          hexText += (charVal < 16 ? '0' : '') + dec2hex(charVal);
+        }
+      } else {
+        for (var j = 1; j >= 0; j--) {
+          var charVal = input.charCodeAt(i + j);
+          hexText += (charVal < 16 ? '0' : '') + dec2hex(charVal);
+        }
+      }
+      hexText += sep2;
+      i += 2;
+    }
+    document.getElementById('hex2B').value = hexText;
+  }
+
+  // 32-bit
+  if (input.length % 4) {
+    document.getElementById('hex4B').value = '无效：字符数不是 4 的整数倍';
+  } else {
+    var hexText = '';
+    var i = 0;
+    while (i < input.length) {
+      hexText += sep1;
+      if (bigEndian) {
+        for (var j = 0; j < 4; j++) {
+          var charVal = input.charCodeAt(i + j);
+          hexText += (charVal < 16 ? '0' : '') + dec2hex(charVal);
+        }
+      } else {
+        for (var j = 3; j >= 0; j--) {
+          var charVal = input.charCodeAt(i + j);
+          hexText += (charVal < 16 ? '0' : '') + dec2hex(charVal);
+        }
+      }
+      hexText += suffix4B + sep2;
+      i += 4;
+    }
+    document.getElementById('hex4B').value = hexText;
+  }
+
+  // 64-bit
+  if (input.length % 8) {
+    document.getElementById('hex8B').value = '无效：字符数不是 8 的整数倍';
+  } else {
+    var hexText = '';
+    var i = 0;
+    while (i < input.length) {
+      hexText += sep1;
+      if (bigEndian) {
+        for (var j = 0; j < 8; j++) {
+          var charVal = input.charCodeAt(i + j);
+          hexText += (charVal < 16 ? '0' : '') + dec2hex(charVal);
+        }
+      } else {
+        for (var j = 7; j >= 0; j--) {
+          var charVal = input.charCodeAt(i + j);
+          hexText += (charVal < 16 ? '0' : '') + dec2hex(charVal);
+        }
+      }
+      hexText += suffix8B + sep2;
+      i += 8;
+    }
+    document.getElementById('hex8B').value = hexText;
+  }
+}
+
+function onInputChange() {
+  if (document.getElementById('chbConvertOnChange').checked) {
+    convert();
+  }
+}
+</script>
 </body>
 </html>

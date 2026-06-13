@@ -10,11 +10,42 @@
   <link rel="stylesheet" href="../styles.css" />
   <link rel="stylesheet" href="./css/tool.css">
   <script src="./js/utils.js"></script>
-
+  <style>
+    .test-row {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .test-row input[type="text"] {
+      flex: 1;
+      min-width: 0;
+    }
+    .match-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--ink-mute);
+      opacity: 0.3;
+      flex-shrink: 0;
+      transition: background 0.25s ease, opacity 0.25s ease;
+    }
+    .match-dot.matched {
+      background: #2e9e5a;
+      opacity: 1;
+    }
+    .test-row .btn-outline {
+      flex-shrink: 0;
+      padding: 0.4rem 0.8rem;
+      font-size: 0.78rem;
+    }
+    .ref-table th[colspan="2"] {
+      text-align: center;
+      letter-spacing: 0.06em;
+    }
+  </style>
 </head>
 <body>
 <div class="grain" aria-hidden="true"></div>
-<div id="bg"></div>
 <main class="container">
   <nav class="top-nav">
     <a href="../index.html" class="back-link">← 作品集</a>
@@ -25,176 +56,153 @@
     <p class="tool-desc">在线测试和调试正则表达式匹配</p>
   </header>
   <section class="tool-body">
-<script type="text/javascript">
-<!--
-    function showToast(msg){var t=document.createElement('div');t.textContent=msg;t.style.cssText='position:fixed;top:20px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 24px;border-radius:8px;font-size:14px;z-index:9999;opacity:0;transition:opacity .3s';document.body.appendChild(t);requestAnimationFrame(function(){t.style.opacity='1'});setTimeout(function(){t.style.opacity='0';setTimeout(function(){t.remove()},300)},2500)}
 
-    function TestMatch() {
-      var re = new RegExp(document.frmRegexp.regex.value);
-      if (document.frmRegexp.test1.value.match(re)) {
-        document.frmRegexp.btnMatch1.style.visibility = 'visible';
-      } else {
-        document.frmRegexp.btnMatch1.style.visibility = 'hidden';
-      }
-      if (document.frmRegexp.test2.value.match(re)) {
-        document.frmRegexp.btnMatch2.style.visibility = 'visible';
-      } else {
-        document.frmRegexp.btnMatch2.style.visibility = 'hidden';
-      }
-      if (document.frmRegexp.test3.value.match(re)) {
-        document.frmRegexp.btnMatch3.style.visibility = 'visible';
-      } else {
-        document.frmRegexp.btnMatch3.style.visibility = 'hidden';
-      }
-      if (document.frmRegexp.test4.value.match(re)) {
-        document.frmRegexp.btnMatch4.style.visibility = 'visible';
-      } else {
-        document.frmRegexp.btnMatch4.style.visibility = 'hidden';
-      }
-    }
-    
-    function ShowMatch(inputtext) {
-      var re = new RegExp(document.frmRegexp.regex.value);
-      var m = re.exec(inputtext);
-      if (m == null) {
-        showToast("未匹配");
-      } else {
-        var s = "匹配位置：" + m.index + "\n";
-        for (i = 0; i < m.length; i++) {
-          s = s + m[i] + "\n";
-        }
-        showToast(s);
-      }
-    }    
+    <!-- 正则表达式输入 -->
+    <div class="form-card">
+      <div class="field">
+        <label class="field-label" for="regex-input">搜索表达式</label>
+        <input type="text" id="regex-input" placeholder="输入正则表达式，如 \d+">
+        <span class="field-hint">输入正则表达式后自动匹配下方测试文本</span>
+      </div>
+    </div>
 
-//-->
-</script>
-<p>在线测试正则表达式，支持多段文本匹配。
-      </p>
-      <form name="frmRegexp" action="">
-				<p>搜索表达式（正则表达式）：</p>
-			    <p><input type="text" name="regex" value="" onChange="TestMatch()" onKeyUp="TestMatch()"></p>
-        <p>测试过的文本片段：</p>
-			    <p><input type="text" name="test1" value="" onChange="TestMatch()" onKeyUp="TestMatch()">
-          <button type=button name="btnMatch1"
-            onclick="ShowMatch(document.frmRegexp.test1.value)">
-            显示匹配
-          </button>
-          </p>
+    <!-- 测试文本 -->
+    <div class="form-card">
+      <div class="field">
+        <label class="field-label">测试文本</label>
+      </div>
+      <div class="field">
+        <div class="test-row">
+          <span class="match-dot" id="dot-1"></span>
+          <input type="text" id="test-1" placeholder="测试文本 1">
+          <button type="button" class="btn-outline" onclick="showMatch(1)">显示匹配</button>
+        </div>
+      </div>
+      <div class="field">
+        <div class="test-row">
+          <span class="match-dot" id="dot-2"></span>
+          <input type="text" id="test-2" placeholder="测试文本 2">
+          <button type="button" class="btn-outline" onclick="showMatch(2)">显示匹配</button>
+        </div>
+      </div>
+      <div class="field">
+        <div class="test-row">
+          <span class="match-dot" id="dot-3"></span>
+          <input type="text" id="test-3" placeholder="测试文本 3">
+          <button type="button" class="btn-outline" onclick="showMatch(3)">显示匹配</button>
+        </div>
+      </div>
+      <div class="field">
+        <div class="test-row">
+          <span class="match-dot" id="dot-4"></span>
+          <input type="text" id="test-4" placeholder="测试文本 4">
+          <button type="button" class="btn-outline" onclick="showMatch(4)">显示匹配</button>
+        </div>
+      </div>
+    </div>
 
-			    <p><input type="text" name="test2" value="" onChange="TestMatch()" onKeyUp="TestMatch()">
-          <button type=button name="btnMatch2"
-            onclick="ShowMatch(document.frmRegexp.test2.value)">
-            显示匹配
-          </button>
-          </p>
+    <!-- 参考表 -->
+    <div class="result-card">
+      <div class="field-label">正则表达式基本元素参考</div>
+      <table class="ref-table">
+        <tr><th colspan="2">字面量（Literals）</th></tr>
+        <tr><td>a B G 7 0 @ - = %</td><td>字母和数字，精确匹配</td></tr>
+        <tr><td>\. \\ \$ \[</td><td>转义特殊字符</td></tr>
+        <tr><td>\n \r \t \十进制码 \x十六进制码</td><td>不可打印字符</td></tr>
+        <tr><th colspan="2">锚点（Anchors）</th></tr>
+        <tr><td>^ $</td><td>行首 / 行尾</td></tr>
+        <tr><td>\b</td><td>单词边界</td></tr>
+        <tr><td>\B</td><td>非单词边界</td></tr>
+        <tr><th colspan="2">字符组（Character groups）</th></tr>
+        <tr><td>.</td><td>任意字符（换行符除外）</td></tr>
+        <tr><td>\d \D \s \S \w</td><td>十进制数字、非数字、空白、非空白、[a-zA-Z0-9_] 中的字符</td></tr>
+        <tr><td>[字符列表]</td><td>列表中的任意字符，如 [0123456789]、[a-zA-Z0-9_]</td></tr>
+        <tr><td>[^字符列表]</td><td>列表外的任意字符，如 [^0-9]</td></tr>
+        <tr><th colspan="2">数量词（Counts）— 加 ? 变为非贪婪模式</th></tr>
+        <tr><td>expr*</td><td>0 次或多次</td></tr>
+        <tr><td>expr?</td><td>0 次或 1 次</td></tr>
+        <tr><td>expr+</td><td>1 次或多次</td></tr>
+        <tr><td>expr{n,m}</td><td>n 到 m 次</td></tr>
+        <tr><td>expr{n}</td><td>恰好 n 次</td></tr>
+        <tr><td>expr{n,}</td><td>n 次或更多</td></tr>
+        <tr><th colspan="2">选择（Alternation）：expr1|expr2</th></tr>
+      </table>
+    </div>
 
-			    <p><input type="text" name="test3" value="" onChange="TestMatch()" onKeyUp="TestMatch()">
-          <button type=button name="btnMatch3"
-            onclick="ShowMatch(document.frmRegexp.test3.value)">
-            显示匹配
-          </button>
-          </p>
-
-			    <p><input type="text" name="test4" value="" onChange="TestMatch()" onKeyUp="TestMatch()">
-          <button type=button name="btnMatch4"
-            onclick="ShowMatch(document.frmRegexp.test4.value)">
-            显示匹配
-          </button>
-          </p>
-
-
-			</form>
-			<p>正则表达式基本元素参考：
-		<table>
-
-		<tr><th colspan="2">字面量（Literals）</th>
-		</tr>
-
-      <tr>
-		<td>a B G 7 0 @ - = %</td><td>字母和数字，精确匹配</td>
-		</tr>
-
-      <tr>
-		<td>\. \\ \$ \[</td><td>转义特殊字符</td>
-		</tr>
-
-      <tr>
-		<td>\n \r \t \十进制码 \x十六进制码</td><td>不可打印字符</td>
-		</tr>
-
-
-		<tr><th colspan="2">锚点（Anchors）</th>
-		</tr>
-
-      <tr>
-		<td>^ $</td><td>行首 / 行尾</td>
-		</tr>
-
-      <tr>
-		<td>\b</td><td>单词边界</td>
-		</tr>
-
-      <tr>
-		<td>\B</td><td>非单词边界</td>
-		</tr>
-
-
-		<tr><th colspan="2">字符组（Character groups）</th>
-		</tr>
-
-      <tr>
-		<td>.</td><td>任意字符（换行符除外）</td>
-		</tr>
-		
-      <tr>
-		<td>\d \D \s \S \w</td><td>十进制数字、非数字、空白、非空白、[a-zA-Z0-9_] 中的字符</td>
-		</tr>
-		
-      <tr>
-		<td>[字符列表]</td><td>列表中的任意字符，如 [0123456789]、[a-zA-Z0-9_]</td>
-		</tr>
-		
-      <tr>
-		<td>[^字符列表]</td><td>列表外的任意字符，如 [^0-9]</td>
-		</tr>
-		
-
-		<tr><th colspan="2">数量词（Counts）— 加 ? 变为非贪婪模式</th>
-		</tr>
-
-      <tr>
-		<td>expr*</td><td>0 次或多次</td>
-		</tr>
-
-      <tr>
-		<td>expr?</td><td>0 次或 1 次</td>
-		</tr>
-
-      <tr>
-		<td>expr+</td><td>1 次或多次</td>
-		</tr>
-
-      <tr>
-		<td>expr{n,m}</td><td>n 到 m 次</td>
-		</tr>
-
-      <tr>
-		<td>expr{n}</td><td>恰好 n 次</td>
-		</tr>
-
-      <tr>
-		<td>expr{n,}</td><td>n 次或更多</td>
-		</tr>
-
-		<tr><th colspan="2">选择（Alternation）：expr1|expr2</th>
-		</tr>
-		
-		</table>
   </section>
   <footer class="page-footer">
     <p class="copyright">@鸽子笼 2020-2026</p>
   </footer>
 </main>
+
+<script>
+(function () {
+  var regexInput = document.getElementById('regex-input');
+  var testInputs = [
+    document.getElementById('test-1'),
+    document.getElementById('test-2'),
+    document.getElementById('test-3'),
+    document.getElementById('test-4')
+  ];
+  var dots = [
+    document.getElementById('dot-1'),
+    document.getElementById('dot-2'),
+    document.getElementById('dot-3'),
+    document.getElementById('dot-4')
+  ];
+
+  function testMatch() {
+    var pattern = regexInput.value;
+    var re;
+    try {
+      re = pattern ? new RegExp(pattern) : null;
+    } catch (e) {
+      showToast('正则表达式无效：' + e.message);
+      for (var i = 0; i < dots.length; i++) {
+        dots[i].classList.remove('matched');
+      }
+      return;
+    }
+    for (var i = 0; i < testInputs.length; i++) {
+      if (re && testInputs[i].value.match(re)) {
+        dots[i].classList.add('matched');
+      } else {
+        dots[i].classList.remove('matched');
+      }
+    }
+  }
+
+  regexInput.addEventListener('input', testMatch);
+  for (var i = 0; i < testInputs.length; i++) {
+    testInputs[i].addEventListener('input', testMatch);
+  }
+
+  window.showMatch = function (index) {
+    var pattern = regexInput.value;
+    if (!pattern) {
+      showToast('请先输入正则表达式');
+      return;
+    }
+    var re;
+    try {
+      re = new RegExp(pattern);
+    } catch (e) {
+      showToast('正则表达式无效：' + e.message);
+      return;
+    }
+    var text = testInputs[index - 1].value;
+    var m = re.exec(text);
+    if (m == null) {
+      showToast('未匹配');
+    } else {
+      var s = '匹配位置：' + m.index;
+      for (var i = 0; i < m.length; i++) {
+        s += '\n' + m[i];
+      }
+      showToast(s);
+    }
+  };
+})();
+</script>
 </body>
 </html>

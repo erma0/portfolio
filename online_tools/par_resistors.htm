@@ -10,11 +10,9 @@
   <link rel="stylesheet" href="../styles.css" />
   <link rel="stylesheet" href="./css/tool.css">
   <script src="./js/utils.js"></script>
-
 </head>
 <body>
 <div class="grain" aria-hidden="true"></div>
-<div id="bg"></div>
 <main class="container">
   <nav class="top-nav">
     <a href="../index.html" class="back-link">← 作品集</a>
@@ -25,46 +23,81 @@
     <p class="tool-desc">搜索两个并联电阻组合以匹配目标等效阻值</p>
   </header>
   <section class="tool-body">
-<script type="text/javascript">
-//<!--
-function showToast(msg){var t=document.createElement('div');t.textContent=msg;t.style.cssText='position:fixed;top:20px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 24px;border-radius:8px;font-size:14px;z-index:9999;opacity:0;transition:opacity .3s';document.body.appendChild(t);requestAnimationFrame(function(){t.style.opacity='1'});setTimeout(function(){t.style.opacity='0';setTimeout(function(){t.remove()},300)},2500)}
+    <p>此工具在 E24（5% 精度）电阻系列中搜索两个并联后等效阻值最接近目标值的电阻组合，适合用于替代手头缺少的阻值。精确匹配将被排除——本工具专用于搜索替代方案。</p>
 
-var E24_set = [1.0, 1.1, 1.2, 1.3, 1.5, 1.6, 1.8, 2.0, 2.2, 2.4, 2.7, 3.0, 3.3, 3.6, 3.9, 4.3, 4.7, 5.1, 5.6, 6.2, 6.8, 7.5, 8.2, 9.1]; 
+    <div class="form-card">
+      <div class="field">
+        <label class="field-label" for="equivalentResistance">目标等效阻值（Ω）</label>
+        <input type="text" id="equivalentResistance" value="2300">
+      </div>
+      <div class="field">
+        <label class="field-label">搜索范围</label>
+        <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+          <span>从</span>
+          <select id="selectRangeMin">
+            <option value="0.9">0.9</option>
+            <option value="0.95">0.95</option>
+            <option value="0.97">0.97</option>
+            <option value="0.98" selected>0.98</option>
+            <option value="0.99">0.99</option>
+            <option value="1.00">1.00</option>
+          </select>
+          <span>到</span>
+          <select id="selectRangeMax">
+            <option value="1.00">1.00</option>
+            <option value="1.01">1.01</option>
+            <option value="1.02" selected>1.02</option>
+            <option value="1.03">1.03</option>
+            <option value="1.05">1.05</option>
+            <option value="1.1">1.1</option>
+          </select>
+          <span>倍目标阻值</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="btn-group">
+      <button type="button" onclick="Execute()">搜索电阻组合</button>
+    </div>
+
+    <div class="result-card" id="divOutput">
+      <span class="result-value" style="color: var(--ink-mute);">点击"搜索电阻组合"查看结果</span>
+    </div>
+  </section>
+  <footer class="page-footer">
+    <p class="copyright">@鸽子笼 2020-2026</p>
+  </footer>
+</main>
+
+<script>
+var E24_set = [1.0, 1.1, 1.2, 1.3, 1.5, 1.6, 1.8, 2.0, 2.2, 2.4, 2.7, 3.0, 3.3, 3.6, 3.9, 4.3, 4.7, 5.1, 5.6, 6.2, 6.8, 7.5, 8.2, 9.1];
 
 function getNextResistor(resistance) {
   var order = 0;
   var mantissa = resistance * 1.000001;
   if (resistance >= 1) {
-    while (mantissa >= 10) {
-      mantissa /= 10;
-      order++;
-    } 
+    while (mantissa >= 10) { mantissa /= 10; order++; }
   } else {
-    while (mantissa < 1) {
-      mantissa *= 10;
-      order--;
-    }
+    while (mantissa < 1) { mantissa *= 10; order--; }
   }
   var higherMantissa = E24_set[0];
-  var higherMantissaFound = false; 
-  for(i=0; i<E24_set.length; i++) {
+  var higherMantissaFound = false;
+  for (var i = 0; i < E24_set.length; i++) {
     higherMantissa = E24_set[i];
     if (higherMantissa > mantissa) {
       higherMantissaFound = true;
       break;
-    }    
+    }
   }
-  if (higherMantissaFound == false) {
-    // roll-over to 1.0
+  if (!higherMantissaFound) {
     order++;
     higherMantissa = E24_set[0];
   }
-  return (higherMantissa * Math.pow(10, order));  
+  return (higherMantissa * Math.pow(10, order));
 }
 
 function Execute() {
-  // get requested resistance in Ohms
-  var resistance = parseFloat(document.frmConvert.equivalentResistance.value);
+  var resistance = parseFloat(document.getElementById('equivalentResistance').value);
   if (isNaN(resistance)) {
     showToast("阻值无效");
     return;
@@ -73,84 +106,39 @@ function Execute() {
     showToast("阻值必须大于零");
     return;
   }
-  
+
   var resArray = [];
   var R2, rEquivalent;
-
   var rangeMin = parseFloat(document.getElementById('selectRangeMin').value);
   var rangeMax = parseFloat(document.getElementById('selectRangeMax').value);
 
-  // range of interest for R1: from first resistance larger than requested to 2x requested
   var R1 = getNextResistor(resistance);
-  while (R1 <= 2*resistance) {
+  while (R1 <= 2 * resistance) {
     R2 = R1;
-    while (R2 < 30*resistance) {
-      rEquivalent = (R1*R2)/(R1+R2);
+    while (R2 < 30 * resistance) {
+      rEquivalent = (R1 * R2) / (R1 + R2);
       if (rEquivalent >= rangeMin * resistance && rEquivalent <= rangeMax * resistance) {
         resArray.push({"R1": R1, "R2": R2, "rEquivalent": rEquivalent});
       }
-      // next R2
       R2 = getNextResistor(R2);
     }
-    // next R1
     R1 = getNextResistor(R1);
   }
 
-  var htmlVal = "<strong>推荐电阻组合：</strong>";
-  htmlVal += "<table>"
+  var htmlVal = "<span class='field-label'>推荐电阻组合</span>";
+  htmlVal += "<table>";
   htmlVal += "<tr><th>R1 (Ω)</th><th>R2 (Ω)</th><th>等效阻值 (Ω)</th><th>误差</th></tr>";
   resArray.forEach(function(res) {
-    htmlVal += "<tr><td>" + parseFloat(res.R1.toPrecision(6)) + "</td><td>" + parseFloat(res.R2.toPrecision(6)) + "</td><td>" + res.rEquivalent.toPrecision(6) + "</td><td>" + (100*(res.rEquivalent - resistance)/resistance).toFixed(2) + "%</td></tr>"
+    htmlVal += "<tr><td>" + parseFloat(res.R1.toPrecision(6)) + "</td><td>" + parseFloat(res.R2.toPrecision(6)) + "</td><td>" + res.rEquivalent.toPrecision(6) + "</td><td>" + (100 * (res.rEquivalent - resistance) / resistance).toFixed(2) + "%</td></tr>";
   });
   htmlVal += "</table>";
 
-  var target = document.getElementById('divOutput'); 
-  target.innerHTML = htmlVal; 
-}
+  if (resArray.length === 0) {
+    htmlVal = "<span class='result-value' style='color: var(--ink-mute);'>未找到符合条件的电阻组合，请尝试放宽搜索范围</span>";
+  }
 
-//-->
+  document.getElementById('divOutput').innerHTML = htmlVal;
+}
 </script>
-<p>
-此工具在 E24（5% 精度）电阻系列中搜索两个并联后等效阻值最接近目标值的电阻组合，适合用于替代手头缺少的阻值。精确匹配将被排除——本工具专用于搜索替代方案。
-</p>
-<form name="frmConvert" action="">
-	<p>
-    目标等效阻值（欧姆）：
-    <input type="text" name="equivalentResistance" value="2300">    
-  </p>			    
-  <p>
-    搜索范围：从
-    <select id="selectRangeMin">
-      <option value="0.9">0.9</option>
-      <option value="0.95">0.95</option>
-      <option value="0.97">0.97</option>
-      <option value="0.98" selected>0.98</option>
-      <option value="0.99">0.99</option>
-      <option value="1.00">1.00</option>
-    </select>
-    到
-    <select id="selectRangeMax">
-      <option value="1.00">1.00</option>
-      <option value="1.01">1.01</option>
-      <option value="1.02" selected>1.02</option>
-      <option value="1.03">1.03</option>
-      <option value="1.05">1.05</option>
-      <option value="1.1">1.1</option>
-    </select>
-    倍目标阻值。
-  </p>			    
-  <p>
-    <button type=button name="btnFind"  onclick="Execute()">搜索电阻组合</button>
-	</p>
-  <p>
-    <div id="divOutput">
-    </div>    
-  </p>
-</form>
-  </section>
-  <footer class="page-footer">
-    <p class="copyright">@鸽子笼 2020-2026</p>
-  </footer>
-</main>
 </body>
 </html>

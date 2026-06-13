@@ -13,7 +13,6 @@
 </head>
 <body>
 <div class="grain" aria-hidden="true"></div>
-<div id="bg"></div>
 <main class="container">
   <nav class="top-nav">
     <a href="../index.html" class="back-link">← 作品集</a>
@@ -24,132 +23,118 @@
     <p class="tool-desc">解析和分析二进制数据结构</p>
   </header>
   <section class="tool-body">
-<script type="text/javascript">
-//<!--
-    function clean_bin(input, remove_0b) {
-        input = input.toUpperCase();
-        
-        if (remove_0b) {
-          input = input.replace(/0B/gi, "");        
-        }
-        
-        var orig_input = input;
-        input = input.replace(/[^01]/g, "");
-        if (orig_input != input)
-            alert ("警告：输入中的非二进制字符已被忽略。");
-        return input;    
-    }
-    
 
+    <div class="form-card">
+      <div class="field">
+        <label class="field-label" for="edInput">二进制字符串</label>
+        <textarea id="edInput" rows="4"></textarea>
+        <span class="field-hint">除 0 和 1 以外的所有字符均被忽略，因此 "100111" = "10 01 11" = "10, 01, 11" 等。</span>
+      </div>
+      <div class="field">
+        <label><input type="checkbox" id="chbSeparator" checked> 移除输入中的 "0b" 前缀</label>
+      </div>
+      <div class="field">
+        <label><input type="checkbox" id="chbHexSeparator" checked> 用 "0x" 分隔字节</label>
+      </div>
+      <div class="btn-group">
+        <button type="button" onclick="Convert()">转换</button>
+      </div>
+    </div>
 
+    <div class="result-card">
+      <span class="field-label">清理后的输入</span>
+      <div class="input-row">
+        <input type="text" id="cleanedBin" readonly="readonly" value="">
+        <button type="button" class="btn-copy" onclick="copyToClipboard(document.getElementById('cleanedBin').value)"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="5" width="9" height="9" rx="1.5"/><path d="M3 11V3a1.5 1.5 0 011.5-1.5H11"/></svg>复制</button>
+      </div>
+    </div>
 
+    <div class="result-card">
+      <span class="field-label">解码数据（十六进制值）</span>
+      <div class="input-row">
+        <input type="text" id="hexOutput" readonly="readonly" value="">
+        <button type="button" class="btn-copy" onclick="copyToClipboard(document.getElementById('hexOutput').value)"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="5" width="9" height="9" rx="1.5"/><path d="M3 11V3a1.5 1.5 0 011.5-1.5H11"/></svg>复制</button>
+      </div>
+    </div>
 
-    function ShowDecodedAsText(val)
-    {
-        var target = document.getElementById('divDecodedText'); 
-        target.innerHTML = val;    
-    }       
-    
-    function Convert() {
-      var cleaned_bin = clean_bin(document.frmConvert.ed_input.value, document.frmConvert.chbSeparator.checked);
-      document.frmConvert.cleaned_bin.value = cleaned_bin;
-      if (cleaned_bin.length % 8) {
-        alert ("错误：清理后的二进制字符串长度不是 8 的整数倍。");     
-        return;
-      }
+    <div class="result-card">
+      <span class="field-label">解码数据（ASCII 文本）</span>
+      <div class="result-value" id="decodedText"><i>（解码后的文本将显示在此处）</i></div>
+      <span class="field-hint">32~126 范围外的字节以斜体显示为 [字节值]</span>
+    </div>
 
-      var separator = "";
-      if (document.frmConvert.chbHexSeparator.checked)
-        separator = ", 0x";
-      var hexText = "";
-      if (document.frmConvert.chbHexSeparator.checked)
-        hexText = "0x";
+    <div class="form-card">
+      <div class="field">
+        <label class="field-label" for="filename">输出文件名</label>
+        <input type="text" id="filename" value="myfile.dat">
+      </div>
+      <div class="btn-group">
+        <button type="button" onclick="ConvertToFile()">转换为文件</button>
+      </div>
+    </div>
 
-      var binary = new Array();
-      for (var i=0; i<cleaned_bin.length/8; i++) {
-        var h = cleaned_bin.substr(i*8, 8);
-        binary[i] = parseInt(h,2);
-        hexText = hexText + ((i!=0)?separator:"") + (binary[i]<16?"0":"") + dec2hex(binary[i]);                
-      }
-
-      var output = binary;
-
-      var htmlStr = "<p style=\"font-family: courier new, monospace\"><b>";
-      for (i=0; i<output.length; i++) {
-        if (output[i] >= 32 && output[i] <= 126) {
-          switch(String.fromCharCode(output[i])) {
-          case '&': htmlStr += "&amp;";
-            break;
-          case '<': htmlStr += "&lt;";
-            break;
-          case '>': htmlStr += "&gt;";
-            break;
-          case '"': htmlStr += "&quot;";
-            break;
-          case '\'': htmlStr += "&#039;";
-            break;
-          default: htmlStr += String.fromCharCode(output[i]);
-          }
-        }
-        else {
-          htmlStr += "<i>[" + output[i] + "]<" + "/i>";
-        }
-      }
-      htmlStr += "<" + "/b><" + "/p>";  // stupid W3C validator...
-      document.frmConvert.hex.value = hexText;
-              
-      ShowDecodedAsText(htmlStr);   
-
-    }
-    
-    function ConvertToFile() {
-      Convert();
-      createFileFromHex(cleanHex(document.frmConvert.hex.value), document.frmConvert.filename.value);
-    }      
-
-//-->
-</script>
-<form name="frmConvert" action="">
-				<p>二进制字符串：
-        <br>
-        <input type="checkbox" name="chbSeparator" value="sep" checked="checked">移除输入中的 "0b" 前缀        
-        </p>
-			    <p><textarea name="ed_input" rows="4" cols="67"></textarea></p>        
-        <p>注意：除 0 和 1 以外的所有字符均被忽略，因此 "100111" = "10 01 11" = "10, 01, 11" 等。
-        </p>
-				<p>清理后的输入：</p>
-			    <p><input type="text" name="cleaned_bin" readonly="readonly" value=""><button type="button" onclick="copyToClipboard(this.previousElementSibling.value)">复制</button></p>
-        <p>解码数据（十六进制值）：
-        <br>
-        <input type="checkbox" name="chbHexSeparator" value="sep" checked="checked">用 "0x" 分隔字节</p>        
-        </p>
-			  <p><input type="text" name="hex" value=""><button type="button" onclick="copyToClipboard(this.previousElementSibling.value)">复制</button></p>                			
-        <p>解码数据（ASCII 文本），32~126 范围外的字节以斜体显示为 <i>[字节值]</i>:<br>        
-        <div id="divDecodedText">
-        <p><i>（解码后的文本将显示在此处）</i></p>
-        </div>        
-			  <p>
-			    <button type=button name="btnConvert"
-            onclick="Convert()">
-            转换
-          </button>
-			  </p>
-        <h2>转换为原始二进制文件（客户端）</h2>
-				<p>创建文件名：</p>
-			    <p>
-				<input type="text" name="filename" value="myfile.dat">
-				</p>	        
-			  <p>
-			    <button type=button name="btnConvertToFile"
-            onclick="ConvertToFile()">
-            转换为文件
-          </button>
-			  </p>        
-			</form>
   </section>
   <footer class="page-footer">
     <p class="copyright">@鸽子笼 2020-2026</p>
   </footer>
 </main>
+
+<script>
+function clean_bin(input, remove_0b) {
+  input = input.toUpperCase();
+  if (remove_0b) {
+    input = input.replace(/0B/gi, '');
+  }
+  var orig_input = input;
+  input = input.replace(/[^01]/g, '');
+  if (orig_input != input)
+    showToast('警告：输入中的非二进制字符已被忽略。');
+  return input;
+}
+
+function Convert() {
+  var cleaned_bin = clean_bin(document.getElementById('edInput').value, document.getElementById('chbSeparator').checked);
+  document.getElementById('cleanedBin').value = cleaned_bin;
+  if (cleaned_bin.length % 8) {
+    showToast('错误：清理后的二进制字符串长度不是 8 的整数倍。');
+    return;
+  }
+
+  var useSeparator = document.getElementById('chbHexSeparator').checked;
+  var separator = useSeparator ? ', 0x' : '';
+  var hexText = useSeparator ? '0x' : '';
+
+  var binary = [];
+  for (var i = 0; i < cleaned_bin.length / 8; i++) {
+    var h = cleaned_bin.substr(i * 8, 8);
+    binary[i] = parseInt(h, 2);
+    hexText += (i !== 0 ? separator : '') + (binary[i] < 16 ? '0' : '') + dec2hex(binary[i]);
+  }
+
+  document.getElementById('hexOutput').value = hexText;
+
+  var htmlStr = '';
+  for (i = 0; i < binary.length; i++) {
+    if (binary[i] >= 32 && binary[i] <= 126) {
+      switch (String.fromCharCode(binary[i])) {
+        case '&': htmlStr += '&amp;'; break;
+        case '<': htmlStr += '&lt;'; break;
+        case '>': htmlStr += '&gt;'; break;
+        case '"': htmlStr += '&quot;'; break;
+        case "'": htmlStr += '&#039;'; break;
+        default: htmlStr += String.fromCharCode(binary[i]);
+      }
+    } else {
+      htmlStr += '<i>[' + binary[i] + ']</i>';
+    }
+  }
+  document.getElementById('decodedText').innerHTML = htmlStr;
+}
+
+function ConvertToFile() {
+  Convert();
+  createFileFromHex(cleanHex(document.getElementById('hexOutput').value), document.getElementById('filename').value);
+}
+</script>
 </body>
 </html>

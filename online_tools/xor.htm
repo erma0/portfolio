@@ -10,11 +10,9 @@
   <link rel="stylesheet" href="../styles.css" />
   <link rel="stylesheet" href="./css/tool.css">
   <script src="./js/utils.js"></script>
-
 </head>
 <body>
 <div class="grain" aria-hidden="true"></div>
-<div id="bg"></div>
 <main class="container">
   <nav class="top-nav">
     <a href="../index.html" class="back-link">← 作品集</a>
@@ -25,110 +23,126 @@
     <p class="tool-desc">对十六进制数据执行 XOR 逐字节运算</p>
   </header>
   <section class="tool-body">
-<script type="text/javascript">
-//<!--
-    function showToast(msg){var t=document.createElement('div');t.textContent=msg;t.style.cssText='position:fixed;top:20px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 24px;border-radius:8px;font-size:14px;z-index:9999;opacity:0;transition:opacity .3s';document.body.appendChild(t);requestAnimationFrame(function(){t.style.opacity='1'});setTimeout(function(){t.style.opacity='0';setTimeout(function(){t.remove()},300)},2500)}
 
+    <p>计算两个十六进制字符串的 XOR 运算。约定第一个字符串（字节数组）为源数据（或明文），第二个字节数组为密钥，若密钥较短则循环使用。</p>
 
-    function Convert() {
-        var cleaned_hex_src = cleanHex(document.frmConvert.hex_src.value, document.frmConvert.chbSeparator.checked);
-        document.frmConvert.cleaned_hex_src.value = cleaned_hex_src;
-        if (cleaned_hex_src.length % 2) {
-            showToast("错误：十六进制源长度为奇数");
-            return;
-        }
+    <div class="form-card">
+      <div class="field">
+        <label class="field-label" for="hex_src">源数据（明文）</label>
+        <textarea id="hex_src" rows="3"></textarea>
+        <span class="field-hint">第一个字节数组，十六进制字符串</span>
+      </div>
 
-        var cleaned_hex_key = cleanHex(document.frmConvert.hex_key.value, document.frmConvert.chbSeparator.checked);
-        document.frmConvert.cleaned_hex_key.value = cleaned_hex_key;
-        if (cleaned_hex_key.length % 2) {
-            showToast("错误：十六进制密钥长度为奇数");
-            return;
-        }
+      <div class="field">
+        <label class="field-label" for="hex_key">密钥</label>
+        <textarea id="hex_key" rows="3"></textarea>
+        <span class="field-hint">第二个字节数组，长度不足时循环使用。使用 "FF" 可对所有源位取反</span>
+      </div>
 
-        var binary_src = new Array();
-        for (var i = 0; i < cleaned_hex_src.length / 2; i++) {
-            var h = cleaned_hex_src.substr(i * 2, 2);
-            binary_src[i] = parseInt(h, 16);
-        }
+      <div class="field">
+        <label class="field-label">选项</label>
+        <label><input type="checkbox" id="chbSeparator" checked> 源/密钥：移除 "0x" 前缀</label>
+        <br>
+        <label><input type="checkbox" id="chbSeparatorOut" checked> 输出：使用 0x 前缀及逗号分隔符（C 风格）</label>
+        <br>
+        <label><input type="checkbox" id="chbNewline" checked> 输出：每 16 字节插入换行</label>
+      </div>
 
-        var binary_key = new Array();
-        for (var i = 0; i < cleaned_hex_key.length / 2; i++) {
-            var h = cleaned_hex_key.substr(i * 2, 2);
-            binary_key[i] = parseInt(h, 16);
-        }
+      <div class="field">
+        <span class="field-hint">十六进制集合以外的字符将被忽略，因此 "12AB34" = "12 AB 34" = "12, AB, 34" 等价。字符串不区分大小写。</span>
+      </div>
+    </div>
 
-        var binary_out = new Array();
-        for (var i = 0; i < binary_src.length; i++) {
-            binary_out[i] = binary_src[i] ^ binary_key[i % binary_key.length];
-        }
+    <div class="btn-group">
+      <button type="button" id="btnConvert" onclick="Convert()">计算 XOR</button>
+    </div>
 
-        var hexText = "";
-        var separator1 = "",
-            separator2 = "";
-        var newline = document.frmConvert.chbNewline.checked;
-        if (document.frmConvert.chbSeparatorOut.checked) {
-            separator1 = "0x";
-            separator2 = ", "
-        }
-        for (i = 0; i < binary_out.length; i++) {
-            var charVal = binary_out[i];
-            hexText = hexText + separator1 + (charVal < 16 ? "0" : "") + dec2hex(charVal) + separator2;
-            if (newline) {
-                if ((i % 16) == 15) {
-                    hexText += "\n";
-                }
-            }
-        }
-        document.frmConvert.hex_out.value = hexText;
-    }
+    <div class="result-card">
+      <div class="field">
+        <span class="field-label">清理后的源数据</span>
+        <div class="input-row">
+          <input type="text" id="cleaned_hex_src" readonly="readonly" value="">
+          <button type="button" class="btn-copy" onclick="copyToClipboard(document.getElementById('cleaned_hex_src').value)" aria-label="复制"></button>
+        </div>
+      </div>
 
-//-->
-</script>
-<p>计算两个十六进制字符串的 XOR 运算。约定第一个字符串（字节数组）为源数据（或明文），第二个字节数组为密钥，若密钥较短则循环使用。
-    </p>
-    <form name="frmConvert" action="">
-        <p>第一个字节数组（"源"/"明文"），十六进制字符串：</p>
-        <p>
-            <textarea name="hex_src" rows="3" cols="87"></textarea>
-        </p>
-        <p>第二个字节数组（"密钥"，长度不足时循环），十六进制字符串：</p>
-        <p>
-            <textarea name="hex_key" rows="3" cols="87"></textarea>
-        </p>
-        <p>注意：十六进制集合以外的字符将被忽略，因此 "12AB34" = "12 AB 34" = "12, AB, 34" 等价。字符串不区分大小写。</p>
-        <p>注意 2：使用 "FF" 作为密钥可对所有源位取反。</p>
-        <p>选项：</p>
-        <p>
-            <input type="checkbox" name="chbSeparator" value="sep" checked="checked">源/密钥：移除 "0x" 前缀
-            <br>
-            <input type="checkbox" name="chbSeparatorOut" value="sep_out" checked="yes">输出：使用 0x 前缀及逗号分隔符（C 风格）
-            <br>
-            <input type="checkbox" name="chbNewline" value="newline" checked="yes">输出：每 16 字节插入换行
-        </p>
-    
-        <p>
-            <button type=button name="btnConvert" onclick="Convert()">
-                计算 XOR
-            </button>
-        </p>
-        <p>清理后的源数据：</p>
-        <p>
-            <input type="text" name="cleaned_hex_src" readonly="readonly" value=""><button type="button" onclick="copyToClipboard(this.previousElementSibling.value)">复制</button>
-        </p>
-        <p>清理后的密钥：</p>
-        <p>
-            <input type="text" name="cleaned_hex_key" readonly="readonly" value=""><button type="button" onclick="copyToClipboard(this.previousElementSibling.value)">复制</button>
-        </p>
-        <p>XOR 结果（十六进制）：</p>
-        <p>
-            <textarea name="hex_out" rows="3" cols="87"></textarea><button type="button" onclick="copyToClipboard(this.previousElementSibling.value)">复制</button>
-        </p>
-    
-    </form>
+      <div class="field">
+        <span class="field-label">清理后的密钥</span>
+        <div class="input-row">
+          <input type="text" id="cleaned_hex_key" readonly="readonly" value="">
+          <button type="button" class="btn-copy" onclick="copyToClipboard(document.getElementById('cleaned_hex_key').value)" aria-label="复制"></button>
+        </div>
+      </div>
+
+      <div class="field">
+        <span class="field-label">XOR 结果（十六进制）</span>
+        <div class="input-row">
+          <textarea id="hex_out" rows="3" readonly="readonly"></textarea>
+          <button type="button" class="btn-copy" onclick="copyToClipboard(document.getElementById('hex_out').value)" aria-label="复制"></button>
+        </div>
+      </div>
+    </div>
+
   </section>
   <footer class="page-footer">
     <p class="copyright">@鸽子笼 2020-2026</p>
   </footer>
 </main>
+
+<script>
+// Inject copy icons into btn-copy buttons
+document.querySelectorAll('.btn-copy').forEach(function (btn) {
+  btn.innerHTML = ICON_COPY;
+});
+
+function Convert() {
+  var remove0x = document.getElementById('chbSeparator').checked;
+
+  var cleaned_hex_src = cleanHex(document.getElementById('hex_src').value, remove0x);
+  document.getElementById('cleaned_hex_src').value = cleaned_hex_src;
+  if (cleaned_hex_src.length % 2) {
+    showToast('错误：十六进制源长度为奇数');
+    return;
+  }
+
+  var cleaned_hex_key = cleanHex(document.getElementById('hex_key').value, remove0x);
+  document.getElementById('cleaned_hex_key').value = cleaned_hex_key;
+  if (cleaned_hex_key.length % 2) {
+    showToast('错误：十六进制密钥长度为奇数');
+    return;
+  }
+
+  var binary_src = [];
+  for (var i = 0; i < cleaned_hex_src.length / 2; i++) {
+    binary_src[i] = parseInt(cleaned_hex_src.substr(i * 2, 2), 16);
+  }
+
+  var binary_key = [];
+  for (var i = 0; i < cleaned_hex_key.length / 2; i++) {
+    binary_key[i] = parseInt(cleaned_hex_key.substr(i * 2, 2), 16);
+  }
+
+  var binary_out = [];
+  for (var i = 0; i < binary_src.length; i++) {
+    binary_out[i] = binary_src[i] ^ binary_key[i % binary_key.length];
+  }
+
+  var hexText = '';
+  var separator1 = '', separator2 = '';
+  var newline = document.getElementById('chbNewline').checked;
+  if (document.getElementById('chbSeparatorOut').checked) {
+    separator1 = '0x';
+    separator2 = ', ';
+  }
+  for (var i = 0; i < binary_out.length; i++) {
+    var charVal = binary_out[i];
+    hexText += separator1 + (charVal < 16 ? '0' : '') + dec2hex(charVal) + separator2;
+    if (newline && (i % 16) === 15) {
+      hexText += '\n';
+    }
+  }
+  document.getElementById('hex_out').value = hexText;
+}
+</script>
 </body>
 </html>

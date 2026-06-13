@@ -51,7 +51,7 @@ portfolio/
     ├── css/                # tools-index.css / tool.css
     ├── js/                 # utils.js / md5.js / rusha.js
     ├── images/             # 图标
-    └── *.htm               # 各工具页（~36 个，冻结）
+    └── *.htm               # 各工具页（~25 个，冻结）
 ```
 
 ---
@@ -321,3 +321,5 @@ portfolio/
 | 2026-06-12 | `works.js` + `icons.js` 合并为 `data.js`（图标内联到数据）；`renderer.js` 移除 `__ICONS` 依赖；修复 wip/archived 卡片 opacity bug；光标光晕 rAF 空转优化；触控设备禁用光晕/倾斜；CSS 标签样式去重；补充 `more` 图标 |
 | 2026-06-12 | 深度架构复盘：①修复 `base64.htm`/`bin_decoder.htm` 缺失 `createFile.js` 引用导致「转换为文件」功能宕机；②清理 4 个无引用的死文件（`main.css`/`mobile.css`/`tree.js`/`jquery-2.1.3.min.js`）；③`renderer.js` 重构——提取 `resolveLink()`/`actionLabel()` 辅助函数，标签生成改用 `map().join()`，增加 per-card try-catch 错误边界；④`animations.js` 去掉冗余外层 IIFE；⑤CSS `no-js` 渐进增强——内联脚本注入 `.js` class，动画初始态全部加 `.js` 前缀，无 JS 时卡片全可见；加 `<noscript>` 回退；删除死选择器 `.about__body` |
 | 2026-06-13 | 全面优化：①`std_scanner` 死链接改为指向 GitHub 仓库；②`invoice.html` 下载按钮指向 GitHub Releases；③删除死文件 `createFile.js`/`style.css`（暗色）/`hex_to_file_new.htm`；④字符拆分入场添加逐字 40ms 延迟；⑤`online_tools/index.html` 去除内联重复脚本，复用 `animations.js`；⑥添加 `og:image` meta 标签；⑦`grid-board.html` 修复 `theme-color`、提取内联 base64 Logo 为独立 PNG 文件；⑧`AGENT.md` 与实际代码同步更新 |
+| 2026-06-13 | online_tools 深度清理：①删除 6 个无引用重定向页（`PEM_to_base64`/`base64_to_PEM`/`hex_to_ascii`/`hex_to_base64`/`hex_to_base32`/`hex_to_base32hex`）；②8 个工具页移除内联 `showToast` 函数（统一由 `utils.js` 提供）；③31 个工具页移除暗色主题遗留 `<div id="bg">`；④`tool.css` 删除 `#bg { display: none }` 兼容规则 |
+| 2026-06-13 | online_tools UI 现代化：①`tool.css` 新增 `.form-card`/`.field`/`.field-label`/`.field-hint`/`.input-row`/`.btn-copy`/`.result-card`/`.btn-group`/`.btn-outline`/`.drop-zone` 等组件类；②`utils.js` 新增 `openFile()` 通用文件读取函数和 `ICON_COPY` SVG 图标常量；③全部 25 个工具页重写——移除 `<form name="...">` 改用 id-based DOM、`alert()` 全部替换为 `showToast()`、使用现代化卡片式布局、复制按钮统一使用 SVG 图标 |

@@ -46,6 +46,7 @@
       background: rgba(44, 74, 62, 0.1);
     }
     .version-card ul { margin: 8px 0 0; }
+    .version-card li { margin-bottom: 4px; }
     .feature-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -70,6 +71,48 @@
       color: var(--ink-soft);
       line-height: 1.6;
     }
+    .btn-web {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      border: 1px solid var(--accent-2);
+      border-radius: var(--radius);
+      color: var(--accent-2);
+      font-family: var(--font-sans);
+      font-size: 14px;
+      font-weight: 500;
+      text-decoration: none;
+      transition: all .2s ease;
+      margin-right: 12px;
+      margin-bottom: 12px;
+    }
+    .btn-web:hover {
+      background: var(--accent-2);
+      color: #fff;
+    }
+    .btn-web svg { flex-shrink: 0; }
+    .edition-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+      margin: 8px 0 0;
+    }
+    .edition-item {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      padding: 8px 12px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      background: var(--bg);
+      color: var(--ink-soft);
+    }
+    .edition-item strong {
+      color: var(--ink);
+      display: block;
+      font-size: 13px;
+      margin-bottom: 2px;
+    }
   </style>
 </head>
 <body>
@@ -83,78 +126,122 @@
       <div class="detail-meta">
         <span class="detail-type desktop">桌面应用</span>
         <span class="detail-type" style="background:rgba(44,74,62,.1);color:var(--accent-2);">Web 应用</span>
-        <span>Tauri 2 · Rust · pdf-lib · 纯前端</span>
+        <span>Tauri 2 · Rust · pdf-lib · PDF.js · 纯前端</span>
       </div>
     </header>
 
     <div class="detail-body">
       <p>
-        跨平台发票批量打印工具，支持 OFD / XML 数电票自动解析、PDF 矢量嵌入打印与批量模板管理。
+        跨平台发票批量打印工具，支持 PDF / OFD / XML 数电票 / 图片等多格式导入，智能排版，一键打印或导出。
         提供两个独立版本，核心功能一致，覆盖不同使用场景：
       </p>
 
+      <!-- 桌面版 -->
       <div class="version-card">
         <h3>
           桌面版
           <span class="ver-tag ver-tag--desktop">v2.0.8</span>
         </h3>
-        <p style="margin:0 0 8px;color:var(--ink-soft)">master 分支 — 跨平台桌面安装包，性能优先</p>
+        <p style="margin:0 0 8px;color:var(--ink-soft);">master 分支 — Tauri 2 桌面应用，Windows 10 1803+ / 11</p>
         <ul>
-          <li>Tauri 2 底座，原生性能，安装包小巧（~8MB）</li>
-          <li>Rust 后端：OFD 解析、PDF 排版引擎、静默批量打印</li>
-          <li>系统级打印能力：直接调用打印机驱动，支持静默输出</li>
-          <li>Windows / macOS / Linux 三平台安装包</li>
+          <li>Tauri 2 + Rust 底座，原生性能，安装包 ~8MB</li>
+          <li>OFD 原生矢量渲染 + 发票信息直提，<code>invoice-engine</code> 独立 crate</li>
+          <li>PDF 渲染双引擎：WinRT 原生优先，自动 fallback PDFium（Chromium 内核）</li>
+          <li>PDF 文字层提取（轻量版无需 OCR）、PP-OCRv5 智能识别（OCR 版）</li>
+          <li>四种打印模式：PDF 阅读器 / 弹窗确认 / PDFium 静默 / SumatraPDF 静默</li>
+          <li>PDF 统一直通：lopdf Form XObject + JPEG DCTDecode，零质量损失</li>
+          <li>快捷键：<kbd>Ctrl+O</kbd> 添加 · <kbd>Ctrl+P</kbd> 打印 · <kbd>Ctrl++/-</kbd> 缩放</li>
         </ul>
-        <p style="margin:8px 0 0;font-family:var(--font-mono);font-size:12px;color:var(--ink-mute);">
-          技术栈：Tauri 2 · Rust · pdf-lib · print.js · Noto Sans SC
+        <p style="margin:12px 0 4px;font-family:var(--font-mono);font-size:12px;color:var(--ink-mute);">
+          技术栈：Tauri 2 · Rust · pdf-lib · printpdf · lopdf · invoice-engine · ocr-rs · WinRT · PDFium
         </p>
+        <div class="edition-grid">
+          <div class="edition-item">
+            <strong>轻量版</strong>
+            文字型 PDF/OFD 自动提取，PDF 文字层解析 ~5ms/页
+          </div>
+          <div class="edition-item">
+            <strong>OCR 版</strong>
+            PP-OCRv5 + MNN，文本优先+坐标回退，金额数学验证
+          </div>
+        </div>
       </div>
 
+      <!-- Web 版 -->
       <div class="version-card">
         <h3>
           Web 版
           <span class="ver-tag ver-tag--web">v3.0.0</span>
         </h3>
-        <p style="margin:0 0 8px;color:var(--ink-soft);">web 分支 — 纯静态前端，浏览器直接运行，零安装</p>
-        <ul>
-          <li>纯 HTML / CSS / JavaScript，无构建步骤，无服务端依赖</li>
-          <li>浏览器内完成 OFD / XML 解析、PDF 生成、打印预览</li>
-          <li>与服务端无交互，所有数据仅存于本地浏览器</li>
-          <li>可部署到任意静态服务器，打开即用</li>
-        </ul>
-        <p style="margin:8px 0 0;font-family:var(--font-mono);font-size:12px;color:var(--ink-mute);">
-          技术栈：pdf-lib · pdf.js · ofd-client.js · xml-client.js · Local Font Access API
+        <p style="margin:0 0 8px;color:var(--ink-soft);">
+          web 分支 — 纯前端单页应用，零构建零后端，浏览器即开即用
         </p>
+        <ul>
+          <li>纯 HTML/CSS/JS，零依赖框架，无构建步骤</li>
+          <li>pdf-lib 1.17 embedPage 直接嵌入原始 PDF 页面，保留矢量</li>
+          <li>PDF.js 4.10 渲染 + OFD/XML 前端解析，全在浏览器完成</li>
+          <li>Local Font Access API 自动读取系统 CJK 字体，零下载</li>
+          <li>浏览器原生 <code>iframe.print()</code> 打印，PDF 矢量保真</li>
+          <li>离线可用：首次加载后完全离线，无需网络</li>
+          <li>部署到任意静态托管：Vercel / Netlify / Cloudflare Pages / GitHub Pages</li>
+        </ul>
+        <p style="margin:12px 0 4px;font-family:var(--font-mono);font-size:12px;color:var(--ink-mute);">
+          技术栈：PDF.js 4.10 · pdf-lib 1.17 · fontkit · JSZip · IndexedDB · Local Font Access API
+        </p>
+        <a class="btn-web" href="https://fapiao.erma0.cn" target="_blank" rel="noopener noreferrer">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+            <path d="M12 8.5v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-9a1 1 0 011-1h5M10 2h4v4M7 9l7-7"/>
+          </svg>
+          打开 Web 版 · fapiao.erma0.cn
+        </a>
       </div>
 
+      <!-- 功能矩阵 -->
       <h2>核心功能（两版通用）</h2>
       <div class="feature-grid">
         <div class="feature-item">
-          <h4>OFD 解析</h4>
-          <p>自动识别 OFD 格式数电票，提取发票号码、日期、金额、购销方等全部字段</p>
+          <h4>OFD 完整支持</h4>
+          <p>OFD 国标电子发票原生解析：矢量渲染、发票信息直提、印章保真、ImageMask 遮罩兼容，拖入即用</p>
         </div>
         <div class="feature-item">
-          <h4>XML 解析</h4>
-          <p>支持 XML 格式数电票数据提取，兼容多版本 XML 结构</p>
+          <h4>XML 数电票</h4>
+          <p>解析 &lt;EInvoice&gt; 格式，提取发票号码/日期/金额/买卖方信息，汇总表与 CSV 全兼容</p>
         </div>
         <div class="feature-item">
           <h4>PDF 矢量打印</h4>
-          <p>矢量 PDF 生成引擎，中文嵌入不失真。页面布局、水印、页脚、页码全可配</p>
+          <p>PDF 页面以原始质量嵌入合成，无二次压缩。桌面版 lopdf Form XObject 直通，Web 版 pdf-lib embedPage</p>
+        </div>
+        <div class="feature-item">
+          <h4>自定义排版</h4>
+          <p>纸张（A4/A5/B5/自定义）、布局 1-10×1-10 网格、边距间距缩放旋转、裁切线、水印、页码页脚</p>
+        </div>
+        <div class="feature-item">
+          <h4>单票独立调整</h4>
+          <p>每张发票预览拖拽移动+角落缩放、九宫格快速对齐、滚轮微调、±150mm 偏移、双击重置</p>
         </div>
         <div class="feature-item">
           <h4>批量模板管理</h4>
-          <p>多套打印模板切换，批量文件拖入一键处理，支持预览与单票微调</p>
+          <p>多套打印模板切换，批量文件拖入一键处理，文件列表记忆，打印状态追踪</p>
         </div>
         <div class="feature-item">
-          <h4>智能识别</h4>
-          <p>自动检测发票类型、方向，匹配对应模板，减少手动操作</p>
+          <h4>发票汇总表</h4>
+          <p>14 字段可勾选，金额/名称双击编辑，含税/不含税/税额自动汇总，CSV 导出 UTF-8 BOM</p>
+        </div>
+        <div class="feature-item">
+          <h4>批量重命名</h4>
+          <p>预设模板（金额+销售方+号码等）或自定义字段勾选，一键批量重命名发票磁盘文件</p>
+        </div>
+        <div class="feature-item">
+          <h4>金额校验可视化</h4>
+          <p>OCR/提取金额求和校验失败时金额徽章 ⚠ 警告，hover 查看含税/不含税/税额验证详情</p>
         </div>
         <div class="feature-item">
           <h4>多格式导出</h4>
-          <p>支持 PDF 直接打印、文件重命名、归档输出，适配财务归档流程</p>
+          <p>PDF 直接打印 / 保存 / 批量重命名 / CSV 汇总导出，适配财务归档流程</p>
         </div>
       </div>
 
+      <!-- 版本对比 -->
       <h2>版本对比</h2>
       <table class="detail-table">
         <thead>
@@ -162,15 +249,19 @@
         </thead>
         <tbody>
           <tr><td>分支</td><td><code>master</code></td><td><code>web</code></td></tr>
-          <tr><td>运行方式</td><td>安装包</td><td>浏览器打开</td></tr>
-          <tr><td>OFD 解析</td><td>✅ Rust 原生</td><td>✅ JS 解析</td></tr>
-          <tr><td>XML 解析</td><td>✅ Rust 原生</td><td>✅ JS 解析</td></tr>
-          <tr><td>PDF 矢量打印</td><td>✅ pdf-lib + 系统驱动</td><td>✅ pdf-lib + 浏览器打印</td></tr>
-          <tr><td>静默打印</td><td>✅ 系统级</td><td>受浏览器限制</td></tr>
-          <tr><td>安装包大小</td><td>~8 MB</td><td>无需安装</td></tr>
-          <tr><td>平台</td><td>Win / Mac / Linux</td><td>任意现代浏览器</td></tr>
-          <tr><td>本地字体</td><td>内嵌 Noto Sans SC</td><td>Local Font Access API</td></tr>
+          <tr><td>运行方式</td><td>Windows 安装包 / 单文件 exe</td><td>浏览器打开</td></tr>
+          <tr><td>底座</td><td>Tauri 2 + Rust</td><td>纯前端（零构建）</td></tr>
+          <tr><td>OFD 解析</td><td>✅ Rust invoice-engine crate（矢量 SVG）</td><td>✅ JS 前端解析</td></tr>
+          <tr><td>XML 数电票</td><td>✅ Rust 原生</td><td>✅ JS 解析</td></tr>
+          <tr><td>PDF 嵌入</td><td>lopdf Form XObject + JPEG DCTDecode</td><td>pdf-lib embedPage</td></tr>
+          <tr><td>静默打印</td><td>✅ PDFium / SumatraPDF 直打打印机 DC</td><td>iframe.print()（弹窗确认）</td></tr>
+          <tr><td>OCR</td><td>✅ PP-OCRv5 + MNN（OCR 版可选）</td><td>❌ 无</td></tr>
+          <tr><td>PDF 文字提取</td><td>✅ WinRT + PDFium 双引擎</td><td>✅ PDF.js 文字层</td></tr>
+          <tr><td>安装包大小</td><td>~8 MB（轻量）/ +models（OCR）</td><td>无需安装</td></tr>
+          <tr><td>平台</td><td>Windows 10 1803+ / 11</td><td>任意现代浏览器</td></tr>
+          <tr><td>本地字体</td><td>内嵌 Noto Sans SC</td><td>Local Font Access API（系统字体）</td></tr>
           <tr><td>离线使用</td><td>✅ 完全离线</td><td>✅ 首次加载后可离线</td></tr>
+          <tr><td>印章烘焙</td><td>✅ PDF 生成时自动烘焙原票印章</td><td>✅ embedPage 保留原始内容</td></tr>
         </tbody>
       </table>
 
@@ -179,23 +270,46 @@
         截图待补充 — 部署后替换为实际截图
       </div>
 
-      <h2>下载</h2>
+      <h2>下载 & 使用</h2>
       <div class="detail-downloads">
-        <a class="btn-dl" href="https://github.com/erma0/fapiao-print/releases/latest" target="_blank" rel="noopener noreferrer" aria-label="下载桌面版 Windows x64">
+        <a class="btn-dl" href="https://github.com/erma0/fapiao-print/releases/latest" target="_blank" rel="noopener noreferrer" aria-label="下载桌面版轻量安装包">
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
             <path d="M4 10v2a2 2 0 002 2h4a2 2 0 002-2v-2M8 1v9M5 7l3 3 3-3"/>
           </svg>
-          桌面版 · Windows x64
+          桌面版 · 轻量安装包 (x64-setup.exe)
         </a>
-        <a class="btn-dl" href="https://github.com/erma0/fapiao-print/releases/latest" target="_blank" rel="noopener noreferrer" aria-label="下载桌面版 macOS arm64">
+        <a class="btn-dl" href="https://github.com/erma0/fapiao-print/releases/latest" target="_blank" rel="noopener noreferrer" aria-label="下载桌面版轻量绿色版">
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
             <path d="M4 10v2a2 2 0 002 2h4a2 2 0 002-2v-2M8 1v9M5 7l3 3 3-3"/>
           </svg>
-          桌面版 · macOS arm64
+          桌面版 · 轻量绿色版 (单文件 exe)
+        </a>
+        <a class="btn-dl" href="https://github.com/erma0/fapiao-print/releases/latest" target="_blank" rel="noopener noreferrer" aria-label="下载桌面版OCR安装包">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+            <path d="M4 10v2a2 2 0 002 2h4a2 2 0 002-2v-2M8 1v9M5 7l3 3 3-3"/>
+          </svg>
+          桌面版 · OCR 安装包 (含 PP-OCRv5)
+        </a>
+        <a class="btn-dl" href="https://github.com/erma0/fapiao-print/releases/latest" target="_blank" rel="noopener noreferrer" aria-label="下载桌面版OCR绿色版">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+            <path d="M4 10v2a2 2 0 002 2h4a2 2 0 002-2v-2M8 1v9M5 7l3 3 3-3"/>
+          </svg>
+          桌面版 · OCR 绿色版 (exe + models/)
+        </a>
+        <a class="btn-web" href="https://fapiao.erma0.cn" target="_blank" rel="noopener noreferrer" style="font-size:15px;padding:14px 28px;">
+          <svg width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+            <path d="M12 8.5v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-9a1 1 0 011-1h5M10 2h4v4M7 9l7-7"/>
+          </svg>
+          Web 版 · fapiao.erma0.cn
         </a>
       </div>
 
-      <p class="detail-repo-wrap">
+      <p style="margin:12px 0 0;font-size:12px;color:var(--ink-mute);">
+        文字型 PDF / OFD 发票选轻量版即可；图片型 PDF 和图片需 OCR 版。
+        仅支持 Windows 10 1803+ / 11，不支持 Windows 7/8。
+      </p>
+
+      <p class="detail-repo-wrap" style="margin-top:24px;">
         <a class="detail-repo" href="https://github.com/erma0/fapiao-print" target="_blank" rel="noopener noreferrer">
           <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
           erma0/fapiao-print
@@ -215,7 +329,7 @@
       <span class="sep" aria-hidden="true">·</span>
       <a href="https://github.com/erma0" target="_blank" rel="noopener noreferrer">GitHub</a>
     </p>
-    <p class="site-footer__small">© 2026 鸽子笼</p>
+    <p class="site-footer__small">&copy; 2026 鸽子笼</p>
   </footer>
 </body>
 </html>

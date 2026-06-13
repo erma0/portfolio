@@ -10,11 +10,9 @@
   <link rel="stylesheet" href="../styles.css" />
   <link rel="stylesheet" href="./css/tool.css">
   <script src="./js/utils.js"></script>
-
 </head>
 <body>
 <div class="grain" aria-hidden="true"></div>
-<div id="bg"></div>
 <main class="container">
   <nav class="top-nav">
     <a href="../index.html" class="back-link">← 作品集</a>
@@ -25,132 +23,131 @@
     <p class="tool-desc">将 C/C++ 字符串字面量中的转义序列还原为原始文本</p>
   </header>
   <section class="tool-body">
-<script type="text/javascript">
-//<!--
-    function showToast(msg){var t=document.createElement('div');t.textContent=msg;t.style.cssText='position:fixed;top:20px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 24px;border-radius:8px;font-size:14px;z-index:9999;opacity:0;transition:opacity .3s';document.body.appendChild(t);requestAnimationFrame(function(){t.style.opacity='1'});setTimeout(function(){t.style.opacity='0';setTimeout(function(){t.remove()},300)},2500)}
 
-    function showErrorInfo(text, pos) {
-      showToast("错误：" + text + " 位置（源码偏移）：" + pos);
-    }
+    <div class="form-card">
+      <div class="field">
+        <label class="field-label" for="ed_input">C/C++ 字符串字面量</label>
+        <textarea id="ed_input" rows="10"></textarea>
+        <span class="field-hint">输入 C/C++ 风格的字符串字面量，如 "Hello\\nWorld"</span>
+      </div>
+    </div>
 
-    function cstr_decode(input) {
-        var output = "";
-        var states = {
-            OPENING: 0,
-            STRING: 1,
-            ESCAPING: 2
-        };
-        var state = states.OPENING;
+    <div class="btn-group">
+      <button type="button" id="btnConvert">转换</button>
+    </div>
 
-        for (i = 0; i < input.length; i++) {
-        
-            switch (state) {
-              
-              case states.OPENING:
-                switch (input[i]) {
-                  case ' ':
-                  case '\f':
-                  case '\n':
-                  case '\r':
-                  case '\t':
-                  case '\v':
-                    break;;
-                  case '\"':
-                    state = states.STRING;
-                    break;
-                  default:
-                    if (i != input.length - 1) {
-                      showErrorInfo("Unexpected character (" + input[i] + "), expecting quotation mark", i);
-                      return output;
-                    } else {
-                      showErrorInfo("Unexpected character (" + input[i] + "), conversion interrupted", i);                       
-                      break;
-                    }
-                }
-                break;
-              
-              case states.STRING:
-                switch (input[i]) {
-                  case '\f':
-                  case '\n':
-                  case '\r':
-                  case '\t':
-                    break;
-                  case '\"':
-                    state = states.OPENING;
-                    break;
-                  case '\\':
-                    state = states.ESCAPING;
-                    break;
-                  default:
-                    output += input[i];
-                    break;
-                }              
-                break;
-                
-              case states.ESCAPING:
-                switch (input[i]) {
-                  case 'f':
-                    output += '\f';
-                    break;
-                  case 'n':
-                    output += '\n';
-                    break;
-                  case 'r':
-                    output += '\r';
-                    break;
-                  case 't':
-                    output += '\t';
-                    break;
-                  case '"':
-                    output += '\"';
-                    break;
-                  case '\\':
-                    output += '\\';
-                    break;
+    <div class="result-card">
+      <label class="field-label">反转义文本</label>
+      <div class="input-row">
+        <textarea id="ed_output" rows="10" readonly></textarea>
+        <button type="button" class="btn-copy" id="btnCopyOutput"></button>
+      </div>
+    </div>
 
-                  default:
-                    showErrorInfo("Unexpected character (" + input[i] + "), expecting one of the escaped character (f, n, r, t, \, or quotation)", i);
-                    return output;
-                }
-                state = states.STRING;              
-                break;
-            }
-                             
-        }
-
-        if (state != states.OPENING) {
-          showErrorInfo("Source string not terminated correctly", i);          
-        }
-        return output;
-    } 
-    
-    function Convert() {
-        var output = cstr_decode(document.frmConvert.ed_input.value);
-        document.frmConvert.ed_output.value = output;
-    } 
-
-//-->
-</script>
-<p>将 C 风格字符串字面量还原为原始文本（反转义）。</p>
-      <form name="frmConvert" action="">
-				<p>C/C++ 字符串字面量：</p>
-			    <p><textarea name="ed_input" rows="10" cols="67"></textarea></p>		  
-			  <p>
-			    <button type=button name="btnConvert"
-            onclick="Convert()">
-            转换
-          </button>
-			  </p>
-				<p>反转义文本：</p>
-			    <p>
-            <textarea name="ed_output" rows="10" cols="67"></textarea><button type="button" onclick="copyToClipboard(this.previousElementSibling.value)">复制</button>
-          </p> 
-			</form>
   </section>
   <footer class="page-footer">
     <p class="copyright">@鸽子笼 2020-2026</p>
   </footer>
 </main>
+
+<script>
+function showErrorInfo(text, pos) {
+  showToast('错误：' + text + ' 位置（源码偏移）：' + pos);
+}
+
+function cstr_decode(input) {
+  var output = '';
+  var OPENING = 0, STRING = 1, ESCAPING = 2;
+  var state = OPENING;
+
+  for (var i = 0; i < input.length; i++) {
+    switch (state) {
+      case OPENING:
+        switch (input[i]) {
+          case ' ':
+          case '\f':
+          case '\n':
+          case '\r':
+          case '\t':
+          case '\v':
+            break;
+          case '"':
+            state = STRING;
+            break;
+          default:
+            if (i !== input.length - 1) {
+              showErrorInfo('意外字符 (' + input[i] + ')，期望引号', i);
+              return output;
+            } else {
+              showErrorInfo('意外字符 (' + input[i] + ')，转换中断', i);
+              break;
+            }
+        }
+        break;
+
+      case STRING:
+        switch (input[i]) {
+          case '\f':
+          case '\n':
+          case '\r':
+          case '\t':
+            break;
+          case '"':
+            state = OPENING;
+            break;
+          case '\\':
+            state = ESCAPING;
+            break;
+          default:
+            output += input[i];
+            break;
+        }
+        break;
+
+      case ESCAPING:
+        switch (input[i]) {
+          case 'f':
+            output += '\f';
+            break;
+          case 'n':
+            output += '\n';
+            break;
+          case 'r':
+            output += '\r';
+            break;
+          case 't':
+            output += '\t';
+            break;
+          case '"':
+            output += '"';
+            break;
+          case '\\':
+            output += '\\';
+            break;
+          default:
+            showErrorInfo('意外字符 (' + input[i] + ')，期望转义字符 (f, n, r, t, \\, 引号)', i);
+            return output;
+        }
+        state = STRING;
+        break;
+    }
+  }
+
+  if (state !== OPENING) {
+    showErrorInfo('源字符串未正确终止', i);
+  }
+  return output;
+}
+
+document.getElementById('btnCopyOutput').innerHTML = ICON_COPY;
+document.getElementById('btnCopyOutput').addEventListener('click', function() {
+  copyToClipboard(document.getElementById('ed_output').value);
+});
+
+document.getElementById('btnConvert').addEventListener('click', function() {
+  var output = cstr_decode(document.getElementById('ed_input').value);
+  document.getElementById('ed_output').value = output;
+});
+</script>
 </body>
 </html>

@@ -10,11 +10,9 @@
   <link rel="stylesheet" href="../styles.css" />
   <link rel="stylesheet" href="./css/tool.css">
   <script src="./js/utils.js"></script>
-
 </head>
 <body>
 <div class="grain" aria-hidden="true"></div>
-<div id="bg"></div>
 <main class="container">
   <nav class="top-nav">
     <a href="../index.html" class="back-link">← 作品集</a>
@@ -25,129 +23,92 @@
     <p class="tool-desc">将十进制字节值转换为 ASCII 字符串</p>
   </header>
   <section class="tool-body">
-<script type="text/javascript">
-//<!--
-    function clean_dec(input) {
-        //input = input.toUpperCase();
-        
-        if (remove_0x) {
-          input = input.replace(/0x/gi, "");        
-        }
-        
-        return input;        
-    }
-    
-    function ShowDecodedAsText(val)
-    {
-        var target = document.getElementById('divDecodedText'); 
-        target.innerHTML = val;    
-    }       
-    
-    function Convert() {
-      var input = document.frmConvert.dec.value;
-      var binary = new Array();
-      var binary_cnt = 0;
-      var num = "";
-      var num_found = 0;
-      var negative = 0;
-      for (var i=0; i<input.length; i++) {
-        var c = input.charAt(i);
-        var eon = 0;
-        if (c == '-') {
-          if (num_found == 0) {
-            negative = 1;
-          } else {
-            eon = 1;
-          }
-        } else if (c < '0' || c > '9') {
-          if (num_found) {
-            eon = 1;
-          }
-        } else {
-          num_found = 1;
-          if (num == "" && negative) {
-            num = "-";
-          }
-          num = num + c;
-        }
-        if (eon) {
-          binary[binary_cnt++] = num;
-          num = "";
-          num_found = 0;
-          negative = 0;                        
-        }
-      }
-      if (num_found) {
-        binary[binary_cnt++] = num;                
-      }
-
-      var cleaned_dec = "";
-      for (var i=0; i<binary.length; i++) {
-        if (i > 0) {
-          cleaned_dec += ", ";
-        }
-        cleaned_dec += binary[i].toString();
-      }
-      document.frmConvert.cleaned_dec.value = cleaned_dec;
-
-      var output = binary;
-
-      var htmlStr = "<p style=\"font-family: courier new, monospace\"><b>";
-      for (i=0; i<output.length; i++) {
-        if (output[i] >= 32 && output[i] <= 126) {
-          switch(String.fromCharCode(output[i])) {
-          case '&': htmlStr += "&amp;";
-            break;
-          case '<': htmlStr += "&lt;";
-            break;
-          case '>': htmlStr += "&gt;";
-            break;
-          case '"': htmlStr += "&quot;";
-            break;
-          case '\'': htmlStr += "&#039;";
-            break;
-          default: htmlStr += String.fromCharCode(output[i]);
-          }
-        }
-        else {
-          htmlStr += "<i>[" + output[i] + "]<" + "/i>";
-        }
-      }
-      htmlStr += "<" + "/b><" + "/p>";  // stupid W3C validator...
-      //document.frmConvert.hex.value = hexText;
-              
-      ShowDecodedAsText(htmlStr);   
-
-    } 
-
-//-->
-</script>
-<h3>十进制 → ASCII 字符串解码器</h3>
-      <p>将一系列十进制数值转换为对应的 ASCII 字符串。
-      for extracting text from decimal encoded data in log files.
-      </p>
-      <form name="frmConvert" action="">
-				<p>Decimal number series:</p>
-			    <p><input type="text" name="dec" value=""></p>
-        <p>Note: decimal numbers can be separated by any non-digit character(s).</p>
-				<p>Normalized, comma-separated input:</p>
-			    <p><input type="text" name="cleaned_dec" readonly="readonly" value=""><button type="button" onclick="copyToClipboard(this.previousElementSibling.value)">复制</button></p>
-        <br>				
-        <p>解码数据（ASCII 文本），32~126 范围外字节以斜体显示为 <i>[byte value]</i>:<br>        
-        <div id="divDecodedText">
-        <p><i>（解码后的文本将显示在此处）</i></p>
-        </div>        
-			  <p>
-			    <button type=button name="btnConvert"
-            onclick="Convert()">
-            转换
-          </button>
-			  </p>
-			</form>
+    <div class="form-card">
+      <div class="field">
+        <label class="field-label" for="inputDec">十进制数值序列</label>
+        <input type="text" id="inputDec" placeholder="例如 72 101 108 108 111">
+        <span class="field-hint">十进制数值可以用任意非数字字符分隔。</span>
+      </div>
+    </div>
+    <div class="btn-group">
+      <button type="button" onclick="convert()">转换</button>
+    </div>
+    <div class="form-card">
+      <div class="field">
+        <label class="field-label">规范化输入</label>
+        <div class="input-row">
+          <input type="text" id="cleanedDec" readonly="readonly" placeholder="逗号分隔的数值">
+          <button type="button" class="btn-copy" onclick="copyToClipboard(document.getElementById('cleanedDec').value)"><script>document.write(ICON_COPY)</script></button>
+        </div>
+      </div>
+    </div>
+    <div class="result-card">
+      <div class="field">
+        <label class="field-label">ASCII 解码结果</label>
+        <span class="field-hint">32~126 范围外字节以斜体显示为 <em>[字节值]</em></span>
+        <div id="decodedText" class="result-value" style="min-height:2rem;"><em>（解码后的文本将显示在此处）</em></div>
+      </div>
+    </div>
   </section>
   <footer class="page-footer">
     <p class="copyright">@鸽子笼 2020-2026</p>
   </footer>
 </main>
+<script>
+function convert() {
+  var input = document.getElementById('inputDec').value;
+  var nums = [];
+  var num = '';
+  var numFound = false;
+  var negative = false;
+
+  for (var i = 0; i < input.length; i++) {
+    var c = input.charAt(i);
+    var eon = false;
+    if (c === '-') {
+      if (!numFound) {
+        negative = true;
+      } else {
+        eon = true;
+      }
+    } else if (c < '0' || c > '9') {
+      if (numFound) eon = true;
+    } else {
+      numFound = true;
+      if (num === '' && negative) num = '-';
+      num += c;
+    }
+    if (eon) {
+      nums.push(num);
+      num = '';
+      numFound = false;
+      negative = false;
+    }
+  }
+  if (numFound) nums.push(num);
+
+  var cleaned = nums.join(', ');
+  document.getElementById('cleanedDec').value = cleaned;
+
+  var html = '';
+  for (var i = 0; i < nums.length; i++) {
+    var val = parseInt(nums[i], 10);
+    if (val >= 32 && val <= 126) {
+      switch (String.fromCharCode(val)) {
+        case '&':  html += '&amp;'; break;
+        case '<':  html += '&lt;'; break;
+        case '>':  html += '&gt;'; break;
+        case '"':  html += '&quot;'; break;
+        case '\'': html += '&#039;'; break;
+        default:   html += String.fromCharCode(val);
+      }
+    } else {
+      html += '<em>[' + val + ']</em>';
+    }
+  }
+
+  document.getElementById('decodedText').innerHTML = html || '<em>（无输出）</em>';
+}
+</script>
 </body>
 </html>

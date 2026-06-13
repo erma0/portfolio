@@ -10,11 +10,9 @@
   <link rel="stylesheet" href="../styles.css" />
   <link rel="stylesheet" href="./css/tool.css">
   <script src="./js/utils.js"></script>
-
 </head>
 <body>
 <div class="grain" aria-hidden="true"></div>
-<div id="bg"></div>
 <main class="container">
   <nav class="top-nav">
     <a href="../index.html" class="back-link">← 作品集</a>
@@ -25,131 +23,94 @@
     <p class="tool-desc">对文本行进行去重、排序或统计操作</p>
   </header>
   <section class="tool-body">
-<script type="text/javascript">
-//<!--
 
-function insertAtCursor(myField, myValue)
-    {
-    //IE support
-    if (document.selection) 
-        {
-        myField.focus();
-        sel = document.selection.createRange();
-        sel.text = myValue;
-        }
-    
-    //MOZILLA/NETSCAPE support
-    else if (myField.selectionStart || myField.selectionStart == '0') 
-        {
-        var startPos = myField.selectionStart;
-        var endPos = myField.selectionEnd;
-        restoreTop = myField.scrollTop;
-        
-        myField.value = myField.value.substring(0, startPos) + myValue + myField.value.substring(endPos, myField.value.length);
-        
-        myField.selectionStart = startPos + myValue.length; 
-        myField.selectionEnd = startPos + myValue.length;
-        
-        if (restoreTop>0)
-            {
-            myField.scrollTop = restoreTop;
-            }
-        } 
-    else 
-        {
-        myField.value += myValue;
-        }
-    }
+    <div class="form-card">
+      <div class="field">
+        <label class="field-label" for="ed_input">源字符串</label>
+        <textarea id="ed_input" rows="12"></textarea>
+        <span class="field-hint">每行一个字符串</span>
+      </div>
+    </div>
 
-    function interceptTabs(evt, control)
-        {
-        key = evt.keyCode ? evt.keyCode : evt.which ? evt.which : evt.charCode;
-        if (key==9)
-            {
-            insertAtCursor(control, '\t');
-            return false; 
-            }
-        else
-            {
-            return key;
-            }
-        }
+    <div class="form-card">
+      <div class="field">
+        <label class="field-label">选项</label>
+        <label><input type="checkbox" id="chbTrimStrings" checked> 自动去除源字符串首尾空白</label>
+        <br>
+        <label><input type="checkbox" id="chbSkipEmptyStrings" checked> 跳过空字符串</label>
+        <br>
+        <label><input type="checkbox" id="chbRemoveDuplicatedStrings" checked> 去除重复字符串</label>
+        <br>
+        <label><input type="checkbox" id="chbSortStrings" checked> 对字符串排序</label>
+      </div>
+    </div>
 
-            function Convert() {
-                var input = document.frmConvert.ed_input.value;
-                var trimStrings = document.frmConvert.chbTrimStrings.checked;
-                var skipEmptyStrings = document.frmConvert.chbSkipEmptyStrings.checked;
-                var removeDuplicatedStrings = document.frmConvert.chbRemoveDuplicatedStrings.checked;
-                var sortStrings = document.frmConvert.chb排序Strings.checked;
+    <div class="btn-group">
+      <button type="button" id="btnConvert">转换</button>
+    </div>
 
-                var lines = input.split('\n');
-                var filteredLines = [];
-                for(var i = 0;i < lines.length; i++){
-                    var line;
-                    if (trimStrings) {
-                        line = lines[i].trim();
-                    } else {
-                        line = lines[i];
-                    }
-                    if (skipEmptyStrings) {
-                        if (line === '') {
-                            continue;
-                        }
-                    }
-                    if (removeDuplicatedStrings) {
-                        if (filteredLines.indexOf(line) < 0) {
-                            filteredLines.push(line);
-                        }
-                    } else {
-                        filteredLines.push(line);
-                    }
-                }
-                if (sortStrings) {
-                    filteredLines.sort();
-                }
-                var output = "";
-                if (filteredLines.length) {
-                    output = filteredLines[0];
-                }
-                for (var i=1; i<filteredLines.length; i++) {
-                    output += "\r\n" + filteredLines[i];
-                }
+    <div class="result-card">
+      <label class="field-label">输出字符串</label>
+      <div class="input-row">
+        <textarea id="ed_output" rows="12" readonly></textarea>
+        <button type="button" class="btn-copy" id="btnCopyOutput"></button>
+      </div>
+    </div>
 
-                document.frmConvert.ed_output.value = output;
-            }
-
-//-->
-</script>
-<form name="frmConvert" action="./cpp_text_escape.htm">
-                <p>源字符串（每行一个）：</p>
-                <p>
-                    <textarea onkeydown="return interceptTabs(event, this);" name="ed_input" rows="12" cols="67"></textarea>
-                </p>
-                <p>选项：</p>
-                <p>
-                    <input type="checkbox" name="chbTrimStrings" value="" checked="yes">自动去除源字符串首尾空白
-                    <br>
-                    <input type="checkbox" name="chbSkipEmptyStrings" value="" checked="yes">跳过空字符串
-                    <br>
-                    <input type="checkbox" name="chbRemoveDuplicatedStrings" value="" checked="yes">去除重复字符串
-                    <br>                    
-                    <input type="checkbox" name="chb排序Strings" value="" checked="yes">对字符串排序
-                    <br>                    
-                </p>
-                <p>
-                    <button type="button" name="btnConvert" onclick="Convert()">
-                        转换
-                    </button>
-                </p>
-                <p>输出字符串：</p>
-                <p>
-                    <textarea name="ed_output" rows="12" cols="67"></textarea><button type="button" onclick="copyToClipboard(this.previousElementSibling.value)">复制</button>
-                </p>
-            </form>
   </section>
   <footer class="page-footer">
     <p class="copyright">@鸽子笼 2020-2026</p>
   </footer>
 </main>
+
+<script>
+document.getElementById('btnCopyOutput').innerHTML = ICON_COPY;
+document.getElementById('btnCopyOutput').addEventListener('click', function() {
+  copyToClipboard(document.getElementById('ed_output').value);
+});
+
+document.getElementById('btnConvert').addEventListener('click', function() {
+  var input = document.getElementById('ed_input').value;
+  var trimStrings = document.getElementById('chbTrimStrings').checked;
+  var skipEmptyStrings = document.getElementById('chbSkipEmptyStrings').checked;
+  var removeDuplicatedStrings = document.getElementById('chbRemoveDuplicatedStrings').checked;
+  var sortStrings = document.getElementById('chbSortStrings').checked;
+
+  var lines = input.split('\n');
+  var filteredLines = [];
+  for (var i = 0; i < lines.length; i++) {
+    var line;
+    if (trimStrings) {
+      line = lines[i].trim();
+    } else {
+      line = lines[i];
+    }
+    if (skipEmptyStrings) {
+      if (line === '') {
+        continue;
+      }
+    }
+    if (removeDuplicatedStrings) {
+      if (filteredLines.indexOf(line) < 0) {
+        filteredLines.push(line);
+      }
+    } else {
+      filteredLines.push(line);
+    }
+  }
+  if (sortStrings) {
+    filteredLines.sort();
+  }
+  var output = '';
+  if (filteredLines.length) {
+    output = filteredLines[0];
+  }
+  for (var j = 1; j < filteredLines.length; j++) {
+    output += '\r\n' + filteredLines[j];
+  }
+
+  document.getElementById('ed_output').value = output;
+});
+</script>
 </body>
 </html>

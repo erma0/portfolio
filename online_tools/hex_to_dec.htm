@@ -10,11 +10,9 @@
   <link rel="stylesheet" href="../styles.css" />
   <link rel="stylesheet" href="./css/tool.css">
   <script src="./js/utils.js"></script>
-
 </head>
 <body>
 <div class="grain" aria-hidden="true"></div>
-<div id="bg"></div>
 <main class="container">
   <nav class="top-nav">
     <a href="../index.html" class="back-link">← 作品集</a>
@@ -25,96 +23,88 @@
     <p class="tool-desc">将十六进制数值转换为十进制</p>
   </header>
   <section class="tool-body">
-<script type="text/javascript">
-//<!--
-
-
-    function ShowDecodedAsText(val)
-    {
-        var target = document.getElementById('divDecodedText'); 
-        target.innerHTML = val;    
-    }       
-    
-    function Convert() {
-      var cleaned_hex = cleanHex(document.frmConvert.hex.value, document.frmConvert.chbSeparator.checked);
-      document.frmConvert.cleaned_hex.value = cleaned_hex;
-      if (cleaned_hex.length % 2) {
-        alert ("错误：清理后的十六进制字符串长度为奇数。");     
-        return;
-      }
-
-      var binary = new Array();
-      for (var i=0; i<cleaned_hex.length/2; i++) {
-        var h = cleaned_hex.substr(i*2, 2);
-        binary[i] = parseInt(h,16);        
-      }
-
-	  var output = "";
-	  var separator = document.frmConvert.separator.value;
-	  var splitLines = document.frmConvert.chbSplitLines.checked;
-	  var valuesPerLine = document.frmConvert.valuesPerLine.value;		  
-	  var padValues = document.frmConvert.chbPadValues.checked;
-	  
-      for (var i=0; i<binary.length; i++) {
-		var val = binary[i];
-		if (padValues) {
-			if (val < 10) {
-				output += "  ";
-			} else if (val < 100) {
-				output += " ";
-			}
-		}
-		output += val;
-		if (i != binary.length - 1) {
-			output += separator;
-		}
-		if (splitLines) {
-			if (i % valuesPerLine == (valuesPerLine-1)) {
-				output += "\r\n";
-			}
-		}
-	  }
-		document.frmConvert.ed_output.value	= output;
-
-    } 
-
-//-->
-</script>
-<h3>十六进制 → 十进制序列转换器</h3>
-      <form name="frmConvert" action="">
-				<p>十六进制字符串：</p>
-			    <p><input type="text" name="hex" value=""></p>
-        <p>注意：十六进制集合以外的字符将被忽略，因此 "12AB34" = "12 AB 34" = "12, AB, 34" 等价。
-        输入不区分大小写。</p>
-        <p>选项：</p>
-          <p><input type="checkbox" name="chbSeparator" value="sep" checked="checked">移除输入中的 "0x" 前缀</p>
-				<p>清理后的输入：</p>
-			    <p><input type="text" name="cleaned_hex" readonly="readonly" value=""><button type="button" onclick="copyToClipboard(this.previousElementSibling.value)">复制</button></p>				
-				
-				<p>输出值分隔符：<input type="text" name="separator" value=", ">
-				<br>
-				<input type="checkbox" name="chbSplitLines" value="" checked="checked">将输出拆分为多行，每行数值个数：
-				<input type="text" name="valuesPerLine" value="8">				
-				<br>
-				<input type="checkbox" name="chbPadValues" value="" checked="checked">将每个数值填充空格至 3 个字符宽
-				</p>
-				
-				<p>输出：</p>
-			    <p>
-				<textarea name="ed_output" rows="10" cols="87"></textarea><button type="button" onclick="copyToClipboard(this.previousElementSibling.value)">复制</button>
-				</p>
-				
-			  <p>
-			    <button type=button name="btnConvert"
-            onclick="Convert()">
-            转换
-          </button>
-			  </p>
-			</form>
+    <div class="form-card">
+      <div class="field">
+        <label class="field-label" for="inputHex">十六进制字符串</label>
+        <input type="text" id="inputHex" placeholder="例如 12AB34 或 12 AB 34">
+        <span class="field-hint">十六进制集合以外的字符将被忽略，"12AB34" = "12 AB 34" = "12, AB, 34" 等价。输入不区分大小写。</span>
+      </div>
+      <div class="field">
+        <label class="field-label">选项</label>
+        <label><input type="checkbox" id="chbRemove0x" checked="checked"> 移除输入中的 "0x" 前缀</label>
+      </div>
+    </div>
+    <div class="form-card">
+      <div class="field">
+        <label class="field-label">清理后的输入</label>
+        <div class="input-row">
+          <input type="text" id="cleanedHex" readonly="readonly" placeholder="清理后的十六进制">
+          <button type="button" class="btn-copy" onclick="copyToClipboard(document.getElementById('cleanedHex').value)"><script>document.write(ICON_COPY)</script></button>
+        </div>
+      </div>
+    </div>
+    <div class="form-card">
+      <div class="field">
+        <label class="field-label">输出格式</label>
+        <label style="display:block;margin-bottom:0.4rem;">分隔符 <input type="text" id="separator" value=", " style="width:4rem;display:inline;"></label>
+        <label style="display:block;margin-bottom:0.4rem;"><input type="checkbox" id="chbSplitLines" checked="checked"> 拆分为多行，每行数值个数：<input type="text" id="valuesPerLine" value="8" style="width:3rem;display:inline;"></label>
+        <label style="display:block;"><input type="checkbox" id="chbPadValues" checked="checked"> 将每个数值填充空格至 3 个字符宽</label>
+      </div>
+    </div>
+    <div class="btn-group">
+      <button type="button" onclick="convert()">转换</button>
+    </div>
+    <div class="result-card">
+      <div class="field">
+        <label class="field-label">十进制输出</label>
+        <div class="input-row">
+          <textarea id="outputDec" rows="6" readonly="readonly" style="flex:1;min-width:0;border-top-right-radius:0;border-bottom-right-radius:0;border-right:none;" placeholder="转换结果将显示在此处"></textarea>
+          <button type="button" class="btn-copy" onclick="copyToClipboard(document.getElementById('outputDec').value)"><script>document.write(ICON_COPY)</script></button>
+        </div>
+      </div>
+    </div>
   </section>
   <footer class="page-footer">
     <p class="copyright">@鸽子笼 2020-2026</p>
   </footer>
 </main>
+<script>
+function convert() {
+  var cleaned = cleanHex(
+    document.getElementById('inputHex').value,
+    document.getElementById('chbRemove0x').checked
+  );
+  document.getElementById('cleanedHex').value = cleaned;
+
+  if (cleaned.length % 2) {
+    showToast('错误：清理后的十六进制字符串长度为奇数');
+    return;
+  }
+
+  var binary = [];
+  for (var i = 0; i < cleaned.length / 2; i++) {
+    binary[i] = parseInt(cleaned.substr(i * 2, 2), 16);
+  }
+
+  var output = '';
+  var sep = document.getElementById('separator').value;
+  var splitLines = document.getElementById('chbSplitLines').checked;
+  var vpl = parseInt(document.getElementById('valuesPerLine').value) || 8;
+  var padValues = document.getElementById('chbPadValues').checked;
+
+  for (var i = 0; i < binary.length; i++) {
+    var val = binary[i];
+    if (padValues) {
+      if (val < 10) output += '  ';
+      else if (val < 100) output += ' ';
+    }
+    output += val;
+    if (i !== binary.length - 1) output += sep;
+    if (splitLines && i % vpl === vpl - 1) output += '\r\n';
+  }
+
+  document.getElementById('outputDec').value = output;
+}
+</script>
 </body>
 </html>

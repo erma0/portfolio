@@ -1,5 +1,5 @@
 /*
-	在线工具子页面 — 米白纸风格
+	在线工具子页面 — 米白纸风格（现代化）
 	复用主页 ../styles.css 变量与基础样式
 */
 
@@ -11,6 +11,9 @@
 	--tool-accent: var(--accent);
 	--tool-accent-hover: #9a3818;
 	--tool-transition: 0.25s ease;
+	--tool-radius: 10px;
+	--tool-card-bg: var(--bg-soft, rgba(246, 243, 236, 0.6));
+	--tool-card-border: var(--line, rgba(26, 26, 26, 0.08));
 }
 
 /* ============ Reset ============ */
@@ -30,9 +33,6 @@ body {
 	margin: 0;
 	min-height: 100vh;
 }
-
-/* ============ Background（暗色 #bg 不再需要，但保留兼容） ============ */
-#bg { display: none; }
 
 /* ============ Container ============ */
 .container {
@@ -123,6 +123,90 @@ body {
 	text-decoration: underline;
 }
 
+/* ============ Form Card — 现代化字段分组 ============ */
+.form-card {
+	background: var(--tool-card-bg);
+	border: 1px solid var(--tool-card-border);
+	border-radius: var(--tool-radius);
+	padding: 1.25rem 1.5rem;
+	margin-bottom: 1rem;
+}
+
+.form-card + .form-card {
+	margin-top: 0.75rem;
+}
+
+/* ============ Field Group ============ */
+.field {
+	margin-bottom: 1rem;
+}
+.field:last-child {
+	margin-bottom: 0;
+}
+
+.field-label {
+	display: block;
+	font-family: var(--font-mono);
+	font-size: 0.72rem;
+	font-weight: 500;
+	color: var(--ink-mute);
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	margin-bottom: 0.4rem;
+}
+
+.field-hint {
+	display: block;
+	font-size: 0.78rem;
+	color: var(--ink-mute);
+	margin-top: 0.3rem;
+	line-height: 1.5;
+}
+
+/* ============ Input Row — 输入框 + 操作按钮 ============ */
+.input-row {
+	display: flex;
+	align-items: stretch;
+	gap: 0;
+	max-width: 40rem;
+}
+
+.input-row input[type="text"],
+.input-row input[type="password"],
+.input-row textarea {
+	flex: 1;
+	min-width: 0;
+	border-top-right-radius: 0;
+	border-bottom-right-radius: 0;
+	border-right: none;
+}
+
+.input-row .btn-copy {
+	flex-shrink: 0;
+	background: var(--tool-bg-input);
+	border: 1px solid var(--line);
+	border-top-left-radius: 0;
+	border-bottom-left-radius: 0;
+	color: var(--ink-mute);
+	font-size: 0.75rem;
+	font-family: var(--font-mono);
+	padding: 0 0.75rem;
+	cursor: pointer;
+	transition: background var(--tool-transition), color var(--tool-transition);
+	white-space: nowrap;
+	display: flex;
+	align-items: center;
+	gap: 0.3rem;
+}
+.input-row .btn-copy:hover {
+	background: var(--tool-bg-input-focus);
+	color: var(--accent);
+}
+.input-row .btn-copy svg {
+	width: 14px;
+	height: 14px;
+}
+
 /* ============ Form Elements ============ */
 .tool-body input[type="text"],
 .tool-body input[type="password"],
@@ -168,7 +252,8 @@ body {
 }
 
 /* ============ Buttons ============ */
-.tool-body button {
+.tool-body button,
+.btn {
 	background: var(--accent);
 	color: #fff;
 	border: none;
@@ -181,11 +266,32 @@ body {
 	transition: background var(--tool-transition), transform 0.15s ease;
 	letter-spacing: 0.02rem;
 }
-.tool-body button:hover {
+.tool-body button:hover,
+.btn:hover {
 	background: var(--tool-accent-hover);
 }
-.tool-body button:active {
+.tool-body button:active,
+.btn:active {
 	transform: scale(0.97);
+}
+
+/* Secondary / outline button */
+.btn-outline {
+	background: transparent;
+	color: var(--accent);
+	border: 1px solid var(--accent);
+}
+.btn-outline:hover {
+	background: var(--accent);
+	color: #fff;
+}
+
+/* Button group */
+.btn-group {
+	display: flex;
+	gap: 0.5rem;
+	flex-wrap: wrap;
+	margin-top: 1rem;
 }
 
 /* Remove old inline button width */
@@ -227,9 +333,31 @@ body {
 }
 
 /* ============ Drop Zone ============ */
+.drop-zone {
+	border: 2px dashed var(--line);
+	border-radius: var(--tool-radius);
+	padding: 2rem 1.5rem;
+	text-align: center;
+	color: var(--ink-mute);
+	font-size: 0.85rem;
+	transition: border-color var(--tool-transition), background var(--tool-transition);
+	cursor: pointer;
+}
+.drop-zone:hover,
+.drop-zone.drag-over {
+	border-color: var(--accent);
+	background: rgba(184, 69, 31, 0.04);
+}
+.drop-zone__icon {
+	font-size: 1.5rem;
+	margin-bottom: 0.5rem;
+	display: block;
+}
+
+/* Legacy #drop_zone compat */
 .tool-body #drop_zone {
 	border: 2px dashed var(--line) !important;
-	border-radius: var(--radius-sm);
+	border-radius: var(--tool-radius);
 	padding: 1.5rem;
 	text-align: center;
 	color: var(--ink-mute);
@@ -240,6 +368,26 @@ body {
 .tool-body #drop_zone:hover {
 	border-color: var(--accent) !important;
 	background: rgba(184, 69, 31, 0.04);
+}
+
+/* ============ Result Card — 输出区域 ============ */
+.result-card {
+	background: var(--tool-card-bg);
+	border: 1px solid var(--tool-card-border);
+	border-radius: var(--tool-radius);
+	padding: 1rem 1.25rem;
+	margin: 0.75rem 0;
+}
+.result-card .field-label {
+	margin-bottom: 0.3rem;
+}
+.result-card .result-value {
+	font-family: var(--font-mono);
+	font-size: 0.88rem;
+	color: var(--ink);
+	word-break: break-all;
+	line-height: 1.5;
+	min-height: 1.4em;
 }
 
 /* ============ Tables ============ */
@@ -304,7 +452,7 @@ body {
 	margin-bottom: 0.2rem;
 }
 
-/* ============ Output Areas ============ */
+/* ============ Output Areas (legacy) ============ */
 .tool-body div[id^="div"] {
 	background: var(--tool-bg-input);
 	border: 1px solid var(--line);
@@ -359,6 +507,22 @@ body {
 	}
 	.tool-body button {
 		padding: 0.5rem 1rem;
+	}
+	.form-card { padding: 1rem 1.1rem; }
+	.input-row { flex-direction: column; }
+	.input-row input[type="text"],
+	.input-row input[type="password"],
+	.input-row textarea {
+		border-radius: var(--radius-sm);
+		border-right: 1px solid var(--line);
+	}
+	.input-row .btn-copy {
+		border-radius: var(--radius-sm);
+		border-top-left-radius: 0;
+		border-top-right-radius: 0;
+		border-left: 1px solid var(--line);
+		padding: 0.4rem 0.75rem;
+		justify-content: center;
 	}
 }
 

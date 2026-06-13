@@ -13,7 +13,6 @@
 </head>
 <body>
 <div class="grain" aria-hidden="true"></div>
-<div id="bg"></div>
 <main class="container">
   <nav class="top-nav">
     <a href="../index.html" class="back-link">← 作品集</a>
@@ -25,21 +24,96 @@
   </header>
   <section class="tool-body">
 
-<h2>Base32hex → 十六进制</h2>
-<p>Base32hex 是 Base32 的变体，使用不同的字母表 "0123456789ABCDEFGHIJKLMNOPQRSTUV"。
-    这使得 Base32hex 字符串可以像二进制输入一样排序。但该字母表包含容易混淆的字符对：0 和 O、1 和 L、B 和 8。</p>
+    <!-- Base32hex → 十六进制 -->
+    <div class="form-card">
+      <div class="field">
+        <label class="field-label" for="b32hextohex_input">Base32hex 字符串</label>
+        <input type="text" id="b32hextohex_input">
+        <span class="field-hint">Base32hex 是 Base32 的变体，使用不同的字母表 "0123456789ABCDEFGHIJKLMNOPQRSTUV"。这使得 Base32hex 字符串可以像二进制输入一样排序。但该字母表包含容易混淆的字符对：0 和 O、1 和 L、B 和 8。</span>
+      </div>
+      <div class="field">
+        <label class="field-label">选项</label>
+        <label><input type="checkbox" id="b32hextohex_chbSep"> 输出添加 0x 前缀</label>
+        <br>
+        <label><input type="checkbox" id="b32hextohex_chbLower"> 使用小写十六进制字符</label>
+      </div>
+      <div class="btn-group">
+        <button type="button" onclick="b32hexToHexConvert()">转换</button>
+      </div>
+    </div>
+
+    <div class="result-card" id="b32hextohex_result_card" style="display:none">
+      <label class="field-label">解码数据（十六进制）</label>
+      <div class="input-row">
+        <input type="text" id="b32hextohex_hex" readonly>
+        <button type="button" class="btn-copy" id="b32hextohex_copy_btn"></button>
+      </div>
+      <div style="margin-top:0.75rem">
+        <label class="field-label">解码数据（ASCII 文本）</label>
+        <span class="field-hint">32~126 范围外的字节以斜体显示为 <i>[byte value]</i></span>
+        <div class="result-value" id="b32hextohex_decoded_text" style="margin-top:0.4rem"></div>
+      </div>
+    </div>
+
+    <hr>
+
+    <!-- 十六进制 → Base32hex -->
+    <div class="form-card">
+      <div class="field">
+        <label class="field-label" for="h2b32hex_hex">十六进制字符串</label>
+        <input type="text" id="h2b32hex_hex">
+        <span class="field-hint">所有非十六进制字符将被忽略，"12AB34" = "12 AB 34" = "12, AB, 34" 等。输入不区分大小写。</span>
+      </div>
+      <div class="field">
+        <label class="field-label">选项</label>
+        <label><input type="checkbox" id="h2b32hex_chbSep" checked> 移除输入中的 "0x" 前缀</label>
+      </div>
+      <div class="btn-group">
+        <button type="button" onclick="hexToB32hexConvert()">转换</button>
+      </div>
+    </div>
+
+    <div class="result-card" id="h2b32hex_result_card" style="display:none">
+      <label class="field-label">清理后的输入</label>
+      <div class="input-row">
+        <input type="text" id="h2b32hex_cleaned_hex" readonly>
+        <button type="button" class="btn-copy" id="h2b32hex_cleaned_copy_btn"></button>
+      </div>
+      <div style="margin-top:0.75rem">
+        <label class="field-label">输出（Base32hex）</label>
+        <div class="input-row">
+          <input type="text" id="h2b32hex_base32hex" readonly>
+          <button type="button" class="btn-copy" id="h2b32hex_copy_btn"></button>
+        </div>
+      </div>
+    </div>
+
+  </section>
+  <footer class="page-footer">
+    <p class="copyright">@鸽子笼 2020-2026</p>
+  </footer>
+</main>
+
 <script>
+// 初始化复制按钮图标
+document.getElementById('b32hextohex_copy_btn').innerHTML = ICON_COPY;
+document.getElementById('b32hextohex_copy_btn').onclick = function() { copyToClipboard(document.getElementById('b32hextohex_hex').value); };
+document.getElementById('h2b32hex_cleaned_copy_btn').innerHTML = ICON_COPY;
+document.getElementById('h2b32hex_cleaned_copy_btn').onclick = function() { copyToClipboard(document.getElementById('h2b32hex_cleaned_hex').value); };
+document.getElementById('h2b32hex_copy_btn').innerHTML = ICON_COPY;
+document.getElementById('h2b32hex_copy_btn').onclick = function() { copyToClipboard(document.getElementById('h2b32hex_base32hex').value); };
+
 function b32hexToHexConvert() {
-  const input = document.frmB32hexToHex.encoded.value;
+  const input = document.getElementById('b32hextohex_input').value;
   const bytes = base32hexDecode(input);
 
-  const useSeparator = document.frmB32hexToHex.chbSeparator.checked;
-  const useLowercase = document.frmB32hexToHex.chbLowercaseOutput.checked;
+  const useSeparator = document.getElementById('b32hextohex_chbSep').checked;
+  const useLowercase = document.getElementById('b32hextohex_chbLower').checked;
   const separator = useSeparator ? ' 0x' : '';
   const hexText = bytes2hex(bytes, separator, useLowercase);
-  document.frmB32hexToHex.hex.value = hexText;
+  document.getElementById('b32hextohex_hex').value = hexText;
 
-  let htmlStr = '<p style="font-family: courier new, monospace"><b>';
+  let htmlStr = '';
   for (let i = 0; i < bytes.length; i++) {
     if (bytes[i] >= 32 && bytes[i] <= 126) {
       const ch = String.fromCharCode(bytes[i]);
@@ -55,65 +129,23 @@ function b32hexToHexConvert() {
       htmlStr += '<i>[' + bytes[i] + ']</i>';
     }
   }
-  htmlStr += '</b></p>';
-  document.getElementById('divB32hexDecodedText').innerHTML = htmlStr;
+  document.getElementById('b32hextohex_decoded_text').innerHTML = htmlStr;
+  document.getElementById('b32hextohex_result_card').style.display = '';
 }
-</script>
 
-<form name="frmB32hexToHex" action="">
-  <p>Base32hex 字符串：</p>
-  <p><input type="text" name="encoded" value=""></p>
-  <p>选项：</p>
-  <p>
-    <input type="checkbox" name="chbSeparator" value="sep" id="b32hex_chbSep">
-    <label for="b32hex_chbSep">输出添加 0x 前缀</label>
-    <br>
-    <input type="checkbox" name="chbLowercaseOutput" value="lowercaseHex" id="b32hex_chbLower">
-    <label for="b32hex_chbLower">使用小写十六进制字符</label>
-  </p>
-  <p>解码数据（十六进制）</p>
-  <p><input type="text" name="hex" value="" readonly><button type="button" onclick="copyToClipboard(this.previousElementSibling.value)">复制</button></p>
-  <p>解码数据（ASCII 文本），32~126 范围外的字节以斜体显示为 <i>[byte value]</i>：</p>
-  <div id="divB32hexDecodedText">
-    <p><i>（解码后的文本将显示在此处）</i></p>
-  </div>
-  <p><button type="button" onclick="b32hexToHexConvert()">转换</button></p>
-</form>
-
-<hr>
-
-<h2>十六进制 → Base32hex</h2>
-<script>
 function hexToB32hexConvert() {
-  const cleaned_hex = cleanHex(document.frmHexToB32hex.hex.value, document.frmHexToB32hex.chbSeparator.checked);
-  document.frmHexToB32hex.cleaned_hex.value = cleaned_hex;
+  const cleaned_hex = cleanHex(document.getElementById('h2b32hex_hex').value, document.getElementById('h2b32hex_chbSep').checked);
+  document.getElementById('h2b32hex_cleaned_hex').value = cleaned_hex;
   if (cleaned_hex.length % 2) {
     showToast('错误：清理后的十六进制字符串长度为奇数。');
-    document.frmHexToB32hex.base32hex.value = '';
+    document.getElementById('h2b32hex_base32hex').value = '';
+    document.getElementById('h2b32hex_result_card').style.display = '';
     return;
   }
   const bytes = hex2bytes(cleaned_hex);
-  document.frmHexToB32hex.base32hex.value = base32hexEncode(bytes);
+  document.getElementById('h2b32hex_base32hex').value = base32hexEncode(bytes);
+  document.getElementById('h2b32hex_result_card').style.display = '';
 }
 </script>
-
-<form name="frmHexToB32hex" action="">
-  <p>十六进制字符串：</p>
-  <p><input type="text" name="hex" value=""></p>
-  <p>所有非十六进制字符将被忽略，"12AB34" = "12 AB 34" = "12, AB, 34" 等。输入不区分大小写。</p>
-  <p>选项：</p>
-  <p><input type="checkbox" name="chbSeparator" value="sep" id="h2b32hex_chbSep" checked="checked"><label for="h2b32hex_chbSep">移除输入中的 "0x" 前缀</label></p>
-  <p>清理后的输入：</p>
-  <p><input type="text" name="cleaned_hex" value="" readonly><button type="button" onclick="copyToClipboard(this.previousElementSibling.value)">复制</button></p>
-  <p>输出（Base32hex）：</p>
-  <p><input type="text" name="base32hex" value="" readonly><button type="button" onclick="copyToClipboard(this.previousElementSibling.value)">复制</button></p>
-  <p><button type="button" onclick="hexToB32hexConvert()">转换</button></p>
-</form>
-
-  </section>
-  <footer class="page-footer">
-    <p class="copyright">@鸽子笼 2020-2026</p>
-  </footer>
-</main>
 </body>
 </html>

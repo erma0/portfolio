@@ -253,7 +253,7 @@ if (typeof showToast !== 'function') {
   function showToast(msg) {
     const t = document.createElement('div');
     t.textContent = msg;
-    t.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);background:var(--ink,#1a1a1a);color:var(--bg,#f6f3ec);padding:10px 24px;border-radius:8px;font-size:14px;z-index:9999;opacity:0;transition:opacity .3s';
+    t.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);background:var(--ink,#1a1a1a);color:var(--bg,#f6f3ec);padding:10px 24px;border-radius:8px;font-size:14px;z-index:9999;opacity:0;transition:opacity .3s;pointer-events:none';
     document.body.appendChild(t);
     requestAnimationFrame(function () { t.style.opacity = '1'; });
     setTimeout(function () {
@@ -262,3 +262,19 @@ if (typeof showToast !== 'function') {
     }, 2500);
   }
 }
+
+/* ---- 文件读取 ---- */
+
+/** 读取用户选择的文件为 ArrayBuffer，回调参数为 { data: Uint8Array, name: string } */
+function openFile(event, callback) {
+  var file = event.target.files && event.target.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function (e) {
+    callback({ data: new Uint8Array(e.target.result), name: file.name });
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+/* ---- SVG 图标常量 ---- */
+var ICON_COPY = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="5" width="9" height="9" rx="1.5"/><path d="M3 11V3a1.5 1.5 0 011.5-1.5H11"/></svg>';
